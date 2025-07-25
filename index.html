@@ -1284,12 +1284,12 @@
             progressFillEl.style.width = `${percent}%`;
             
             // Обновление стоимости (исправлено)
-            // Обновление стоимости (ИСПРАВЛЕНО - считаем за всё время)
+            // Обновление стоимости (ИСПРАВЛЕНО - считаем за всё время правильно)
             const costPerCigarette = data.packPrice / data.cigarettesPerPack;
-            const totalCost = data.totalCost; // Используем общую стоимость
+            const totalCost = data.totalCost;
             costsEl.textContent = `${Math.round(totalCost)} ₽`;
             packPriceEl.textContent = data.packPrice;
-
+            
             // Добавляем дату начала
             const startDate = new Date(data.firstUseDate);
             const startDateStr = startDate.toLocaleDateString('ru-RU');
