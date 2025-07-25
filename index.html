@@ -1284,10 +1284,26 @@
             progressFillEl.style.width = `${percent}%`;
             
             // Обновление стоимости (исправлено)
+            // Обновление стоимости (ИСПРАВЛЕНО - считаем за всё время)
             const costPerCigarette = data.packPrice / data.cigarettesPerPack;
-            const totalCost = data.today * costPerCigarette;
+            const totalCost = data.totalCost; // Используем общую стоимость
             costsEl.textContent = `${Math.round(totalCost)} ₽`;
             packPriceEl.textContent = data.packPrice;
+
+            // Добавляем дату начала
+            const startDate = new Date(data.firstUseDate);
+            const startDateStr = startDate.toLocaleDateString('ru-RU');
+            const costsContainer = document.querySelector('.costs-container');
+            let startDateEl = costsContainer.querySelector('.start-date');
+            if (!startDateEl) {
+                startDateEl = document.createElement('p');
+                startDateEl.className = 'start-date';
+                startDateEl.style.fontSize = '0.8rem';
+                startDateEl.style.opacity = '0.8';
+                startDateEl.style.marginTop = '5px';
+                costsContainer.appendChild(startDateEl);
+            }
+            startDateEl.textContent = `С ${startDateStr}`;
             
             // Обновление счетчика достижений
             const achievedCount = data.achievements.filter(a => a.achieved).length;
