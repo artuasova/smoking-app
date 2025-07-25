@@ -8,6 +8,11 @@
     <meta name="apple-mobile-web-app-title" content="Счетчик сигарет">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="HandheldFriendly" content="true">
     <title>Счетчик сигарет</title>
     <meta name="description" content="PWA приложение для отслеживания потребления сигарет">
     <link rel="manifest" href="manifest.json">
@@ -43,14 +48,26 @@
         }
         
         body {
-            background: var(--bg-gradient);
-            color: var(--text-color);
-            min-height: 100vh;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            touch-action: manipulation;
+    background: var(--bg-gradient) !important;
+    color: var(--text-color);
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    touch-action: manipulation;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    height: -webkit-fill-available;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background-attachment: fixed !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+}
         }
         
         .container {
@@ -564,7 +581,101 @@
             .costs-amount {
                 font-size: 2rem;
             }
+
+                    /* Глобальные стили для фона */
+        html, body {
+            height: 100%;
+            height: -webkit-fill-available;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-gradient) !important;
+            background-attachment: fixed !important;
+            background-size: cover !important;
+            background-repeat: no-repeat !important;
         }
+
+        /* Фикс для PWA */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            overscroll-behavior: none;
+        }
+
+        /* Фон для всей страницы */
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Фикс для overscroll */
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        body {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Добавьте эти стили для предотвращения белого фона */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-gradient);
+            z-index: -1;
+            background-attachment: fixed;
+        }
+
+        /* Фикс для pull-to-refresh */
+        body {
+            background: var(--bg-gradient) !important;
+            background-attachment: fixed !important;
+            overscroll-behavior: contain;
+            -webkit-overscroll-behavior: contain;
+        }
+
+        /* Улучшенный градиент */
+        :root {
+            --bg-gradient: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c) !important;
+        }
+
+        [data-theme="light"] {
+            --bg-gradient: linear-gradient(135deg, #e0e0e0, #f5f5f5, #e0e0e0) !important;
+        }
+
+        /* Фикс для iOS PWA */
+        @supports (-webkit-touch-callout: none) {
+            .container {
+                min-height: -webkit-fill-available;
+            }
+            
+            body {
+                min-height: -webkit-fill-available;
+            }
+        }
+        
+        /* Добавьте это в конец CSS секции */
+        .scroll-container {
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+        }
+            
     </style>
 </head>
 <body>
@@ -595,6 +706,7 @@
             <button class="theme-toggle" id="themeToggle" title="Сменить тему">🌙</button>
         </header>
         
+        <div class="scroll-container">
         <main>
             <div class="counter-card">
                 <h2>Сегодня выкуренных сигарет</h2>
@@ -657,6 +769,7 @@
                 </div>
             </div>
         </main>
+        </div>
         
         <footer>
             <p>Smoking Tracker App by Artuasova | © 2025 Версия 1.8</p>
