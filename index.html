@@ -721,6 +721,9 @@
                 <h3>Время с последней сигареты</h3>
                 <div class="timer-value" id="timer">00:00:00</div>
                 <p>Последняя сигарета: <span id="last-cigarette-time">--:--:--</span></p>
+                <div class="medical-fact-container" style="margin-top: 15px; padding: 15px; background: rgba(0, 0, 0, 0.2); border-radius: 10px; display: none;" id="medical-fact">
+                    <!-- Медицинский факт будет добавлен сюда -->
+                </div>
             </div>
             
             <div class="stats-container">
@@ -875,6 +878,34 @@
             "Здоровье нельзя купить, но можно сохранить!",
             "Сегодня вы сильнее, чем вчера!",
             "Каждый день - это новый шанс!"
+        ];
+
+        // Медицинские факты по часам (от 1 до 24 часа)
+        const medicalFacts = [
+            "Через 1 час после последней сигареты пульс и артериальное давление начинают снижаться до нормального уровня.",
+            "Через 2 часа периферические кровеносные сосуды расширяются, улучшается циркуляция крови в руках и ногах.",
+            "Через 3 часа уровень никотина в крови снижается до нуля, начинается процесс детоксикации организма.",
+            "Через 4 часа улучшается насыщение крови кислородом, снижается риск сердечного приступа.",
+            "Через 5 часов начинается восстановление слизистой оболочки носоглотки и дыхательных путей.",
+            "Через 6 часов улучшается вкус и обоняние, организм начинает выводить токсины.",
+            "Через 7 часов начинается нормализация температуры тела, улучшается кровообращение.",
+            "Через 8 часов уровень оксида углерода в крови снижается, кислородное насыщение нормализуется.",
+            "Через 9 часов начинается восстановление функций легких, улучшается дыхание.",
+            "Через 10 часов снижается уровень стресса, улучшается настроение.",
+            "Через 11 часов улучшается работа пищеварительной системы, снижается тошнота.",
+            "Через 12 часов начинается восстановление иммунной системы, организм борется с инфекциями.",
+            "Через 13 часов улучшается кровоток в мозге, повышается концентрация внимания.",
+            "Через 14 часов снижается раздражительность, улучшается качество сна.",
+            "Через 15 часов начинается восстановление клеток печени, улучшается метаболизм.",
+            "Через 16 часов снижается уровень кашля, уменьшается одышка.",
+            "Через 17 часов улучшается работа сердца, снижается нагрузка на орган.",
+            "Через 18 часов начинается восстановление вкусовых рецепторов, еда становится вкуснее.",
+            "Через 19 часов улучшается работа почек, организм лучше выводит токсины.",
+            "Через 20 часов снижается риск инсульта, улучшается кровообращение в мозге.",
+            "Через 21 час начинается восстановление нервной системы, улучшается координация.",
+            "Через 22 часа улучшается работа эндокринной системы, нормализуются гормоны.",
+            "Через 23 часа снижается воспаление в организме, улучшается общее состояние.",
+            "Через 24 часа организм полностью избавляется от никотина, начинается активное восстановление."
         ];
         
         // DOM элементы
@@ -1317,25 +1348,52 @@
                 lastCigaretteTimeEl.textContent = '--:--:--';
             }
         }
+
+        // Отображение медицинского факта по часам
+        function showMedicalFact() {
+            const factContainer = document.getElementById('medical-fact');
+            if (!factContainer) return;
+    
+            if (data.lastCigaretteTime) {
+                const now = new Date();
+                const lastTime = new Date(data.lastCigaretteTime);
+                const diffHours = Math.floor((now - lastTime) / (1000 * 60 * 60));
+            
+            if (diffHours >= 1 && diffHours <= 24) {
+                factContainer.textContent = medicalFacts[diffHours - 1];
+                factContainer.style.display = 'block';
+            } else if (diffHours > 24) {
+                factContainer.textContent = "Более 24 часов без сигарет! Организм продолжает восстанавливаться!";
+                factContainer.style.display = 'block';
+            } else {
+                factContainer.style.display = 'none';
+            }
+            } else {
+            factContainer.style.display = 'none';
+            }
+        }
         
         // Таймер времени с последней сигареты
         function startTimer() {
             setInterval(() => {
-                if (data.lastCigaretteTime) {
-                    const now = new Date();
-                    const lastTime = new Date(data.lastCigaretteTime);
-                    const diff = now - lastTime;
-                    
-                    const hours = Math.floor(diff / (1000 * 60 * 60));
-                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-                    
-                    timerEl.textContent = 
-                        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                } else {
-                    timerEl.textContent = '00:00:00';
-                }
-            }, 1000);
+            if (data.lastCigaretteTime) {
+                const now = new Date();
+                const lastTime = new Date(data.lastCigaretteTime);
+                const diff = now - lastTime;
+                
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+                timerEl.textContent = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            } else {
+                timerEl.textContent = '00:00:00';
+            }
+        
+            // Добавляем вызов функции отображения медицинского факта
+            showMedicalFact();
+        }, 1000);
         }
         
         // Увеличение счетчика
