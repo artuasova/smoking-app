@@ -1669,22 +1669,22 @@
                     let filteredStats = [];
                     const now = new Date();
                     
+                                        // --- НАЧАЛО ИЗМЕНЕНИЯ ---
                     if (period === 'today') {
-                    // --- НАЧАЛО ИЗМЕНЕНИЯ ---
-                    // Определяем начало "нашего дня" (сегодня в 06:00)
-                    const startOfTodayPeriod = new Date(now);
-                    startOfTodayPeriod.setHours(6, 0, 0, 0); // Устанавливаем 06:00:00.000
-                
-                    // Определяем конец "нашего дня" (завтра в 05:59:59.999)
-                    const endOfTodayPeriod = new Date(startOfTodayPeriod);
-                    endOfTodayPeriod.setDate(endOfTodayPeriod.getDate() + 1); // Прибавляем один день
-                    endOfTodayPeriod.setMilliseconds(endOfTodayPeriod.getMilliseconds() - 1); // Вычитаем 1 миллисекунду, чтобы получить 05:59:59.999
-                
-                    filteredStats = data.timeStats.filter(stat => {
-                        const statTimestamp = stat.timestamp; // Предполагается, что это число - миллисекунды
-                        return statTimestamp >= startOfTodayPeriod.getTime() && statTimestamp <= endOfTodayPeriod.getTime();
-                    });
-                    // --- КОНЕЦ ИСПРАВЛЕНИЯ ---
+                        // Определяем начало "нашего дня" (сегодня в 06:00)
+                        const startOfTodayPeriod = new Date(now);
+                        startOfTodayPeriod.setHours(6, 0, 0, 0); // Устанавливаем 06:00:00.000
+    
+                        // Определяем конец "нашего дня" (завтра в 05:59:59.999)
+                        const endOfTodayPeriod = new Date(startOfTodayPeriod);
+                        endOfTodayPeriod.setDate(endOfTodayPeriod.getDate() + 1); // Прибавляем один день
+                        endOfTodayPeriod.setMilliseconds(endOfTodayPeriod.getMilliseconds() - 1); // Вычитаем 1 миллисекунду, чтобы получить 05:59:59.999
+    
+                        filteredStats = data.timeStats.filter(stat => {
+                            const statTimestamp = stat.timestamp; // Предполагается, что это число - миллисекунды
+                            return statTimestamp >= startOfTodayPeriod.getTime() && statTimestamp <= endOfTodayPeriod.getTime();
+                        });
+                    // --- КОНЕЦ ИЗМЕНЕНИЯ ---
                             
                     } else if (period === 'week') {
                         const weekAgo = new Date();
