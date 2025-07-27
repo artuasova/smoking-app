@@ -828,7 +828,6 @@
             </div>
             <div class="modal-actions">
                 <button class="btn btn-secondary btn-full" id="exportBtn">Экспорт данных</button>
-                <button class="btn btn-secondary btn-full" id="resetDayBtn">Сбросить сегодня</button>
                 <button class="btn danger-btn btn-full" id="resetAllBtn">Сбросить всё</button>
                 <button class="btn btn-warning btn-full" id="refreshBtn">Обновить приложение</button>
                 <button class="btn btn-primary btn-full" id="saveSettings">Сохранить</button>
@@ -853,6 +852,7 @@
             streak: 0,
             lastDate: null,
             timeStats: [],
+            lastAutoResetDate: new Date().toDateString(), // Дата последнего автоматического сброса
             achievements: [
                 { id: 1, name: "Первый день", description: "Использовать приложение первый день", target: 1, achieved: false, icon: "📅" },
                 { id: 2, name: "Неделя использования", description: "Использовать приложение неделю", target: 7, achieved: false, icon: "🗓️" },
@@ -1006,6 +1006,9 @@
             document.getElementById('monthCard').addEventListener('click', function() {
                 toggleTimeDetails('month');
             });
+
+            // Проверка автоматического сброса при запуске
+            checkForAutoReset();
             
             // Проверка сессии
             checkSession();
@@ -1476,27 +1479,6 @@
             }, 500);
         }
         
-        // Сброс дня
-        function resetDay() {
-            const confirmed = confirm('Вы уверены, что хотите сбросить счетчик на сегодня?');
-            if (confirmed) {
-                data.today = 0;
-                data.timeStats = data.timeStats.filter(record => {
-                    const recordDate = new Date(record.timestamp);
-                    const today = new Date();
-                    return recordDate.toDateString() !== today.toDateString();
-                });
-                saveData();
-                updateUI();
-                
-                // Анимация сброса
-                counterEl.style.color = '#FF5252';
-                setTimeout(() => {
-                    counterEl.style.color = '';
-                }, 500);
-            }
-        }
-        
         // Сброс всего
         function resetAll() {
             const confirmed1 = confirm('Вы уверены, что хотите сбросить ВСЕ данные? Это действие нельзя отменить.');
@@ -1733,6 +1715,55 @@
                     card.appendChild(details);
                 }
             }
+                                // --- НОВАЯ ЛОГИКА АВТОМАТИЧЕСКОГО СБРОСА ---
+                    // Функция для получения времени следующего сброса (06:00 завтра)
+                    function getNextResetTime() {
+                        const now = new Date();
+                        // Создаем дату на 06:00 сегодня
+                        const nextReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 6, 0, 0, 0);
+                        // Если сейчас уже прошло 06:00 сегодня, то следующий сброс - завтра в 06:00
+                        if (now >= nextReset) {
+                            nextReset.setDate(nextReset.getDate() + 1);
+                        }
+                        return nextReset;
+                    }
+                
+                    // Функция автоматического сброса
+                    function performAutoReset() {
+                        console.log("Выполняется автоматический сброс...");
+                        data.today = 0;
+                        // Удаляем записи за сегодня из timeStats, как это делала resetDay
+                        data.timeStats = data.timeStats.filter(record => {
+                            const recordDate = new Date(record.timestamp);
+                            const today = new Date();
+                            return recordDate.toDateString() !== today.toDateString();
+                        });
+                        data.lastAutoResetDate = new Date().toDateString(); // Обновляем дату последнего сброса
+                        saveData();
+                        updateUI();
+                        // Можно добавить визуальное уведомление, например:
+                        // alert("Новый день! Счетчик сигарет сброшен.");
+                        // Или показать уведомление в UI, если реализовано.
+                        console.log("Счетчик на сегодня сброшен. Следующий сброс запланирован.");
+                    }
+                
+                    // Функция проверки необходимости сброса
+                    function checkForAutoReset() {
+                        const todayString = new Date().toDateString();
+                        // Проверяем, был ли уже сброс сегодня
+                        if (data.lastAutoResetDate !== todayString) {
+                            const now = new Date();
+                            const nextResetTime = getNextResetTime();
+                            // Проверяем, наступило ли время сброса (06:00)
+                            if (now >= nextResetTime || data.lastAutoResetDate === null) {
+                                 performAutoReset();
+                            }
+                        }
+                    }
+                
+                    // Запуск периодической проверки (например, каждую минуту)
+                    setInterval(checkForAutoReset, 60 * 1000); // Проверка каждую минуту
+                    // --- КОНЕЦ НОВОЙ ЛОГИКИ ---
         }
         
         // Инициализация приложения при загрузке
