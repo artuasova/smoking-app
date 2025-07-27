@@ -1592,9 +1592,10 @@
             settingsModal.classList.add('open');
         }
                 
-        // Закрытие настроек
+            // Закрытие настроек
         function closeSettings() {
-            settingsModal.classList.remove('open'); // Закрываем модальное окно с анимацией
+            // settingsModal.style.display = 'none'; // Старый способ
+            settingsModal.classList.remove('open'); // Новый способ
         }
         
         // Сохранение настроек
