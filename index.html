@@ -985,7 +985,11 @@
             logoutBtn.addEventListener('click', logout);
             document.querySelector('.close-modal').addEventListener('click', closeSettings);
             document.getElementById('settingsModal').addEventListener('click', function(e) {
-                if (e.target === this) closeSettings();
+            // Проверяем, кликнули ли мы непосредственно на фон (.modal)
+            // а не на его содержимое (.modal-content) или крестик (#closeSettings)
+                if (e.target === this) {
+                    closeSettings();
+                }
             });
             
             // Auth handlers
