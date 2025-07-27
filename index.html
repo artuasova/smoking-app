@@ -13,10 +13,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <meta name="HandheldFriendly" content="true">
-    <title>Счетчик сигарет</title>
-    <meta name="description" content="PWA приложение для отслеживания потребления сигарет">
+    <title>SmokeLess</title>
+    <meta name="description" content="SmokeLess - приложение для отслеживания потребления сигарет">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚬</text></svg>">
+        <!-- Иконки для браузеров, не поддерживающих Web App Manifest -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
+    <!-- Apple Touch Icon для homescreen -->
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192x192.png">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
