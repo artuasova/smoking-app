@@ -1731,13 +1731,15 @@
                 function performAutoReset() {
                     console.log("Выполняется автоматический сброс...");
                     data.today = 0;
-                    // Удаляем записи за сегодня из timeStats, как это делала resetDay
+                    // --- ИСПРАВЛЕНИЕ: Удаляем записи за день последнего сброса ---
+                    // Это предотвращает двойное удаление и проблемы с lastCigaretteTime
+                    const resetDateToClearStr = data.lastAutoResetDate; // Дата, которую нужно очистить
                     data.timeStats = data.timeStats.filter(record => {
                         const recordDate = new Date(record.timestamp);
-                        const today = new Date();
-                        return recordDate.toDateString() !== today.toDateString();
+                        return recordDate.toDateString() !== resetDateToClearStr;
                     });
-                    
+                    // --- КОНЕЦ ИСПРАВЛЕНИЯ ---
+                
                     // --- ИСПРАВЛЕНИЕ: Обновляем время последней сигареты ---
                     // После очистки timeStats, нужно обновить data.lastCigaretteTime
                     if (data.timeStats.length > 0) {
@@ -1749,7 +1751,7 @@
                         data.lastCigaretteTime = null;
                     }
                     // --- КОНЕЦ ИСПРАВЛЕНИЯ ---
-                    
+                
                     data.lastAutoResetDate = new Date().toDateString(); // Обновляем дату последнего сброса
                     saveData();
                     updateUI();
