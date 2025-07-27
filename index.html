@@ -873,7 +873,7 @@
             </div>
             <div class="setting">
                 <label>Цена пачки (₽):</label>
-                <input type="number" id="priceSetting" value="250" min="0">
+                <input type="number" id="goalSetting" value="250" min="0">
             </div>
             <div class="setting">
                 <label>Сигарет в пачке:</label>
@@ -1585,9 +1585,9 @@
         
             // Открытие настроек
         function openSettings() {
-            document.getElementById('goalInput').value = data.goal;
-            document.getElementById('packPriceInput').value = data.packPrice;
-            document.getElementById('cigarettesPerPackInput').value = data.cigarettesPerPack;
+            document.getElementById('goalSetting').value = data.goal;
+            document.getElementById('priceSetting').value = data.packPrice;
+            document.getElementById('countSetting').value = data.cigarettesPerPack;
             settingsModal.classList.add('open');
         }
                 
