@@ -1004,9 +1004,6 @@
             document.getElementById('monthCard').addEventListener('click', function() {
                 toggleTimeDetails('month');
             });
-
-            // Проверка автоматического сброса при запуске
-            checkForAutoReset();
             
             // Проверка сессии
             checkSession();
@@ -1774,11 +1771,10 @@
                 
                 // Запуск периодической проверки (например, каждую минуту)
                 setInterval(checkForAutoReset, 60 * 1000); // Проверка каждую минуту
-                
+                // --- КОНЕЦ НОВОЙ ЛОГИКИ ---
+
                 // Проверка автоматического сброса при запуске
                 checkForAutoReset();
-                // --- КОНЕЦ НОВОЙ ЛОГИКИ ---
-        }
         
         // Инициализация приложения при загрузке
         document.addEventListener('DOMContentLoaded', initApp);
