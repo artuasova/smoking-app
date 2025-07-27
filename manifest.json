@@ -1,7 +1,7 @@
 {
   "name": "SmokeLess",
-  "short_name": "Счетчик",
-  "description": "PWA приложение для отслеживания потребления сигарет",
+  "short_name": "SmokeLess",
+  "description": "SmokeLess - приложение для отслеживания потребления сигарет",
   "start_url": "/smoking-app/",
   "display": "standalone",
   "background_color": "#1a2a6c",
