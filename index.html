@@ -1297,18 +1297,23 @@
                 if (saved) {
                     const parsed = JSON.parse(saved);
                     data = { ...data, ...parsed };
-                                // --- МИГРАЦИЯ ДАННЫХ ---
-            // Если поле отсутствует, добавляем его
-            if (data.lastAutoResetDate === undefined) {
-                // Устанавливаем его в текущую дату, чтобы избежать немедленного сброса
-                // при первом запуске после обновления
-                data.lastAutoResetDate = new Date().toDateString();
-                console.log("Миграция: добавлено поле lastAutoResetDate со значением", data.lastAutoResetDate);
-                // Сохраняем обновленную структуру данных
-                saveData();
-            }
-            // --- КОНЕЦ МИГРАЦИИ ---
+        
+                    // --- МИГРАЦИЯ ДАННЫХ ---
+                    // Если поле отсутствует, добавляем его
+                    if (data.lastAutoResetDate === undefined) {
+                        // Устанавливаем его в текущую дату, чтобы избежать немедленного сброса
+                        // при первом запуске после обновления
+                        data.lastAutoResetDate = new Date().toDateString();
+                        console.log("Миграция: добавлено поле lastAutoResetDate со значением", data.lastAutoResetDate);
+        
+                        // Сохраняем обновленную структуру данных
+                        saveData();
+                    }
+                    // - КОНЕЦ МИГРАЦИИ -
                 }
+        
+                // Обновляем интерфейс
+                updateUI();
             } catch (e) {
                 console.log('Не удалось загрузить данные');
             }
