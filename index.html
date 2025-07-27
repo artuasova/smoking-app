@@ -1713,65 +1713,69 @@
                     card.appendChild(details);
                 }
             }
-                                // --- НОВАЯ ЛОГИКА АВТОМАТИЧЕСКОГО СБРОСА ---
-                    // Функция для получения времени следующего сброса (06:00 завтра)
-                    function getNextResetTime() {
+            
+                // --- НОВАЯ ЛОГИКА АВТОМАТИЧЕСКОГО СБРОСА ---
+                // Функция для получения времени следующего сброса (06:00 завтра)
+                function getNextResetTime() {
+                    const now = new Date();
+                    // Создаем дату на 06:00 сегодня
+                    const nextReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 6, 0, 0, 0);
+                    // Если сейчас уже прошло 06:00 сегодня, то следующий сброс - завтра в 06:00
+                    if (now >= nextReset) {
+                        nextReset.setDate(nextReset.getDate() + 1);
+                    }
+                    return nextReset;
+                }
+        
+                // Функция автоматического сброса
+                function performAutoReset() {
+                    console.log("Выполняется автоматический сброс...");
+                    data.today = 0;
+                    // Удаляем записи за сегодня из timeStats, как это делала resetDay
+                    data.timeStats = data.timeStats.filter(record => {
+                        const recordDate = new Date(record.timestamp);
+                        const today = new Date();
+                        return recordDate.toDateString() !== today.toDateString();
+                    });
+                    
+                    // --- ИСПРАВЛЕНИЕ: Обновляем время последней сигареты ---
+                    // После очистки timeStats, нужно обновить data.lastCigaretteTime
+                    if (data.timeStats.length > 0) {
+                        // Берем самую последнюю запись из оставшихся
+                        const lastRecord = data.timeStats[data.timeStats.length - 1];
+                        data.lastCigaretteTime = lastRecord.timestamp;
+                    } else {
+                        // Если сигарет больше нет вообще
+                        data.lastCigaretteTime = null;
+                    }
+                    // --- КОНЕЦ ИСПРАВЛЕНИЯ ---
+                    
+                    data.lastAutoResetDate = new Date().toDateString(); // Обновляем дату последнего сброса
+                    saveData();
+                    updateUI();
+                    console.log("Счетчик на сегодня сброшен. Следующий сброс запланирован.");
+                }
+        
+                // Функция проверки необходимости сброса
+                function checkForAutoReset() {
+                    const todayString = new Date().toDateString();
+                    // Проверяем, был ли уже сброс сегодня
+                    if (data.lastAutoResetDate !== todayString) {
                         const now = new Date();
-                        // Создаем дату на 06:00 сегодня
-                        const nextReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 6, 0, 0, 0);
-                        // Если сейчас уже прошло 06:00 сегодня, то следующий сброс - завтра в 06:00
-                        if (now >= nextReset) {
-                            nextReset.setDate(nextReset.getDate() + 1);
-                        }
-                        return nextReset;
-                    }
-                
-                    // Функция автоматического сброса
-                    function performAutoReset() {
-                        console.log("Выполняется автоматический сброс...");
-                        data.today = 0;
-                        // Удаляем записи за сегодня из timeStats, как это делала resetDay
-                        data.timeStats = data.timeStats.filter(record => {
-                            const recordDate = new Date(record.timestamp);
-                            const today = new Date();
-                            return recordDate.toDateString() !== today.toDateString();
-                        });
-                        
-                        // --- ИСПРАВЛЕНИЕ: Обновляем время последней сигареты ---
-                        // После очистки timeStats, нужно обновить data.lastCigaretteTime
-                        if (data.timeStats.length > 0) {
-                            // Берем самую последнюю запись из оставшихся
-                            const lastRecord = data.timeStats[data.timeStats.length - 1];
-                            data.lastCigaretteTime = lastRecord.timestamp;
-                        } else {
-                            // Если сигарет больше нет вообще
-                            data.lastCigaretteTime = null;
-                        }
-                        // --- КОНЕЦ ИСПРАВЛЕНИЯ ---
-                        
-                        data.lastAutoResetDate = new Date().toDateString(); // Обновляем дату последнего сброса
-                        saveData();
-                        updateUI();
-                        console.log("Счетчик на сегодня сброшен. Следующий сброс запланирован.");
-                    }
-                
-                    // Функция проверки необходимости сброса
-                    function checkForAutoReset() {
-                        const todayString = new Date().toDateString();
-                        // Проверяем, был ли уже сброс сегодня
-                        if (data.lastAutoResetDate !== todayString) {
-                            const now = new Date();
-                            const nextResetTime = getNextResetTime();
-                            // Проверяем, наступило ли время сброса (06:00)
-                            if (now >= nextResetTime || data.lastAutoResetDate === null) {
-                                 performAutoReset();
-                            }
+                        const nextResetTime = getNextResetTime();
+                        // Проверяем, наступило ли время сброса (06:00)
+                        if (now >= nextResetTime || data.lastAutoResetDate === null) {
+                             performAutoReset();
                         }
                     }
+                }
                 
-                    // Запуск периодической проверки (например, каждую минуту)
-                    setInterval(checkForAutoReset, 60 * 1000); // Проверка каждую минуту
-                    // --- КОНЕЦ НОВОЙ ЛОГИКИ ---
+                // Запуск периодической проверки (например, каждую минуту)
+                setInterval(checkForAutoReset, 60 * 1000); // Проверка каждую минуту
+                
+                // Проверка автоматического сброса при запуске
+                checkForAutoReset();
+                // --- КОНЕЦ НОВОЙ ЛОГИКИ ---
         }
         
         // Инициализация приложения при загрузке
