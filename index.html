@@ -1301,12 +1301,33 @@
             }
         }
         
-        // Обновление интерфейса
+                // Обновление интерфейса
         function updateUI() {
             counterEl.textContent = data.today;
             todayEl.textContent = data.today;
-            weekEl.textContent = data.week;
-            monthEl.textContent = data.month;
+        
+            // --- ИСПРАВЛЕНИЕ: Правильный расчет week и month ---
+            const now = new Date();
+            
+            // Рассчитываем "За неделю"
+            const weekAgo = new Date(now);
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            const weekCount = data.timeStats.filter(stat => {
+                const statDate = new Date(stat.timestamp);
+                return statDate >= weekAgo;
+            }).length;
+            weekEl.textContent = weekCount;
+        
+            // Рассчитываем "За месяц"
+            const monthAgo = new Date(now);
+            monthAgo.setMonth(monthAgo.getMonth() - 1);
+            const monthCount = data.timeStats.filter(stat => {
+                const statDate = new Date(stat.timestamp);
+                return statDate >= monthAgo;
+            }).length;
+            monthEl.textContent = monthCount;
+            // --- КОНЕЦ ИСПРАВЛЕНИЯ ---
+        
             goalEl.textContent = data.goal;
             
             // Обновление прогресса
@@ -1314,29 +1335,12 @@
             goalPercentEl.textContent = `${percent}%`;
             progressFillEl.style.width = `${percent}%`;
             
-            // Обновление стоимости (исправлено)
             // Обновление стоимости (ИСПРАВЛЕНО - считаем за всё время)
             const costPerCigarette = data.packPrice / data.cigarettesPerPack;
             const totalCost = data.totalCost; // Используем общую стоимость
             costsEl.textContent = `${Math.round(totalCost)} ₽`;
-            packPriceEl.textContent = data.packPrice;
-
-            // Добавляем дату начала
-            const startDate = new Date(data.firstUseDate);
-            const startDateStr = startDate.toLocaleDateString('ru-RU');
-            const costsContainer = document.querySelector('.costs-container');
-            let startDateEl = costsContainer.querySelector('.start-date');
-            if (!startDateEl) {
-                startDateEl = document.createElement('p');
-                startDateEl.className = 'start-date';
-                startDateEl.style.fontSize = '0.8rem';
-                startDateEl.style.opacity = '0.8';
-                startDateEl.style.marginTop = '5px';
-                costsContainer.appendChild(startDateEl);
-            }
-            startDateEl.textContent = `С ${startDateStr}`;
             
-            // Обновление счетчика достижений
+            // Обновление достижений
             const achievedCount = data.achievements.filter(a => a.achieved).length;
             achievementsCountEl.textContent = `${achievedCount}/${data.achievements.length}`;
             
@@ -1399,8 +1403,6 @@
         // Увеличение счетчика
         function incrementCounter() {
             data.today++;
-            data.week++;
-            data.month++;
             
             // Добавляем время сигареты
             const now = new Date();
@@ -1437,8 +1439,6 @@
         function decrementCounter() {
             if (data.today > 0) {
                 data.today--;
-                data.week = Math.max(0, data.week - 1);
-                data.month = Math.max(0, data.month - 1);
                 
                 // Удаляем последнюю сигарету из времени
                 if (data.timeStats.length > 0) {
