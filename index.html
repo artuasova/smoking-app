@@ -680,7 +680,7 @@
             position: relative;
         }
 
-                    /* --- НОВЫЕ СТИЛИ ДЛЯ МОДАЛЬНЫХ ОКОН --- */
+                /* - НОВЫЕ СТИЛИ ДЛЯ МОДАЛЬНЫХ ОКОНОВ - */
         :root {
             --modal-transition-duration: 0.3s;
             --modal-backdrop-bg: rgba(0, 0, 0, 0.7);
@@ -727,7 +727,7 @@
             transform: translateY(0) scale(1);
             opacity: 1;
         }
-        /* --- КОНЕЦ НОВЫХ СТИЛЕЙ --- */
+        /* - КОНЕЦ НОВЫХ СТИЛЕЙ - */
             
     </style>
 </head>
@@ -1032,9 +1032,10 @@
             resetAllBtn.addEventListener('click', resetAll);
             refreshBtn.addEventListener('click', refreshApp);
             logoutBtn.addEventListener('click', logout);
-            document.querySelector('.close-modal').addEventListener('click', closeSettings);
+            document.querySelector('#settingsModal .close-modal').addEventListener('click', () => {
+            settingsModal.classList.remove('open');
             document.getElementById('settingsModal').addEventListener('click', function(e) {
-            if (e.target === this) closeSettings(); // исправлен регистр
+            this.classList.remove('open'); // исправлен регистр
             });
             
             // Auth handlers
@@ -1601,6 +1602,7 @@
             data.goal = parseInt(document.getElementById('goalSetting').value) || 20;
             data.packPrice = parseInt(document.getElementById('priceSetting').value) || 250;
             data.cigarettesPerPack = parseInt(document.getElementById('countSetting').value) || 20;
+            settingsModal.classList.remove('open');
             
             saveData();
             updateUI();
