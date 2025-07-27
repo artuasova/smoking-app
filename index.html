@@ -1645,10 +1645,10 @@
             location.reload(true);
         }
         
-        // Показ случайной цитаты
+            // Показ случайной цитаты
         function showRandomQuote() {
             const randomIndex = Math.floor(Math.random() * quotes.length);
-            quoteEl.textContent = `"${quotes[randomIndex]}"`;
+            quoteEl.textContent = '"' + quotes[randomIndex] + '"';
         }
         
         // Проверка достижений
