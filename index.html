@@ -679,55 +679,6 @@
             -webkit-overflow-scrolling: touch;
             position: relative;
         }
-
-                /* - НОВЫЕ СТИЛИ ДЛЯ МОДАЛЬНЫХ ОКОНОВ - */
-        :root {
-            --modal-transition-duration: 0.3s;
-            --modal-backdrop-bg: rgba(0, 0, 0, 0.7);
-        }
-        
-        .modal-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--modal-backdrop-bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity var(--modal-transition-duration) ease-out, visibility 0s var(--modal-transition-duration) ease-out;
-            z-index: 1000;
-        }
-        
-        .modal-backdrop.open {
-            opacity: 1;
-            visibility: visible;
-            transition: opacity var(--modal-transition-duration) ease-out, visibility 0s 0s ease-out;
-        }
-        
-        .modal-content {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 25px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            transform: translateY(20px) scale(0.95);
-            opacity: 0;
-            transition: transform var(--modal-transition-duration) ease-out, opacity var(--modal-transition-duration) ease-out;
-        }
-        
-        .modal-backdrop.open .modal-content {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-        }
-        /* - КОНЕЦ НОВЫХ СТИЛЕЙ - */
             
     </style>
 </head>
@@ -833,7 +784,7 @@
     </div>
     
     <!-- Модальное окно аутентификации -->
-    <div class="modal-backdrop" id="authModal">
+    <div class="modal" id="authModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="authTitle">Вход</h2>
@@ -861,7 +812,7 @@
     </div>
     
     <!-- Модальное окно настроек -->
-    <div class="modal-backdrop" id="settingsModal">
+    <div class="modal" id="settingsModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Настройки</h2>
@@ -873,7 +824,7 @@
             </div>
             <div class="setting">
                 <label>Цена пачки (₽):</label>
-                <input type="number" id="goalSetting" value="250" min="0">
+                <input type="number" id="priceSetting" value="250" min="0">
             </div>
             <div class="setting">
                 <label>Сигарет в пачке:</label>
@@ -1032,10 +983,9 @@
             resetAllBtn.addEventListener('click', resetAll);
             refreshBtn.addEventListener('click', refreshApp);
             logoutBtn.addEventListener('click', logout);
-            document.querySelector('#settingsModal .close-modal').addEventListener('click', () => {
-            settingsModal.classList.remove('open');
+            document.querySelector('.close-modal').addEventListener('click', closeSettings);
             document.getElementById('settingsModal').addEventListener('click', function(e) {
-            this.classList.remove('open'); // исправлен регистр
+                if (e.target === this) closeSettings();
             });
             
             // Auth handlers
@@ -1126,12 +1076,12 @@
             forgotPasswordBtn.style.display = 'block';
             isRegistration = false;
             isForgotPassword = false;
-            authModal.classList.add('open');
+            authModal.style.display = 'flex';
         }
         
         // Скрыть модальное окно аутентификации
         function hideAuthModal() {
-            authModal.classList.remove('open');
+            authModal.style.display = 'none';
         }
         
         // Переключение формы аутентификации
@@ -1584,18 +1534,17 @@
             localStorage.setItem('theme', newTheme);
         }
         
-            // Открытие настроек
+        // Открытие настроек
         function openSettings() {
             document.getElementById('goalSetting').value = data.goal;
             document.getElementById('priceSetting').value = data.packPrice;
             document.getElementById('countSetting').value = data.cigarettesPerPack;
-            settingsModal.classList.add('open');
+            settingsModal.style.display = 'flex';
         }
-                
-            // Закрытие настроек
+        
+        // Закрытие настроек
         function closeSettings() {
-            // settingsModal.style.display = 'none'; // Старый способ
-            settingsModal.classList.remove('open'); // Новый способ
+            settingsModal.style.display = 'none';
         }
         
         // Сохранение настроек
@@ -1603,7 +1552,6 @@
             data.goal = parseInt(document.getElementById('goalSetting').value) || 20;
             data.packPrice = parseInt(document.getElementById('priceSetting').value) || 250;
             data.cigarettesPerPack = parseInt(document.getElementById('countSetting').value) || 20;
-            settingsModal.classList.remove('open');
             
             saveData();
             updateUI();
@@ -1646,10 +1594,10 @@
             location.reload(true);
         }
         
-            // Показ случайной цитаты
+        // Показ случайной цитаты
         function showRandomQuote() {
             const randomIndex = Math.floor(Math.random() * quotes.length);
-            quoteEl.textContent = '"' + quotes[randomIndex] + '"';
+            quoteEl.textContent = `"${quotes[randomIndex]}"`;
         }
         
         // Проверка достижений
