@@ -1,8 +1,10 @@
-const CACHE_NAME = 'smoking-app-v1';
+const CACHE_NAME = 'smoking-app-v0.6';
 const urlsToCache = [
   '/smoking-app/',
   '/smoking-app/index.html',
-  '/smoking-app/manifest.json'
+  '/smoking-app/manifest.json',
+  '/smoking-app/icon-192x192.png',
+  '/smoking-app/icon-512x512.png'
 ];
 
 self.addEventListener('install', event => {
