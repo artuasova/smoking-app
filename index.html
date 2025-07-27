@@ -1585,11 +1585,10 @@
         
             // Открытие настроек
         function openSettings() {
-            document.getElementById('goalSetting').value = data.goal;
-            document.getElementById('priceSetting').value = data.packPrice;
-            document.getElementById('countSetting').value = data.cigarettesPerPack;
-            // settingsModal.style.display = 'flex'; // Старый способ
-            settingsModal.classList.add('open'); // Новый способ
+            document.getElementById('goalInput').value = data.goal;
+            document.getElementById('packPriceInput').value = data.packPrice;
+            document.getElementById('cigarettesPerPackInput').value = data.cigarettesPerPack;
+            settingsModal.classList.add('open');
         }
                 
         // Закрытие настроек
