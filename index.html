@@ -1000,7 +1000,6 @@
         // Settings elements
         const settingsModal = document.getElementById('settingsModal');
         const settingsBtn = document.getElementById('settingsBtn');
-        console.log(settingsBtn);
         const themeToggle = document.getElementById('themeToggle');
         const incrementBtn = document.getElementById('increment');
         const decrementBtn = document.getElementById('decrement');
@@ -1584,14 +1583,15 @@
             localStorage.setItem('theme', newTheme);
         }
         
-        // Открытие настроек
+            // Открытие настроек
         function openSettings() {
             document.getElementById('goalSetting').value = data.goal;
             document.getElementById('priceSetting').value = data.packPrice;
             document.getElementById('countSetting').value = data.cigarettesPerPack;
-            settingsModal.classList.add('open');
+            // settingsModal.style.display = 'flex'; // Старый способ
+            settingsModal.classList.add('open'); // Новый способ
         }
-        
+                
         // Закрытие настроек
         function closeSettings() {
             settingsModal.classList.remove('open'); // Закрываем модальное окно с анимацией
