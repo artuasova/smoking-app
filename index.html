@@ -1738,12 +1738,22 @@
                             const today = new Date();
                             return recordDate.toDateString() !== today.toDateString();
                         });
+                        
+                        // --- ИСПРАВЛЕНИЕ: Обновляем время последней сигареты ---
+                        // После очистки timeStats, нужно обновить data.lastCigaretteTime
+                        if (data.timeStats.length > 0) {
+                            // Берем самую последнюю запись из оставшихся
+                            const lastRecord = data.timeStats[data.timeStats.length - 1];
+                            data.lastCigaretteTime = lastRecord.timestamp;
+                        } else {
+                            // Если сигарет больше нет вообще
+                            data.lastCigaretteTime = null;
+                        }
+                        // --- КОНЕЦ ИСПРАВЛЕНИЯ ---
+                        
                         data.lastAutoResetDate = new Date().toDateString(); // Обновляем дату последнего сброса
                         saveData();
                         updateUI();
-                        // Можно добавить визуальное уведомление, например:
-                        // alert("Новый день! Счетчик сигарет сброшен.");
-                        // Или показать уведомление в UI, если реализовано.
                         console.log("Счетчик на сегодня сброшен. Следующий сброс запланирован.");
                     }
                 
