@@ -718,6 +718,7 @@
                 <div class="counter-buttons">
                     <button class="btn btn-primary" id="increment">Добавить</button>
                     <button class="btn btn-secondary" id="decrement">Удалить</button>
+                    <button class="btn danger-btn" id="manualResetToday" style="margin-top: 10px; width: 100%;">Сбросить сегодня</button>
                 </div>
             </div>
             
@@ -958,6 +959,7 @@
         const exportBtn = document.getElementById('exportBtn');
         const resetAllBtn = document.getElementById('resetAllBtn');
         const refreshBtn = document.getElementById('refreshBtn');
+        const manualResetTodayBtn = document.getElementById('manualResetToday');
         
         // Auth state
         let isRegistration = false;
@@ -984,6 +986,7 @@
             refreshBtn.addEventListener('click', refreshApp);
             logoutBtn.addEventListener('click', logout);
             document.querySelector('#settingsModal .close-modal').addEventListener('click', closeSettings);
+            manualResetTodayBtn.addEventListener('click', manualResetToday);
             
             // Auth handlers
             document.getElementById('authSubmit').addEventListener('click', handleAuth);
@@ -1515,6 +1518,20 @@
                         document.body.style.backgroundColor = '';
                     }, 500);
                 }
+            }
+        }
+
+        // Ручной сброс счетчика на сегодня
+        function manualResetToday() {
+            const confirmed = confirm('Вы уверены, что хотите сбросить счетчик на сегодня? Все сигареты за сегодня будут удалены.');
+            if (confirmed) {
+                    // Выполняем тот же сброс, что и в автоматическом режиме
+                    performAutoReset();
+                    // Анимация сброса (опционально)
+                    counterEl.style.color = '#FF5252';
+                    setTimeout(() => {
+                    counterEl.style.color = '';
+                }, 500);
             }
         }
         
