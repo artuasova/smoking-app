@@ -1224,7 +1224,7 @@
             if (!currentUser) return;
             
             try {
-                showSyncIndicator('syncing', 'Загрузка данных...');
+                showSyncIndicator('syncing', 'Обновление ...');
                 
                 const { data: userData, error } = await supabase
                     .from('smoking_data')
@@ -1238,7 +1238,7 @@
                 
                 if (userData) {
                     data = { ...data, ...userData.data };
-                    showSyncIndicator('success', 'Данные загружены');
+                    showSyncIndicator('success', 'Обновлено');
                 } else {
                     await saveUserData();
                     showSyncIndicator('success', 'Данные сохранены');
