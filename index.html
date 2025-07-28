@@ -587,9 +587,36 @@
                 position: relative;
             }
         }
+        /* Минимальный фон для предотвращения черного экрана на старте */
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c) !important;
+            background-attachment: fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        /* Анимации для прелоадера */
+        @keyframes appLogoPulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes appSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <!-- Кастомный экран загрузки (Preloader) -->
+    <div id="app-preloader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease-out;">
+        <img src="icon-192x192.png" alt="SmokeLess Logo" style="width: 100px; height: 100px; margin-bottom: 20px; animation: appLogoPulse 2s infinite;">
+        <div style="color: white; font-size: 1.5rem; font-weight: bold; text-align: center; padding: 0 20px;">SmokeLess загружается...</div>
+        <!-- Простая анимация спиннера -->
+        <div style="margin-top: 30px; width: 50px; height: 50px; border: 5px solid rgba(255, 255, 255, 0.3); border-top: 5px solid white; border-radius: 50%; animation: appSpin 1s linear infinite;"></div>
+    </div>
     <div class="container">
         <div class="sync-indicator" id="syncIndicator">
             <span id="syncText">Синхронизация...</span>
@@ -1001,7 +1028,26 @@
             setInterval(checkForAutoReset, 60 * 1000); // Проверка каждую минуту
             // Проверка автоматического сброса при запуске
             checkForAutoReset();
+            
+            // Скрыть прелоадер после полной инициализации приложения
+            hidePreloader();
         }
+        
+        // Функция для скрытия прелоадера
+        function hidePreloader() {
+            const preloader = document.getElementById('app-preloader');
+            if (preloader) {
+                // Запускаем анимацию исчезновения
+                preloader.style.opacity = '0';
+                // После завершения анимации удаляем элемент
+                setTimeout(() => {
+                    if (preloader.parentNode) {
+                        preloader.parentNode.removeChild(preloader);
+                    }
+                }, 500); // Должно совпадать с длительностью transition в CSS (0.5s)
+            }
+        }
+        
         // Проверка сессии
         async function checkSession() {
             const { data: { session } } = await supabase.auth.getSession();
@@ -1192,7 +1238,7 @@
                     .from('smoking_data')
                     .upsert({
                         user_id: currentUser.id,
-                         data,
+                        data,
                         updated_at: now
                     }, {
                         onConflict: 'user_id'
