@@ -673,7 +673,14 @@
             }
         }
 
-        /* Стили для "лампочки"-индикатора */
+        /* Добавьте это в конец CSS секции */
+        .scroll-container {
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+        }
+                    /* === Стили для "лампочки"-индикатора === */
         .sync-light-base {
             width: 20px;
             height: 20px;
@@ -718,15 +725,7 @@
                             0 0 2px 1px rgba(255, 165, 0, 0.7) inset; /* Менее выраженная внутренняя тень */
             }
         }
-        
-        /* Добавьте это в конец CSS секции */
-        .scroll-container {
-            height: 100%;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            position: relative;
-        }
-            
+        /* === Конец стилей для "лампочки"-индикатора === */
     </style>
 </head>
 <body>
