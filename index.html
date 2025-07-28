@@ -680,35 +680,6 @@
             -webkit-overflow-scrolling: touch;
             position: relative;
         }
-
-                    /* === Стили для мини-кnопки "Закончить день" === */
-        .mini-button-style {
-            background: rgba(209, 35, 111, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: normal; /* Сделаем шрифт не таким жирным, как у .btn */
-            text-align: center;
-            width: auto; /* Автоматическая ширина */
-            margin: 30px auto 0 auto; /* Центрируем, отступ сверху 15px, снизу 0 */
-            padding: 6px 12px;
-            border-radius: 12px; /* Полукруглые края */
-            transition: all 0.3s ease;
-            display: block;
-            box-shadow: none; /* Убираем тень, как у обычных .btn */
-        }
-        .mini-button-style:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px); /* Легкое "всплытие" при наведении */
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Легкая тень при наведении */
-        }
-        .mini-button-style:active {
-            transform: translateY(0); /* Возвращаем на место при клике */
-            background: rgba(255, 64, 129, 0.2); /* Легкий розовый фон при нажатии */
-        }
-        /* === Конец стилей для мини-кнопки "Закончить день" === */
             
     </style>
 </head>
@@ -756,7 +727,7 @@
                 <div class="counter-buttons">
                     <button class="btn btn-primary" id="increment">Добавить</button>
                     <button class="btn btn-secondary" id="decrement">Удалить</button>
-                    <button id="manualResetToday" class="mini-button-style">Закончить день</button>
+                    <button id="manualResetToday" style="background: none; border: none; color: #ff4081; cursor: pointer; font-size: 0.9rem; margin-top: 15px; text-align: center; width: 100%;">Нажмите здесь, чтобы завершить день</button>
                 </div>
             </div>
             
