@@ -672,7 +672,7 @@
                 min-height: -webkit-fill-available;
             }
         }
-
+        
         /* Добавьте это в конец CSS секции */
         .scroll-container {
             height: 100%;
@@ -680,54 +680,7 @@
             -webkit-overflow-scrolling: touch;
             position: relative;
         }
-        /* === Стили для "лампочки"-индикатора === */
-        .sync-light-base {
-            width: 20px !important;
-            height: 20px !important;
-            border-radius: 50% !important;
-            display: block !important;
-            /* Базовая тень для всех состояний */
-            box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.3) !important;
-            min-width: 20px !important;  /* Добавим на всякий случай */
-            min-height: 20px !important; /* Добавим на всякий случай */
-        }
-        .sync-light-off {
-            /* Серый, "выключенная" лампочка */
-            background: radial-gradient(circle at 30% 30%, #a0a0a0, #606060) !important;
-            box-shadow: 0 0 4px 1px rgba(160, 160, 160, 0.5) !important;
-        }
-        .sync-light-syncing {
-            /* Желтая, "синхронизирующаяся" лампочка с анимацией пульса */
-            background: radial-gradient(circle at 30% 30%, #ffff00, #ffa500) !important;
-            box-shadow: 0 0 12px 4px rgba(255, 215, 0, 0.7), /* Желтое свечение */
-                        0 0 4px 2px rgba(255, 165, 0, 0.9) inset !important; /* Внутренняя тень */
-            animation: pulse-glow 1.5s ease-in-out infinite alternate !important;
-        }
-        .sync-light-success {
-            /* Зеленая, "успешная" лампочка */
-            background: radial-gradient(circle at 30% 30%, #00ff00, #008000) !important;
-            box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.7), /* Зеленое свечение */
-                        0 0 5px 2px rgba(0, 128, 0, 0.9) inset !important; /* Внутренняя тень */
-        }
-        .sync-light-error {
-            /* Красная, "ошибочная" лампочка */
-            background: radial-gradient(circle at 30% 30%, #ff0000, #800000) !important;
-            box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.7), /* Красное свечение */
-                        0 0 5px 2px rgba(128, 0, 0, 0.9) inset !important; /* Внутренняя тень */
-        }
-        
-        /* Анимация пульсирования для состояния синхронизации */
-        @keyframes pulse-glow {
-            0% {
-                box-shadow: 0 0 12px 4px rgba(255, 215, 0, 0.7),
-                            0 0 4px 2px rgba(255, 165, 0, 0.9) inset;
-            }
-            100% {
-                box-shadow: 0 0 18px 6px rgba(255, 255, 100, 0.9), /* Более яркое свечение */
-                            0 0 2px 1px rgba(255, 165, 0, 0.7) inset; /* Менее выраженная внутренняя тень */
-            }
-        }
-        /* === Конец стилей для "лампочки"-индикатора === */
+            
     </style>
 </head>
 <body>
@@ -748,8 +701,8 @@
             </div>
             <!-- Правая часть: Кнопки управления -->
             <div style="display: flex; align-items: center; gap: 10px;">
-                <!-- Индикатор синхронизации (лампочка) -->
-                <div id="syncStatusIndicator" class="sync-light-base sync-light-off"></div>
+                <!-- Индикатор синхронизации -->
+                <div id="syncStatusIndicator" style="font-size: 1.2rem; display: none;">⚪</div>
                 <!-- Кнопка обновления -->
                 <button id="refreshAppBtnTop" title="Обновить данные" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">🔄</button>
             </div>
@@ -1083,7 +1036,6 @@
                     });
                 });
             }
-            console.log("Элемент syncStatusIndicator в initApp:", syncStatusIndicator);
         }
         
         // Проверка сессии
@@ -1093,7 +1045,6 @@
                 currentUser = session.user;
                 showUserPanel();
                 await loadUserData();
-                showUserPanel();
             } else {
                 showAuthModal();
             }
@@ -1324,9 +1275,8 @@
             }
         }
         
-        // Показать индикатор синхронизации (обновленная версия с "лампочкой")
+                // Показать индикатор синхронизации (обновленная версия)
         function showSyncIndicator(status, message) {
-            console.log("showSyncIndicator вызвана с status:", status, "message:", message);
             // 1. Старая логика для временного индикатора (оставляем для совместимости)
             syncIndicator.className = 'sync-indicator sync-' + status;
             syncText.textContent = message;
@@ -1337,29 +1287,27 @@
                 }, 3000);
             }
         
-            // 2. Обновляем новый постоянный индикатор-лампочку в панели пользователя
-            if (syncStatusIndicator) {
-                // Сначала убираем все возможные классы состояния, оставляя базовый
-                syncStatusIndicator.className = 'sync-light-base';
-        
-                // Устанавливаем состояние в зависимости от статуса
+            // 2. Обновляем новый постоянный индикатор в панели пользователя
+            if (syncStatusIndicator) { // Проверяем, существует ли элемент
+                syncStatusIndicator.style.display = 'block'; // Всегда показываем
                 switch (status) {
                     case 'syncing':
-                        syncStatusIndicator.classList.add('sync-light-syncing');
+                        syncStatusIndicator.textContent = '🟡'; // Желтый для синхронизации
+                        // Добавим анимацию вращения через CSS-класс или inline style
+                        syncStatusIndicator.style.animation = 'spin 1s linear infinite';
                         break;
                     case 'success':
-                        syncStatusIndicator.classList.add('sync-light-success');
+                        syncStatusIndicator.textContent = '🟢'; // Зеленый для успеха
+                        syncStatusIndicator.style.animation = 'none'; // Останавливаем анимацию
                         break;
                     case 'error':
-                        syncStatusIndicator.classList.add('sync-light-error');
+                        syncStatusIndicator.textContent = '🔴'; // Красный для ошибки
+                        syncStatusIndicator.style.animation = 'none'; // Останавливаем анимацию
                         break;
                     default:
-                        // По умолчанию "выключенная" лампочка
-                        syncStatusIndicator.classList.add('sync-light-off');
+                        syncStatusIndicator.textContent = '⚪'; // Серый по умолчанию
+                        syncStatusIndicator.style.animation = 'none';
                 }
-        
-                // Убедимся, что элемент виден
-                syncStatusIndicator.style.display = '';
             }
         }
         
