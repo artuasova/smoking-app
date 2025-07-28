@@ -672,6 +672,52 @@
                 min-height: -webkit-fill-available;
             }
         }
+
+        /* Стили для "лампочки"-индикатора */
+        .sync-light-base {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: block;
+            /* Базовая тень для всех состояний */
+            box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.3);
+        }
+        .sync-light-off {
+            /* Серый, "выключенная" лампочка */
+            background: radial-gradient(circle at 30% 30%, #a0a0a0, #606060);
+            box-shadow: 0 0 4px 1px rgba(160, 160, 160, 0.5);
+        }
+        .sync-light-syncing {
+            /* Желтая, "синхронизирующаяся" лампочка с анимацией пульса */
+            background: radial-gradient(circle at 30% 30%, #ffff00, #ffa500);
+            box-shadow: 0 0 12px 4px rgba(255, 215, 0, 0.7), /* Желтое свечение */
+                        0 0 4px 2px rgba(255, 165, 0, 0.9) inset; /* Внутренняя тень */
+            animation: pulse-glow 1.5s ease-in-out infinite alternate;
+        }
+        .sync-light-success {
+            /* Зеленая, "успешная" лампочка */
+            background: radial-gradient(circle at 30% 30%, #00ff00, #008000);
+            box-shadow: 0 0 15px 5px rgba(0, 255, 0, 0.7), /* Зеленое свечение */
+                        0 0 5px 2px rgba(0, 128, 0, 0.9) inset; /* Внутренняя тень */
+        }
+        .sync-light-error {
+            /* Красная, "ошибочная" лампочка */
+            background: radial-gradient(circle at 30% 30%, #ff0000, #800000);
+            box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.7), /* Красное свечение */
+                        0 0 5px 2px rgba(128, 0, 0, 0.9) inset; /* Внутренняя тень */
+        }
+        
+        /* Анимация пульсирования для состояния синхронизации */
+        @keyframes pulse-glow {
+            0% {
+                box-shadow: 0 0 12px 4px rgba(255, 215, 0, 0.7),
+                            0 0 4px 2px rgba(255, 165, 0, 0.9) inset;
+            }
+            100% {
+                box-shadow: 0 0 18px 6px rgba(255, 255, 100, 0.9), /* Более яркое свечение */
+                            0 0 2px 1px rgba(255, 165, 0, 0.7) inset; /* Менее выраженная внутренняя тень */
+            }
+        }
         
         /* Добавьте это в конец CSS секции */
         .scroll-container {
