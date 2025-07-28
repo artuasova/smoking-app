@@ -748,7 +748,7 @@
             <!-- Правая часть: Кнопки управления -->
             <div style="display: flex; align-items: center; gap: 10px;">
                 <!-- Индикатор синхронизации (лампочка) -->
-                <div id="syncStatusIndicator" class="sync-light-base sync-light-off"></div>
+                <div id="syncStatusIndicator" class="sync-light-base sync-light-success"></div>
                 <!-- Кнопка обновления -->
                 <button id="refreshAppBtnTop" title="Обновить данные" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">🔄</button>
             </div>
@@ -1082,6 +1082,7 @@
                     });
                 });
             }
+            console.log("Элемент syncStatusIndicator в initApp:", syncStatusIndicator);
         }
         
         // Проверка сессии
@@ -1324,6 +1325,7 @@
         
         // Показать индикатор синхронизации (обновленная версия с "лампочкой")
         function showSyncIndicator(status, message) {
+            console.log("showSyncIndicator вызвана с status:", status, "message:", message);
             // 1. Старая логика для временного индикатора (оставляем для совместимости)
             syncIndicator.className = 'sync-indicator sync-' + status;
             syncText.textContent = message;
