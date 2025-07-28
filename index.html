@@ -1275,7 +1275,7 @@
             }
         }
         
-                // Показать индикатор синхронизации (обновленная версия)
+        // Показать индикатор синхронизации (обновленная версия с "лампочкой")
         function showSyncIndicator(status, message) {
             // 1. Старая логика для временного индикатора (оставляем для совместимости)
             syncIndicator.className = 'sync-indicator sync-' + status;
@@ -1287,26 +1287,31 @@
                 }, 3000);
             }
         
-            // 2. Обновляем новый постоянный индикатор в панели пользователя
+            // 2. Обновляем новый постоянный индикатор-лампочку в панели пользователя
             if (syncStatusIndicator) { // Проверяем, существует ли элемент
-                syncStatusIndicator.style.display = 'block'; // Всегда показываем
+                // Сначала удаляем все возможные классы состояния
+                syncStatusIndicator.classList.remove('sync-light-off', 'sync-light-syncing', 'sync-light-success', 'sync-light-error');
+                
+                // Добавляем базовый класс
+                syncStatusIndicator.classList.add('sync-light-base');
+                
+                // Всегда показываем
+                syncStatusIndicator.style.display = 'block'; 
+                
+                // Устанавливаем состояние в зависимости от статуса
                 switch (status) {
                     case 'syncing':
-                        syncStatusIndicator.textContent = '🟡'; // Желтый для синхронизации
-                        // Добавим анимацию вращения через CSS-класс или inline style
-                        syncStatusIndicator.style.animation = 'spin 1s linear infinite';
+                        syncStatusIndicator.classList.add('sync-light-syncing');
                         break;
                     case 'success':
-                        syncStatusIndicator.textContent = '🟢'; // Зеленый для успеха
-                        syncStatusIndicator.style.animation = 'none'; // Останавливаем анимацию
+                        syncStatusIndicator.classList.add('sync-light-success');
                         break;
                     case 'error':
-                        syncStatusIndicator.textContent = '🔴'; // Красный для ошибки
-                        syncStatusIndicator.style.animation = 'none'; // Останавливаем анимацию
+                        syncStatusIndicator.classList.add('sync-light-error');
                         break;
                     default:
-                        syncStatusIndicator.textContent = '⚪'; // Серый по умолчанию
-                        syncStatusIndicator.style.animation = 'none';
+                        // По умолчанию "выключенная" лампочка
+                        syncStatusIndicator.classList.add('sync-light-off');
                 }
             }
         }
