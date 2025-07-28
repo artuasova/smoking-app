@@ -703,6 +703,8 @@
             <div style="display: flex; align-items: center; gap: 10px;">
                 <!-- Индикатор синхронизации -->
                 <div id="syncStatusIndicator" style="font-size: 1.2rem; display: none;">⚪</div>
+                <!-- Контейнер для текста статуса -->
+                <div id="syncStatusText" style="font-size: 0.9rem; display: none;"></div>
                 <!-- Кнопка обновления -->
                 <button id="refreshAppBtnTop" title="Обновить данные" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">🔄</button>
             </div>
@@ -946,6 +948,7 @@
         // Элементы для новой кнопки обновления и индикатора в панели пользователя
         const refreshAppBtnTop = document.getElementById('refreshAppBtnTop');
         const syncStatusIndicator = document.getElementById('syncStatusIndicator');
+        const syncStatusText = document.getElementById('syncStatusText');
         
         // Auth elements
         const authModal = document.getElementById('authModal');
@@ -1275,41 +1278,60 @@
             }
         }
         
-                // Показать индикатор синхронизации (обновленная версия)
-        function showSyncIndicator(status, message) {
-            // 1. Старая логика для временного индикатора (оставляем для совместимости)
-            syncIndicator.className = 'sync-indicator sync-' + status;
-            syncText.textContent = message;
-            syncIndicator.style.display = 'flex';
-            if (status !== 'syncing') {
-                setTimeout(() => {
-                    syncIndicator.style.display = 'none';
-                }, 3000);
-            }
-        
-            // 2. Обновляем новый постоянный индикатор в панели пользователя
-            if (syncStatusIndicator) { // Проверяем, существует ли элемент
-                syncStatusIndicator.style.display = 'block'; // Всегда показываем
-                switch (status) {
-                    case 'syncing':
-                        syncStatusIndicator.textContent = '🟡'; // Желтый для синхронизации
-                        // Добавим анимацию вращения через CSS-класс или inline style
-                        syncStatusIndicator.style.animation = 'spin 1s linear infinite';
-                        break;
-                    case 'success':
-                        syncStatusIndicator.textContent = '🟢'; // Зеленый для успеха
-                        syncStatusIndicator.style.animation = 'none'; // Останавливаем анимацию
-                        break;
-                    case 'error':
-                        syncStatusIndicator.textContent = '🔴'; // Красный для ошибки
-                        syncStatusIndicator.style.animation = 'none'; // Останавливаем анимацию
-                        break;
-                    default:
-                        syncStatusIndicator.textContent = '⚪'; // Серый по умолчанию
-                        syncStatusIndicator.style.animation = 'none';
+            // Показать индикатор синхронизации (обновленная версия)
+            function showSyncIndicator(status, message) {
+                // 1. Управление постоянным индикатором в панели пользователя (эмодзи)
+                if (syncStatusIndicator) {
+                    // Всегда показываем индикатор при вызове
+                    syncStatusIndicator.style.display = 'block';
+                    switch (status) {
+                        case 'syncing':
+                            syncStatusIndicator.textContent = '🟡'; // Желтый для синхронизации
+                            syncStatusIndicator.style.animation = 'spin 1s linear infinite';
+                            break;
+                        case 'success':
+                            syncStatusIndicator.textContent = '🟢'; // Зеленый для успеха
+                            syncStatusIndicator.style.animation = 'none'; // Останавливаем анимацию
+                            break;
+                        case 'error':
+                            syncStatusIndicator.textContent = '🔴'; // Красный для ошибки
+                            syncStatusIndicator.style.animation = 'none'; // Останавливаем анимацию
+                            break;
+                        default:
+                            syncStatusIndicator.textContent = '⚪'; // Серый по умолчанию
+                            syncStatusIndicator.style.animation = 'none';
+                    }
+            
+                    // 2. Обновляем текстовый элемент рядом с индикатором
+                    // Проверяем, существует ли элемент для текста (syncStatusText)
+                    if (syncStatusText) {
+                        // Устанавливаем текст сообщения
+                        syncStatusText.textContent = message;
+                        // Делаем текст видимым
+                        syncStatusText.style.display = 'block';
+            
+                        // Для статусов success/error скрываем текст через некоторое время
+                        if (status === 'success' || status === 'error') {
+                            // Используем setTimeout, чтобы текст исчез через 3 секунды (3000 миллисекунд)
+                            setTimeout(() => {
+                                // Проверяем еще раз, что элемент существует, на случай,
+                                // если страница была закрыта или изменена за эти 3 секунды
+                                if (syncStatusText) {
+                                    // Скрываем текстовый элемент
+                                    syncStatusText.style.display = 'none';
+                                }
+                                // Если вы хотите, чтобы сам индикатор тоже скрывался
+                                // после успеха/ошибки, раскомментируйте следующие строки:
+                                // if (syncStatusIndicator) {
+                                //     syncStatusIndicator.style.display = 'none';
+                                // }
+                            }, 3000); // Текст будет виден 3 секунды
+                        }
+                        // Для статуса 'syncing' текст остается видимым до тех пор,
+                        // пока не будет вызван showSyncIndicator с другим статусом (например, 'success')
+                    }
                 }
             }
-        }
         
         // Сохранение данных
         function saveData() {
