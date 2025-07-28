@@ -741,10 +741,6 @@
             </div>
             
             <div class="stats-container">
-                <div class="stat-card" id="todayCard">
-                    <div class="stat-value" id="today">0</div>
-                    <div class="stat-label">Сегодня</div>
-                </div>
                 <div class="stat-card" id="weekCard">
                     <div class="stat-value" id="week">0</div>
                     <div class="stat-label">За неделю</div>
@@ -752,6 +748,11 @@
                 <div class="stat-card" id="monthCard">
                     <div class="stat-value" id="month">0</div>
                     <div class="stat-label">За месяц</div>
+                </div>
+                <div class="stat-card" id="allTimeCard" style="cursor: pointer; text-align: center;">
+                    <div class="stat-value" id="allTimeValue">0</div>
+                    <div class="stat-label">За всё время</div>
+                    <div class="stat-sublabel" id="firstUseDateLabel" style="font-size: 0.7rem; opacity: 0.7; margin-top: 5px;">--.--.----</div>
                 </div>
             </div>
             
@@ -925,7 +926,6 @@
         
         // DOM элементы
         const counterEl = document.getElementById('counter');
-        const todayEl = document.getElementById('today');
         const weekEl = document.getElementById('week');
         const monthEl = document.getElementById('month');
         const goalEl = document.getElementById('goal');
@@ -1014,14 +1014,15 @@
             });
             
             // Обработчики для статистики
-            document.getElementById('todayCard').addEventListener('click', function() {
-                toggleTimeDetails('today');
-            });
             document.getElementById('weekCard').addEventListener('click', function() {
                 toggleTimeDetails('week');
             });
             document.getElementById('monthCard').addEventListener('click', function() {
                 toggleTimeDetails('month');
+            });
+            // Добавьте это сразу после monthCard.addEventListener(...)
+            document.getElementById('allTimeCard').addEventListener('click', function() {
+                toggleTimeDetails('all');
             });
             
             // Проверка сессии
@@ -1363,7 +1364,6 @@
         // Обновление интерфейса
         function updateUI() {
             counterEl.textContent = data.today;
-            todayEl.textContent = data.today;
             weekEl.textContent = data.week;
             monthEl.textContent = data.month;
             goalEl.textContent = data.goal;
@@ -1405,6 +1405,34 @@
                 lastCigaretteTimeEl.textContent = lastTime.toLocaleTimeString('ru-RU');
             } else {
                 lastCigaretteTimeEl.textContent = '--:--:--';
+            }
+            // Обновление значения "За всё время"  // <-- НАЧАЛО НОВОГО КОДА
+            const allTimeValueEl = document.getElementById('allTimeValue');
+            const firstUseDateLabelEl = document.getElementById('firstUseDateLabel');
+        
+            if (allTimeValueEl) {
+                // Подсчитываем общее количество сигарет
+                const allTimeCount = data.timeStats.length;
+                allTimeValueEl.textContent = allTimeCount;
+            }
+        
+            if (firstUseDateLabelEl) {
+                // Отображаем дату первой сигареты
+                if (data.timeStats.length > 0) {
+                    // Берем самую раннюю запись
+                    const earliestStat = data.timeStats.reduce((earliest, current) => 
+                        (current.timestamp < earliest.timestamp) ? current : earliest
+                    );
+                    const firstDate = new Date(earliestStat.timestamp);
+                    firstUseDateLabelEl.textContent = `с ${firstDate.toLocaleDateString('ru-RU')}`;
+                } else if (data.firstUseDate) {
+                    // Если записей нет, но дата первой сигареты сохранена
+                    const firstDate = new Date(data.firstUseDate);
+                    firstUseDateLabelEl.textContent = `с ${firstDate.toLocaleDateString('ru-RU')}`;
+                } else {
+                    // Если ничего нет
+                    firstUseDateLabelEl.textContent = 'данных нет';
+                }
             }
         }
 
@@ -1774,6 +1802,8 @@
                             const recordDate = new Date(record.timestamp);
                             return recordDate >= monthAgo;
                         });
+                    } else if (period === 'all') {
+                            filteredStats = [...data.timeStats]; 
                     }
                     
                     // Сортируем по времени (новые первыми)
