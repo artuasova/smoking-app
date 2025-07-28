@@ -698,7 +698,6 @@
                         <div style="font-size: 0.8rem; opacity: 0.8;" id="userEmail">email@example.com</div>
                     </div>
                 </div>
-                <button class="btn btn-secondary" id="logoutBtn" style="padding: 8px 15px; font-size: 0.9rem;">Выйти</button>
             </div>
         </div>
         
@@ -837,6 +836,7 @@
                 <button class="btn danger-btn btn-full" id="resetAllBtn">Сбросить всё</button>
                 <button class="btn btn-warning btn-full" id="refreshBtn">Обновить приложение</button>
                 <button class="btn btn-primary btn-full" id="saveSettings">Сохранить</button>
+                <button id="logoutFromSettings" style="background: none; border: none; color: #ff4081; cursor: pointer; font-size: 0.9rem; margin-top: 15px; text-align: center; width: 100%;">Выйти из аккаунта</button>
             </div>
         </div>
     </div>
@@ -936,6 +936,7 @@
         const userName = document.getElementById('userName');
         const userEmail = document.getElementById('userEmail');
         const logoutBtn = document.getElementById('logoutBtn');
+        const logoutFromSettingsBtn = document.getElementById('logoutFromSettings');
         
         // Auth elements
         const authModal = document.getElementById('authModal');
@@ -986,6 +987,7 @@
             resetAllBtn.addEventListener('click', resetAll);
             refreshBtn.addEventListener('click', refreshApp);
             logoutBtn.addEventListener('click', logout);
+            logoutFromSettingsBtn.addEventListener('click', logout);
             document.querySelector('#settingsModal .close-modal').addEventListener('click', closeSettings);
             manualResetTodayBtn.addEventListener('click', manualResetToday);
             
