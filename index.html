@@ -690,14 +690,21 @@
         </div>
         
         <div class="user-panel" id="userPanel">
-            <div class="user-info">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div class="user-avatar" id="userAvatar">U</div>
-                    <div>
-                        <div id="userName">Пользователь</div>
-                        <div style="font-size: 0.8rem; opacity: 0.8;" id="userEmail">email@example.com</div>
-                    </div>
+        <div class="user-info" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <!-- Левая часть: Аватар и информация -->
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div>
+                    <div id="userName">Пользователь</div>
+                    <div style="font-size: 0.8rem; opacity: 0.8;" id="userEmail">email@example.com</div>
                 </div>
+            </div>
+            <!-- Правая часть: Кнопки управления -->
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <!-- Индикатор синхронизации -->
+                <div id="syncStatusIndicator" style="font-size: 1.2rem; display: none;">⚪</div>
+                <!-- Кнопка обновления -->
+                <button id="refreshAppBtnTop" title="Обновить данные" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">🔄</button>
             </div>
         </div>
         
@@ -936,6 +943,9 @@
         const userName = document.getElementById('userName');
         const userEmail = document.getElementById('userEmail');
         const logoutFromSettingsBtn = document.getElementById('logoutFromSettings');
+        // Элементы для новой кнопки обновления и индикатора в панели пользователя
+        const refreshAppBtnTop = document.getElementById('refreshAppBtnTop');
+        const syncStatusIndicator = document.getElementById('syncStatusIndicator');
         
         // Auth elements
         const authModal = document.getElementById('authModal');
@@ -986,6 +996,7 @@
             resetAllBtn.addEventListener('click', resetAll);
             refreshBtn.addEventListener('click', refreshApp);
             logoutFromSettingsBtn.addEventListener('click', logout);
+            refreshAppBtnTop.addEventListener('click', refreshApp);
             document.querySelector('#settingsModal .close-modal').addEventListener('click', closeSettings);
             manualResetTodayBtn.addEventListener('click', manualResetToday);
             
@@ -1264,16 +1275,39 @@
             }
         }
         
-        // Показать индикатор синхронизации
+                // Показать индикатор синхронизации (обновленная версия)
         function showSyncIndicator(status, message) {
+            // 1. Старая логика для временного индикатора (оставляем для совместимости)
             syncIndicator.className = 'sync-indicator sync-' + status;
             syncText.textContent = message;
             syncIndicator.style.display = 'flex';
-            
             if (status !== 'syncing') {
                 setTimeout(() => {
                     syncIndicator.style.display = 'none';
                 }, 3000);
+            }
+        
+            // 2. Обновляем новый постоянный индикатор в панели пользователя
+            if (syncStatusIndicator) { // Проверяем, существует ли элемент
+                syncStatusIndicator.style.display = 'block'; // Всегда показываем
+                switch (status) {
+                    case 'syncing':
+                        syncStatusIndicator.textContent = '🟡'; // Желтый для синхронизации
+                        // Добавим анимацию вращения через CSS-класс или inline style
+                        syncStatusIndicator.style.animation = 'spin 1s linear infinite';
+                        break;
+                    case 'success':
+                        syncStatusIndicator.textContent = '🟢'; // Зеленый для успеха
+                        syncStatusIndicator.style.animation = 'none'; // Останавливаем анимацию
+                        break;
+                    case 'error':
+                        syncStatusIndicator.textContent = '🔴'; // Красный для ошибки
+                        syncStatusIndicator.style.animation = 'none'; // Останавливаем анимацию
+                        break;
+                    default:
+                        syncStatusIndicator.textContent = '⚪'; // Серый по умолчанию
+                        syncStatusIndicator.style.animation = 'none';
+                }
             }
         }
         
