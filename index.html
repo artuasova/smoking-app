@@ -701,8 +701,8 @@
             </div>
             <!-- Правая часть: Кнопки управления -->
             <div style="display: flex; align-items: center; gap: 10px;">
-                <!-- Индикатор синхронизации -->
-                <div id="syncStatusIndicator" class="sync-light-base sync-light-off" style="display: none;"></div>
+                <!-- Индикатор синхронизации (лампочка) -->
+                <div id="syncStatusIndicator" class="sync-light-base sync-light-off"></div>
                 <!-- Кнопка обновления -->
                 <button id="refreshAppBtnTop" title="Обновить данные" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">🔄</button>
             </div>
@@ -1288,16 +1288,10 @@
             }
         
             // 2. Обновляем новый постоянный индикатор-лампочку в панели пользователя
-            if (syncStatusIndicator) { // Проверяем, существует ли элемент
-                // Сначала удаляем все возможные классы состояния
-                syncStatusIndicator.classList.remove('sync-light-off', 'sync-light-syncing', 'sync-light-success', 'sync-light-error');
-                
-                // Добавляем базовый класс
-                syncStatusIndicator.classList.add('sync-light-base');
-                
-                // Всегда показываем
-                syncStatusIndicator.style.display = 'block'; 
-                
+            if (syncStatusIndicator) {
+                // Сначала убираем все возможные классы состояния, оставляя базовый
+                syncStatusIndicator.className = 'sync-light-base';
+        
                 // Устанавливаем состояние в зависимости от статуса
                 switch (status) {
                     case 'syncing':
@@ -1313,6 +1307,9 @@
                         // По умолчанию "выключенная" лампочка
                         syncStatusIndicator.classList.add('sync-light-off');
                 }
+        
+                // Убедимся, что элемент виден
+                syncStatusIndicator.style.display = '';
             }
         }
         
