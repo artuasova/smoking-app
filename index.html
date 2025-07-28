@@ -851,767 +851,144 @@
         </div>
     </div>
     
-    <script>
-        // Конфигурация Supabase
-        const supabaseUrl = 'https://podwpmokbbyzkrqhygci.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZHdwbW9rYmJ5emtycWh5Z2NpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzNzI1MzQsImV4cCI6MjA2ODk0ODUzNH0.3UH4jmnzgPub0GLCK4yXE692kpYuXVt9LAwJmC5heaA';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+         <script>
+            // Конфигурация Supabase
+            const supabaseUrl = 'https://podwpmokbbyzkrqhygci.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZHdwbW9rYmJ5emtycWh5Z2NpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzNzI1MzQsImV4cCI6MjA2ODk0ODUzNH0.3UH4jmnzgPub0GLCK4yXE692kpYuXVt9LAwJmC5heaA';
+            const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+            // Данные приложения
+            let data = {
+                today: 0,
+                week: 0,
+                month: 0,
+                goal: 20,
+                packPrice: 250,
+                cigarettesPerPack: 20,
+                streak: 0,
+                lastDate: null,
+                timeStats: [],
+                lastAutoResetDate: new Date().toDateString(), // Дата последнего автоматического сброса
+                achievements: [
+                    { id: 1, name: "Первый день", description: "Использовать приложение первый день", target: 1, achieved: false, icon: "📅" },
+                    { id: 2, name: "Неделя использования", description: "Использовать приложение неделю", target: 7, achieved: false, icon: "🗓️" },
+                    { id: 3, name: "Месяц использования", description: "Использовать приложение месяц", target: 30, achieved: false, icon: "📆" },
+                    { id: 4, name: "100 сигарет", description: "Выкурить 100 сигарет", target: 100, achieved: false, icon: "🚬" },
+                    { id: 5, name: "Экономия здоровья", description: "Сократить потребление на 50%", target: 50, achieved: false, icon: "💚" }
+                ],
+                totalCost: 0,
+                usageDays: 0,
+                firstUseDate: new Date().toDateString(),
+                lastCigaretteTime: null
+            };
+            // Мотивационные цитаты
+            const quotes = [
+                "Каждая не выкуренная сигарета - шаг к здоровью!",
+                "Вы сильнее своей зависимости!",
+                "Экономия сегодня - здоровье завтра!",
+                "Каждый день без сигарет делает вас сильнее!",
+                "Ваше здоровье - ваша ценность!",
+                "Сила воли - ключ к успеху!",
+                "Каждая сигарета, которую вы не выкурили - победа!",
+                "Здоровье нельзя купить, но можно сохранить!",
+                "Сегодня вы сильнее, чем вчера!",
+                "Каждый день - это новый шанс!"
+            ];
+            // Медицинские факты по часам (от 1 до 24 часа)
+            const medicalFacts = [
+                "Через 1 час после последней сигареты пульс и артериальное давление начинают снижаться до нормального уровня.",
+                "Через 2 часа периферические кровеносные сосуды расширяются, улучшается циркуляция крови в руках и ногах.",
+                "Через 3 часа уровень никотина в крови снижается до нуля, начинается процесс детоксикации организма.",
+                "Через 4 часа улучшается насыщение крови кислородом, снижается риск сердечного приступа.",
+                "Через 5 часов начинается восстановление слизистой оболочки носоглотки и дыхательных путей.",
+                "Через 6 часов улучшается вкус и обоняние, организм начинает выводить токсины.",
+                "Через 7 часов начинается нормализация температуры тела, улучшается кровообращение.",
+                "Через 8 часов уровень оксида углерода в крови снижается, кислородное насыщение нормализуется.",
+                "Через 9 часов начинается восстановление функций легких, улучшается дыхание.",
+                "Через 10 часов снижается уровень стресса, улучшается настроение.",
+                "Через 11 часов улучшается работа пищеварительной системы, снижается тошнота.",
+                "Через 12 часов начинается восстановление иммунной системы, организм борется с инфекциями.",
+                "Через 13 часов улучшается кровоток в мозге, повышается концентрация внимания.",
+                "Через 14 часов снижается раздражительность, улучшается качество сна.",
+                "Через 15 часов начинается восстановление клеток печени, улучшается метаболизм.",
+                "Через 16 часов снижается уровень кашля, уменьшается одышка.",
+                "Через 17 часов улучшается работа сердца, снижается нагрузка на орган.",
+                "Через 18 часов начинается восстановление вкусовых рецепторов, еда становится вкуснее.",
+                "Через 19 часов улучшается работа почек, организм лучше выводит токсины.",
+                "Через 20 часов снижается риск инсульта, улучшается кровообращение в мозге.",
+                "Через 21 час начинается восстановление нервной системы, улучшается координация.",
+                "Через 22 часов улучшается работа эндокринной системы, нормализуются гормоны.",
+                "Через 23 часа снижается воспаление в организме, улучшается общее состояние.",
+                "Через 24 часа организм полностью избавляется от никотина, начинается активное восстановление."
+            ];
+            // DOM элементы
+            const counterEl = document.getElementById('counter');
+            const weekEl = document.getElementById('week');
+            const monthEl = document.getElementById('month');
+            const goalEl = document.getElementById('goal');
+            const goalPercentEl = document.getElementById('goal-percent');
+            const progressFillEl = document.getElementById('progress-fill');
+            const costsEl = document.getElementById('costs');
+            const packPriceEl = document.getElementById('pack-price');
+            const quoteEl = document.getElementById('quote');
+            const achievementsListEl = document.getElementById('achievements-list');
+            const achievementsCountEl = document.getElementById('achievements-count');
+            const timerEl = document.getElementById('timer');
+            const lastCigaretteTimeEl = document.getElementById('last-cigarette-time');
+            const syncIndicator = document.getElementById('syncIndicator');
+            const syncText = document.getElementById('syncText');
+            const userPanel = document.getElementById('userPanel');
+            const userAvatar = document.getElementById('userAvatar');
+            const userName = document.getElementById('userName');
+            const userEmail = document.getElementById('userEmail');
+            const logoutFromSettingsBtn = document.getElementById('logoutFromSettings');
+            // Элементы для новой кнопки обновления и индикатора в панели пользователя
+            const refreshAppBtnTop = document.getElementById('refreshAppBtnTop');
+            const syncStatusIndicator = document.getElementById('syncStatusIndicator');
+            const syncStatusText = document.getElementById('syncStatusText');
+            // Auth elements
+            const authModal = document.getElementById('authModal');
+            const authTitle = document.getElementById('authTitle');
+            const authEmail = document.getElementById('authEmail');
+            const authPassword = document.getElementById('authPassword');
+            const newPassword = document.getElementById('newPassword');
+            const authSubmit = document.getElementById('authSubmit');
+            const toggleAuth = document.getElementById('toggleAuth');
+            const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
+            const resetPasswordBtn = document.getElementById('resetPasswordBtn');
+            const forgotPasswordSection = document.getElementById('forgotPasswordSection');
+            const closeAuthModal = document.getElementById('closeAuthModal');
+            // Settings elements
+            const settingsModal = document.getElementById('settingsModal');
+            const settingsBtn = document.getElementById('settingsBtn');
+            const themeToggle = document.getElementById('themeToggle');
+            const incrementBtn = document.getElementById('increment');
+            const decrementBtn = document.getElementById('decrement');
+            const saveSettingsBtn = document.getElementById('saveSettings');
+            const exportBtn = document.getElementById('exportBtn');
+            const resetAllBtn = document.getElementById('resetAllBtn');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const manualResetTodayBtn = document.getElementById('manualResetToday');
+            // Auth state
+            let isRegistration = false;
+            let isForgotPassword = false;
+            let currentUser = null;
         
-        // Данные приложения
-        let data = {
-            today: 0,
-            week: 0,
-            month: 0,
-            goal: 20,
-            packPrice: 250,
-            cigarettesPerPack: 20,
-            streak: 0,
-            lastDate: null,
-            timeStats: [],
-            lastAutoResetDate: new Date().toDateString(), // Дата последнего автоматического сброса
-            achievements: [
-                { id: 1, name: "Первый день", description: "Использовать приложение первый день", target: 1, achieved: false, icon: "📅" },
-                { id: 2, name: "Неделя использования", description: "Использовать приложение неделю", target: 7, achieved: false, icon: "🗓️" },
-                { id: 3, name: "Месяц использования", description: "Использовать приложение месяц", target: 30, achieved: false, icon: "📆" },
-                { id: 4, name: "100 сигарет", description: "Выкурить 100 сигарет", target: 100, achieved: false, icon: "🚬" },
-                { id: 5, name: "Экономия здоровья", description: "Сократить потребление на 50%", target: 50, achieved: false, icon: "💚" }
-            ],
-            totalCost: 0,
-            usageDays: 0,
-            firstUseDate: new Date().toDateString(),
-            lastCigaretteTime: null
-        };
-        
-        // Мотивационные цитаты
-        const quotes = [
-            "Каждая не выкуренная сигарета - шаг к здоровью!",
-            "Вы сильнее своей зависимости!",
-            "Экономия сегодня - здоровье завтра!",
-            "Каждый день без сигарет делает вас сильнее!",
-            "Ваше здоровье - ваша ценность!",
-            "Сила воли - ключ к успеху!",
-            "Каждая сигарета, которую вы не выкурили - победа!",
-            "Здоровье нельзя купить, но можно сохранить!",
-            "Сегодня вы сильнее, чем вчера!",
-            "Каждый день - это новый шанс!"
-        ];
-
-        // Медицинские факты по часам (от 1 до 24 часа)
-        const medicalFacts = [
-            "Через 1 час после последней сигареты пульс и артериальное давление начинают снижаться до нормального уровня.",
-            "Через 2 часа периферические кровеносные сосуды расширяются, улучшается циркуляция крови в руках и ногах.",
-            "Через 3 часа уровень никотина в крови снижается до нуля, начинается процесс детоксикации организма.",
-            "Через 4 часа улучшается насыщение крови кислородом, снижается риск сердечного приступа.",
-            "Через 5 часов начинается восстановление слизистой оболочки носоглотки и дыхательных путей.",
-            "Через 6 часов улучшается вкус и обоняние, организм начинает выводить токсины.",
-            "Через 7 часов начинается нормализация температуры тела, улучшается кровообращение.",
-            "Через 8 часов уровень оксида углерода в крови снижается, кислородное насыщение нормализуется.",
-            "Через 9 часов начинается восстановление функций легких, улучшается дыхание.",
-            "Через 10 часов снижается уровень стресса, улучшается настроение.",
-            "Через 11 часов улучшается работа пищеварительной системы, снижается тошнота.",
-            "Через 12 часов начинается восстановление иммунной системы, организм борется с инфекциями.",
-            "Через 13 часов улучшается кровоток в мозге, повышается концентрация внимания.",
-            "Через 14 часов снижается раздражительность, улучшается качество сна.",
-            "Через 15 часов начинается восстановление клеток печени, улучшается метаболизм.",
-            "Через 16 часов снижается уровень кашля, уменьшается одышка.",
-            "Через 17 часов улучшается работа сердца, снижается нагрузка на орган.",
-            "Через 18 часов начинается восстановление вкусовых рецепторов, еда становится вкуснее.",
-            "Через 19 часов улучшается работа почек, организм лучше выводит токсины.",
-            "Через 20 часов снижается риск инсульта, улучшается кровообращение в мозге.",
-            "Через 21 час начинается восстановление нервной системы, улучшается координация.",
-            "Через 22 часа улучшается работа эндокринной системы, нормализуются гормоны.",
-            "Через 23 часа снижается воспаление в организме, улучшается общее состояние.",
-            "Через 24 часа организм полностью избавляется от никотина, начинается активное восстановление."
-        ];
-        
-        // DOM элементы
-        const counterEl = document.getElementById('counter');
-        const weekEl = document.getElementById('week');
-        const monthEl = document.getElementById('month');
-        const goalEl = document.getElementById('goal');
-        const goalPercentEl = document.getElementById('goal-percent');
-        const progressFillEl = document.getElementById('progress-fill');
-        const costsEl = document.getElementById('costs');
-        const packPriceEl = document.getElementById('pack-price');
-        const quoteEl = document.getElementById('quote');
-        const achievementsListEl = document.getElementById('achievements-list');
-        const achievementsCountEl = document.getElementById('achievements-count');
-        const timerEl = document.getElementById('timer');
-        const lastCigaretteTimeEl = document.getElementById('last-cigarette-time');
-        const syncIndicator = document.getElementById('syncIndicator');
-        const syncText = document.getElementById('syncText');
-        const userPanel = document.getElementById('userPanel');
-        const userAvatar = document.getElementById('userAvatar');
-        const userName = document.getElementById('userName');
-        const userEmail = document.getElementById('userEmail');
-        const logoutFromSettingsBtn = document.getElementById('logoutFromSettings');
-        // Элементы для новой кнопки обновления и индикатора в панели пользователя
-        const refreshAppBtnTop = document.getElementById('refreshAppBtnTop');
-        const syncStatusIndicator = document.getElementById('syncStatusIndicator');
-        const syncStatusText = document.getElementById('syncStatusText');
-        
-        // Auth elements
-        const authModal = document.getElementById('authModal');
-        const authTitle = document.getElementById('authTitle');
-        const authEmail = document.getElementById('authEmail');
-        const authPassword = document.getElementById('authPassword');
-        const newPassword = document.getElementById('newPassword');
-        const authSubmit = document.getElementById('authSubmit');
-        const toggleAuth = document.getElementById('toggleAuth');
-        const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
-        const resetPasswordBtn = document.getElementById('resetPasswordBtn');
-        const forgotPasswordSection = document.getElementById('forgotPasswordSection');
-        const closeAuthModal = document.getElementById('closeAuthModal');
-        
-        // Settings elements
-        const settingsModal = document.getElementById('settingsModal');
-        const settingsBtn = document.getElementById('settingsBtn');
-        const themeToggle = document.getElementById('themeToggle');
-        const incrementBtn = document.getElementById('increment');
-        const decrementBtn = document.getElementById('decrement');
-        const saveSettingsBtn = document.getElementById('saveSettings');
-        const exportBtn = document.getElementById('exportBtn');
-        const resetAllBtn = document.getElementById('resetAllBtn');
-        const refreshBtn = document.getElementById('refreshBtn');
-        const manualResetTodayBtn = document.getElementById('manualResetToday');
-        
-        // Auth state
-        let isRegistration = false;
-        let isForgotPassword = false;
-        let currentUser = null;
-        
-        // Инициализация приложения
-        function initApp() {
-            loadData();
-            updateUI();
-            showRandomQuote();
-            renderAchievements();
-            checkAchievements();
-            startTimer();
-            
-            // Установка обработчиков событий
-            incrementBtn.addEventListener('click', incrementCounter);
-            decrementBtn.addEventListener('click', decrementCounter);
-            themeToggle.addEventListener('click', toggleTheme);
-            settingsBtn.addEventListener('click', openSettings);
-            saveSettingsBtn.addEventListener('click', saveSettings);
-            exportBtn.addEventListener('click', exportData);
-            resetAllBtn.addEventListener('click', resetAll);
-            refreshBtn.addEventListener('click', refreshApp);
-            logoutFromSettingsBtn.addEventListener('click', logout);
-            refreshAppBtnTop.addEventListener('click', refreshApp);
-            document.querySelector('#settingsModal .close-modal').addEventListener('click', closeSettings);
-            manualResetTodayBtn.addEventListener('click', manualResetToday);
-            
-            // Auth handlers
-            document.getElementById('authSubmit').addEventListener('click', handleAuth);
-            document.getElementById('toggleAuth').addEventListener('click', toggleAuthForm);
-            document.getElementById('forgotPasswordBtn').addEventListener('click', toggleForgotPassword);
-            document.getElementById('resetPasswordBtn').addEventListener('click', resetPassword);
-            document.getElementById('closeAuthModal').addEventListener('click', hideAuthModal);
-            document.getElementById('authModal').addEventListener('click', function(e) {
-                if (e.target === this) hideAuthModal();
-            });
-            
-            // Обработчики для статистики
-            document.getElementById('weekCard').addEventListener('click', function() {
-                toggleTimeDetails('week');
-            });
-            document.getElementById('monthCard').addEventListener('click', function() {
-                toggleTimeDetails('month');
-            });
-            // Добавьте это сразу после monthCard.addEventListener(...)
-            document.getElementById('allTimeCard').addEventListener('click', function() {
-                toggleTimeDetails('all');
-            });
-            
-            // Проверка сессии
-            checkSession();
-            
-            // Регистрация Service Worker
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('sw.js')
-                    .then(function(registration) {
-                        console.log('SW registered: ', registration);
-                    })
-                    .catch(function(registrationError) {
-                        console.log('SW registration failed: ', registrationError);
-                    });
-                });
-            }
-        }
-        
-        // Проверка сессии
-        async function checkSession() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                currentUser = session.user;
-                showUserPanel();
-                await loadUserData();
-            } else {
-                showAuthModal();
-            }
-        }
-        
-        // Показать панель пользователя
-        function showUserPanel() {
-            if (currentUser) {
-                const email = currentUser.email;
-                userAvatar.textContent = email.charAt(0).toUpperCase();
-                userName.textContent = email.split('@')[0];
-                userEmail.textContent = email;
-                userPanel.style.display = 'block';
-            }
-        }
-        
-        // Скрыть панель пользователя
-        function hideUserPanel() {
-            userPanel.style.display = 'none';
-        }
-        
-        // Выход
-        async function logout() {
-            const confirmed = confirm('Вы уверены, что хотите выйти?');
-            if (confirmed) {
-                await supabase.auth.signOut();
-                currentUser = null;
-                hideUserPanel();
-                showAuthModal();
-                showSyncIndicator('success', 'Вы вышли из аккаунта');
-            }
-        }
-        
-        // Показать модальное окно аутентификации
-        function showAuthModal() {
-            authTitle.textContent = 'Вход';
-            authSubmit.textContent = 'Войти';
-            toggleAuth.textContent = 'Нет аккаунта? Зарегистрироваться';
-            forgotPasswordSection.style.display = 'none';
-            resetPasswordBtn.style.display = 'none';
-            forgotPasswordBtn.style.display = 'block';
-            isRegistration = false;
-            isForgotPassword = false;
-            authModal.style.display = 'flex';
-        }
-        
-        // Скрыть модальное окно аутентификации
-        function hideAuthModal() {
-            authModal.style.display = 'none';
-        }
-        
-        // Переключение формы аутентификации
-        function toggleAuthForm() {
-            isRegistration = !isRegistration;
-            if (isRegistration) {
-                authTitle.textContent = 'Регистрация';
-                authSubmit.textContent = 'Зарегистрироваться';
-                toggleAuth.textContent = 'Уже есть аккаунт? Войти';
-                forgotPasswordSection.style.display = 'none';
-                resetPasswordBtn.style.display = 'none';
-                forgotPasswordBtn.style.display = 'block';
-            } else {
-                authTitle.textContent = 'Вход';
-                authSubmit.textContent = 'Войти';
-                toggleAuth.textContent = 'Нет аккаунта? Зарегистрироваться';
-                forgotPasswordSection.style.display = 'none';
-                resetPasswordBtn.style.display = 'none';
-                forgotPasswordBtn.style.display = 'block';
-            }
-            isForgotPassword = false;
-        }
-        
-        // Переключение формы восстановления пароля
-        function toggleForgotPassword() {
-            isForgotPassword = !isForgotPassword;
-            if (isForgotPassword) {
-                authTitle.textContent = 'Забыли пароль?';
-                authSubmit.textContent = 'Отправить ссылку';
-                forgotPasswordSection.style.display = 'block';
-                resetPasswordBtn.style.display = 'block';
-                forgotPasswordBtn.style.display = 'none';
-                toggleAuth.style.display = 'none';
-            } else {
-                authTitle.textContent = 'Вход';
-                authSubmit.textContent = 'Войти';
-                forgotPasswordSection.style.display = 'none';
-                resetPasswordBtn.style.display = 'none';
-                forgotPasswordBtn.style.display = 'block';
-                toggleAuth.style.display = 'block';
-            }
-        }
-        
-        // Обработка аутентификации
-        async function handleAuth() {
-            const email = authEmail.value.trim();
-            const password = authPassword.value;
-            
-            if (!email || !password) {
-                showSyncIndicator('error', 'Заполните все поля');
-                return;
-            }
-            
-            try {
-                let result;
-                
-                if (isRegistration) {
-                    // Регистрация
-                    result = await supabase.auth.signUp({
-                        email: email,
-                        password: password
-                    });
-                    
-                    if (result.error) throw result.error;
-                    
-                    showSyncIndicator('success', 'Регистрация успешна!');
-                    hideAuthModal();
-                    currentUser = result.data.user;
-                    showUserPanel();
-                    await saveUserData();
-                } else if (isForgotPassword) {
-                    // Восстановление пароля
-                    const { error } = await supabase.auth.resetPasswordForEmail(email);
-                    
-                    if (error) throw error;
-                    
-                    showSyncIndicator('success', 'Ссылка для восстановления отправлена');
-                } else {
-                    // Вход
-                    result = await supabase.auth.signInWithPassword({
-                        email: email,
-                        password: password
-                    });
-                    
-                    if (result.error) throw result.error;
-                    
-                    currentUser = result.data.user;
-                    hideAuthModal();
-                    showUserPanel();
-                    showSyncIndicator('success', 'Вход выполнен!');
-                    await loadUserData();
-                }
-            } catch (error) {
-                console.error('Ошибка аутентификации:', error);
-                showSyncIndicator('error', 'Ошибка: ' + error.message);
-            }
-        }
-        
-        // Сброс пароля
-        async function resetPassword() {
-            const email = authEmail.value.trim();
-            const newPasswordVal = newPassword.value;
-            
-            if (!email || !newPasswordVal) {
-                showSyncIndicator('error', 'Заполните все поля');
-                return;
-            }
-            
-            try {
-                const { error } = await supabase.auth.updateUser({
-                    password: newPasswordVal
-                });
-                
-                if (error) throw error;
-                
-                showSyncIndicator('success', 'Пароль успешно изменен');
-                toggleForgotPassword();
-            } catch (error) {
-                showSyncIndicator('error', 'Ошибка: ' + error.message);
-            }
-        }
-        
-        // Загрузка данных пользователя
-        async function loadUserData() {
-            if (!currentUser) return;
-            
-            try {
-                showSyncIndicator('syncing', 'Обновление ...');
-                
-                const { data: userData, error } = await supabase
-                    .from('smoking_data')
-                    .select('*')
-                    .eq('user_id', currentUser.id)
-                    .single();
-                
-                if (error && error.code !== 'PGRST116') {
-                    throw error;
-                }
-                
-                if (userData) {
-                    data = { ...data, ...userData.data };
-                    showSyncIndicator('success', 'Обновлено');
-                } else {
-                    await saveUserData();
-                    showSyncIndicator('success', 'Данные сохранены');
-                }
-                
-                updateUI();
-            } catch (error) {
-                console.error('Ошибка загрузки данных:', error);
-                showSyncIndicator('error', 'Ошибка загрузки данных');
-            }
-        }
-        
-        // Сохранение данных пользователя
-        async function saveUserData() {
-            if (!currentUser) return;
-            
-            try {
-                const now = new Date().toISOString();
-                
-                const { error } = await supabase
-                    .from('smoking_data')
-                    .upsert({
-                        user_id: currentUser.id,
-                         data,
-                        updated_at: now
-                    }, {
-                        onConflict: 'user_id'
-                    });
-                
-                if (error) throw error;
-                
-                localStorage.setItem('smokingApp_lastUpdate', now);
-                return true;
-            } catch (error) {
-                console.error('Ошибка сохранения данных:', error);
-                return false;
-            }
-        }
-        
-            // Показать индикатор синхронизации (обновленная версия)
-            function showSyncIndicator(status, message) {
-                // 1. Управление постоянным индикатором в панели пользователя (эмодзи)
-                if (syncStatusIndicator) {
-                    // Всегда показываем индикатор при вызове
-                    syncStatusIndicator.style.display = 'block';
-                    switch (status) {
-                        case 'syncing':
-                            syncStatusIndicator.textContent = '🟡'; // Желтый для синхронизации
-                            syncStatusIndicator.style.animation = 'spin 1s linear infinite';
-                            break;
-                        case 'success':
-                            syncStatusIndicator.textContent = '🟢'; // Зеленый для успеха
-                            syncStatusIndicator.style.animation = 'none'; // Останавливаем анимацию
-                            break;
-                        case 'error':
-                            syncStatusIndicator.textContent = '🔴'; // Красный для ошибки
-                            syncStatusIndicator.style.animation = 'none'; // Останавливаем анимацию
-                            break;
-                        default:
-                            syncStatusIndicator.textContent = '⚪'; // Серый по умолчанию
-                            syncStatusIndicator.style.animation = 'none';
-                    }
-            
-                    // 2. Обновляем текстовый элемент рядом с индикатором
-                    // Проверяем, существует ли элемент для текста (syncStatusText)
-                    if (syncStatusText) {
-                        // Устанавливаем текст сообщения
-                        syncStatusText.textContent = message;
-                        // Делаем текст видимым
-                        syncStatusText.style.display = 'block';
-            
-                        // Для статусов success/error скрываем текст через некоторое время
-                        if (status === 'success' || status === 'error') {
-                            // Используем setTimeout, чтобы текст исчез через 3 секунды (3000 миллисекунд)
-                            setTimeout(() => {
-                                // Проверяем еще раз, что элемент существует, на случай,
-                                // если страница была закрыта или изменена за эти 3 секунды
-                                if (syncStatusText) {
-                                    // Скрываем текстовый элемент
-                                    syncStatusText.style.display = 'none';
-                                }
-                                // Если вы хотите, чтобы сам индикатор тоже скрывался
-                                // после успеха/ошибки, раскомментируйте следующие строки:
-                                // if (syncStatusIndicator) {
-                                //     syncStatusIndicator.style.display = 'none';
-                                // }
-                            }, 3000); // Текст будет виден 3 секунды
-                        }
-                        // Для статуса 'syncing' текст остается видимым до тех пор,
-                        // пока не будет вызван showSyncIndicator с другим статусом (например, 'success')
-                    }
-                }
-            }
-        
-        // Сохранение данных
-        function saveData() {
-            try {
-                localStorage.setItem('smokingData', JSON.stringify(data));
-                
-                // Асинхронно сохраняем в облако
-                setTimeout(() => {
-                    saveUserData();
-                }, 100);
-            } catch (e) {
-                console.log('Не удалось сохранить данные');
-            }
-        }
-        
-        // Загрузка данных
-        function loadData() {
-            try {
-                const saved = localStorage.getItem('smokingData');
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    data = { ...data, ...parsed };
-                }
-            } catch (e) {
-                console.log('Не удалось загрузить данные');
-            }
-        }
-        
-        // Обновление интерфейса
-        function updateUI() {
-            counterEl.textContent = data.today;
-            weekEl.textContent = data.week;
-            monthEl.textContent = data.month;
-            goalEl.textContent = data.goal;
-            
-            // Обновление прогресса
-            const percent = Math.min(100, Math.round((data.today / data.goal) * 100));
-            goalPercentEl.textContent = `${percent}%`;
-            progressFillEl.style.width = `${percent}%`;
-            
-            // Обновление стоимости (исправлено)
-            // Обновление стоимости (ИСПРАВЛЕНО - считаем за всё время)
-            const costPerCigarette = data.packPrice / data.cigarettesPerPack;
-            const totalCost = data.totalCost; // Используем общую стоимость
-            costsEl.textContent = `${Math.round(totalCost)} ₽`;
-            packPriceEl.textContent = data.packPrice;
-
-            // Добавляем дату начала
-            const startDate = new Date(data.firstUseDate);
-            const startDateStr = startDate.toLocaleDateString('ru-RU');
-            const costsContainer = document.querySelector('.costs-container');
-            let startDateEl = costsContainer.querySelector('.start-date');
-            if (!startDateEl) {
-                startDateEl = document.createElement('p');
-                startDateEl.className = 'start-date';
-                startDateEl.style.fontSize = '0.8rem';
-                startDateEl.style.opacity = '0.8';
-                startDateEl.style.marginTop = '5px';
-                costsContainer.appendChild(startDateEl);
-            }
-            startDateEl.textContent = `С ${startDateStr}`;
-            
-            // Обновление счетчика достижений
-            const achievedCount = data.achievements.filter(a => a.achieved).length;
-            achievementsCountEl.textContent = `${achievedCount}/${data.achievements.length}`;
-            
-            // Обновление времени последней сигареты
-            if (data.lastCigaretteTime) {
-                const lastTime = new Date(data.lastCigaretteTime);
-                lastCigaretteTimeEl.textContent = lastTime.toLocaleTimeString('ru-RU');
-            } else {
-                lastCigaretteTimeEl.textContent = '--:--:--';
-            }
-            // Обновление значения "За всё время"  // <-- НАЧАЛО НОВОГО КОДА
-            const allTimeValueEl = document.getElementById('allTimeValue');
-            const firstUseDateLabelEl = document.getElementById('firstUseDateLabel');
-        
-            if (allTimeValueEl) {
-                // Подсчитываем общее количество сигарет
-                const allTimeCount = data.timeStats.length;
-                allTimeValueEl.textContent = allTimeCount;
-            }
-        
-            if (firstUseDateLabelEl) {
-                // Отображаем дату первой сигареты
-                if (data.timeStats.length > 0) {
-                    // Берем самую раннюю запись
-                    const earliestStat = data.timeStats.reduce((earliest, current) => 
-                        (current.timestamp < earliest.timestamp) ? current : earliest
-                    );
-                    const firstDate = new Date(earliestStat.timestamp);
-                    firstUseDateLabelEl.textContent = `с ${firstDate.toLocaleDateString('ru-RU')}`;
-                } else if (data.firstUseDate) {
-                    // Если записей нет, но дата первой сигареты сохранена
-                    const firstDate = new Date(data.firstUseDate);
-                    firstUseDateLabelEl.textContent = `с ${firstDate.toLocaleDateString('ru-RU')}`;
-                } else {
-                    // Если ничего нет
-                    firstUseDateLabelEl.textContent = 'данных нет';
-                }
-            }
-        }
-
-        // Отображение медицинского факта по часам
-        function showMedicalFact() {
-            const factContainer = document.getElementById('medical-fact');
-            if (!factContainer) return;
-    
-            if (data.lastCigaretteTime) {
+            // --- НОВАЯ ЛОГИКА АВТОМАТИЧЕСКОГО СБРОСА ---
+            // Функция для получения времени следующего сброса (06:00 завтра)
+            function getNextResetTime() {
                 const now = new Date();
-                const lastTime = new Date(data.lastCigaretteTime);
-                const diffHours = Math.floor((now - lastTime) / (1000 * 60 * 60));
-            
-            if (diffHours >= 1 && diffHours <= 24) {
-                factContainer.textContent = medicalFacts[diffHours - 1];
-                factContainer.style.display = 'block';
-            } else if (diffHours > 24) {
-                factContainer.textContent = "Более 24 часов без сигарет! Организм продолжает восстанавливаться!";
-                factContainer.style.display = 'block';
-            } else {
-                factContainer.style.display = 'none';
-            }
-            } else {
-            factContainer.style.display = 'none';
-            }
-        }
-        
-        // Таймер времени с последней сигареты
-        function startTimer() {
-            setInterval(() => {
-            if (data.lastCigaretteTime) {
-                const now = new Date();
-                const lastTime = new Date(data.lastCigaretteTime);
-                const diff = now - lastTime;
-                
-                const hours = Math.floor(diff / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            
-                timerEl.textContent = 
-                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            } else {
-                timerEl.textContent = '00:00:00';
-            }
-        
-            // Добавляем вызов функции отображения медицинского факта
-            showMedicalFact();
-        }, 1000);
-        }
-        
-        // Увеличение счетчика
-        function incrementCounter() {
-            data.today++;
-            data.week++;
-            data.month++;
-            
-            // Добавляем время сигареты
-            const now = new Date();
-            data.timeStats.push({
-                time: now.toLocaleTimeString('ru-RU'),
-                timestamp: now.getTime(),
-                date: now.toDateString()
-            });
-            
-            // Обновляем время последней сигареты
-            data.lastCigaretteTime = now.getTime();
-            
-            // Обновляем общую стоимость (исправлено)
-            const costPerCigarette = data.packPrice / data.cigarettesPerPack;
-            data.totalCost += costPerCigarette;
-            
-            // Проверка серии дней без курения
-            const today = new Date().toDateString();
-            if (data.lastDate !== today) {
-                data.lastDate = today;
-                data.usageDays++;
-            }
-            
-            saveData();
-            updateUI();
-            checkAchievements();
-            renderAchievements();
-            
-            // Анимация дыма
-            createSmokeAnimation();
-        }
-        
-        // Уменьшение счетчика
-        function decrementCounter() {
-            if (data.today > 0) {
-                data.today--;
-                data.week = Math.max(0, data.week - 1);
-                data.month = Math.max(0, data.month - 1);
-                
-                // Удаляем последнюю сигарету из времени
-                if (data.timeStats.length > 0) {
-                    data.timeStats.pop();
-                    // Обновляем время последней сигареты
-                    if (data.timeStats.length > 0) {
-                        data.lastCigaretteTime = data.timeStats[data.timeStats.length - 1].timestamp;
-                    } else {
-                        data.lastCigaretteTime = null;
-                    }
-                } else {
-                    data.lastCigaretteTime = null;
+                // Создаем дату на 06:00 сегодня
+                const nextReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 6, 0, 0, 0);
+                // Если сейчас уже прошло 06:00 сегодня, то следующий сброс - завтра в 06:00
+                if (now >= nextReset) {
+                    nextReset.setDate(nextReset.getDate() + 1);
                 }
-                
-                // Обновляем общую стоимость (исправлено)
-                const costPerCigarette = data.packPrice / data.cigarettesPerPack;
-                data.totalCost -= costPerCigarette;
-                data.totalCost = Math.max(0, data.totalCost);
-                
-                saveData();
-                updateUI();
-                checkAchievements();
-                renderAchievements();
-                
-                // Анимация дыма
-                createSmokeAnimation();
+                return nextReset;
             }
-        }
         
-        // Создание анимации дыма
-        function createSmokeAnimation() {
-            counterEl.classList.add('pulse');
-            setTimeout(() => {
-                counterEl.classList.remove('pulse');
-            }, 500);
-        }
-        
-        // Сброс всего
-        function resetAll() {
-            const confirmed1 = confirm('Вы уверены, что хотите сбросить ВСЕ данные? Это действие нельзя отменить.');
-            if (confirmed1) {
-                const confirmed2 = confirm('Последнее предупреждение: ВСЕ данные будут удалены. Продолжить?');
-                if (confirmed2) {
-                    // Сброс всех данных
-                    data = {
-                        today: 0,
-                        week: 0,
-                        month: 0,
-                        goal: 20,
-                        packPrice: 250,
-                        cigarettesPerPack: 20,
-                        streak: 0,
-                        lastDate: null,
-                        timeStats: [],
-                        achievements: [
-                            { id: 1, name: "Первый день", description: "Использовать приложение первый день", target: 1, achieved: false, icon: "📅" },
-                            { id: 2, name: "Неделя использования", description: "Использовать приложение неделю", target: 7, achieved: false, icon: "🗓️" },
-                            { id: 3, name: "Месяц использования", description: "Использовать приложение месяц", target: 30, achieved: false, icon: "📆" },
-                            { id: 4, name: "100 сигарет", description: "Выкурить 100 сигарет", target: 100, achieved: false, icon: "🚬" },
-                            { id: 5, name: "Экономия здоровья", description: "Сократить потребление на 50%", target: 50, achieved: false, icon: "💚" }
-                        ],
-                        totalCost: 0,
-                        usageDays: 0,
-                        firstUseDate: new Date().toDateString(),
-                        lastCigaretteTime: null
-                    };
-                    
-                    saveData();
-                    updateUI();
-                    renderAchievements();
-                    
-                    // Анимация сброса
-                    document.body.style.backgroundColor = '#FF5252';
-                    setTimeout(() => {
-                        document.body.style.backgroundColor = '';
-                    }, 500);
-                }
-            }
-        }
-
-        // Ручной сброс счетчика на сегодня
-        function manualResetToday() {
-            const confirmed = confirm('Вы уверены, что хотите сбросить счетчик на сегодня? Все сигареты за сегодня будут удалены.');
-            if (confirmed) {
-                // --- НАЧАЛО НОВОЙ ЛОГИКИ РУЧНОГО СБРОСА ---
-                console.log("Выполняется ручной сброс...");
+            // Функция автоматического сброса (ИСПРАВЛЕНА)
+            function performAutoReset() {
+                console.log("Выполняется автоматический сброс...");
                 data.today = 0;
         
                 // 1. Определяем период "сегодня" (с 06:00 сегодня до 05:59 завтра)
@@ -1653,292 +1030,834 @@
                 // 5. Сохраняем данные и обновляем интерфейс
                 saveData();
                 updateUI();
-                console.log("Ручной сброс завершен.");
-                // --- КОНЕЦ НОВОЙ ЛОГИКИ РУЧНОГО СБРОСА ---
-        
-                // Анимация сброса (опционально)
-                counterEl.style.color = '#FF5252';
-                setTimeout(() => {
-                    counterEl.style.color = '';
-                }, 500);
+                console.log("Автоматический сброс завершен.");
             }
-        }
         
-        // Смена темы
-        function toggleTheme() {
-            const currentTheme = document.body.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            document.body.setAttribute('data-theme', newTheme);
-            
-            // Обновляем иконку
-            themeToggle.textContent = newTheme === 'light' ? '☀️' : '🌙';
-            
-            // Сохраняем выбор темы
-            localStorage.setItem('theme', newTheme);
-        }
-        
-        // Открытие настроек
-        function openSettings() {
-            document.getElementById('goalSetting').value = data.goal;
-            document.getElementById('priceSetting').value = data.packPrice;
-            document.getElementById('countSetting').value = data.cigarettesPerPack;
-            settingsModal.style.display = 'flex';
-        }
-        
-        // Закрытие настроек
-        function closeSettings() {
-            settingsModal.style.display = 'none';
-        }
-        
-        // Сохранение настроек
-        function saveSettings() {
-            data.goal = parseInt(document.getElementById('goalSetting').value) || 20;
-            data.packPrice = parseInt(document.getElementById('priceSetting').value) || 250;
-            data.cigarettesPerPack = parseInt(document.getElementById('countSetting').value) || 20;
-            
-            saveData();
-            updateUI();
-            closeSettings();
-        }
-        
-        // Экспорт данных
-        function exportData() {
-            const dataStr = JSON.stringify(data, null, 2);
-            const dataUri = 'application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = 'smoking-data.json';
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-        }
-        
-        // Обновление приложения
-        function refreshApp() {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                    for(let registration of registrations) {
-                        registration.update();
-                    }
-                });
-            }
-            
-            // Принудительное обновление кэша
-            if (window.caches) {
-                caches.keys().then(function(names) {
-                    for (let name of names) {
-                        caches.delete(name);
-                    }
-                });
-            }
-            
-            // Перезагрузка страницы
-            location.reload(true);
-        }
-        
-        // Показ случайной цитаты
-        function showRandomQuote() {
-            const randomIndex = Math.floor(Math.random() * quotes.length);
-            quoteEl.textContent = `"${quotes[randomIndex]}"`;
-        }
-        
-        // Проверка достижений
-        function checkAchievements() {
-            data.achievements.forEach(achievement => {
-                if (!achievement.achieved) {
-                    let achieved = false;
-                    
-                    switch(achievement.id) {
-                        case 1: // Первый день
-                            achieved = data.usageDays >= achievement.target;
-                            break;
-                        case 2: // Неделя использования
-                            achieved = data.usageDays >= achievement.target;
-                            break;
-                        case 3: // Месяц использования
-                            achieved = data.usageDays >= achievement.target;
-                            break;
-                        case 4: // 100 сигарет
-                            achieved = data.month >= achievement.target;
-                            break;
-                        case 5: // Экономия здоровья (снижение на 50%)
-                            const reduction = ((data.goal - data.today) / data.goal) * 100;
-                            achieved = reduction >= achievement.target;
-                            break;
-                    }
-                    
-                    if (achieved) {
-                        achievement.achieved = true;
-                        showAchievementNotification(achievement);
-                    }
-                }
-            });
-        }
-        
-        // Показ уведомления о достижении
-        function showAchievementNotification(achievement) {
-            alert(`🎉 Поздравляем! Вы получили достижение: ${achievement.name}\n${achievement.description}`);
-        }
-        
-        // Отображение достижений
-        function renderAchievements() {
-            achievementsListEl.innerHTML = '';
-            
-            data.achievements.forEach(achievement => {
-                const achievementEl = document.createElement('div');
-                achievementEl.className = `achievement ${achievement.achieved ? 'achieved' : ''}`;
-                achievementEl.innerHTML = `
-                    <div class="achievement-icon">${achievement.icon}</div>
-                    <div class="achievement-info">
-                        <div class="achievement-name">${achievement.name}</div>
-                        <div class="achievement-desc">${achievement.description}</div>
-                    </div>
-                `;
-                achievementsListEl.appendChild(achievementEl);
-            });
-        }
-        
-        // Переключение деталей времени
-        function toggleTimeDetails(period) {
-            const card = document.getElementById(`${period}Card`);
-            const existingDetails = card.querySelector('.time-details');
-            
-            if (existingDetails) {
-                existingDetails.remove();
-            } else {
-                if (data.timeStats.length > 0) {
-                    const details = document.createElement('div');
-                    details.className = 'time-details';
-                    
-                    // Фильтруем по периоду
-                    let filteredStats = [];
+            // Функция проверки необходимости сброса
+            function checkForAutoReset() {
+                const todayString = new Date().toDateString();
+                // Проверяем, был ли уже сброс сегодня
+                if (data.lastAutoResetDate !== todayString) {
                     const now = new Date();
-                    
-                                        // --- НАЧАЛО ИЗМЕНЕНИЯ ---
-                    if (period === 'today') {
-                        // Определяем начало "нашего дня" (сегодня в 06:00)
-                        const startOfTodayPeriod = new Date(now);
-                        startOfTodayPeriod.setHours(6, 0, 0, 0); // Устанавливаем 06:00:00.000
-    
-                        // Определяем конец "нашего дня" (завтра в 05:59:59.999)
-                        const endOfTodayPeriod = new Date(startOfTodayPeriod);
-                        endOfTodayPeriod.setDate(endOfTodayPeriod.getDate() + 1); // Прибавляем один день
-                        endOfTodayPeriod.setMilliseconds(endOfTodayPeriod.getMilliseconds() - 1); // Вычитаем 1 миллисекунду, чтобы получить 05:59:59.999
-    
-                        filteredStats = data.timeStats.filter(stat => {
-                            const statTimestamp = stat.timestamp; // Предполагается, что это число - миллисекунды
-                            return statTimestamp >= startOfTodayPeriod.getTime() && statTimestamp <= endOfTodayPeriod.getTime();
-                        });
-                    // --- КОНЕЦ ИЗМЕНЕНИЯ ---
-                            
-                    } else if (period === 'week') {
-                        const weekAgo = new Date();
-                        weekAgo.setDate(weekAgo.getDate() - 7);
-                        filteredStats = data.timeStats.filter(record => {
-                            const recordDate = new Date(record.timestamp);
-                            return recordDate >= weekAgo;
-                        });
-                    } else if (period === 'month') {
-                        const monthAgo = new Date();
-                        monthAgo.setMonth(monthAgo.getMonth() - 1);
-                        filteredStats = data.timeStats.filter(record => {
-                            const recordDate = new Date(record.timestamp);
-                            return recordDate >= monthAgo;
-                        });
-                    } else if (period === 'all') {
-                        filteredStats = [...data.timeStats]; 
+                    const nextResetTime = getNextResetTime();
+                    // Проверяем, наступило ли время сброса (06:00)
+                    if (now >= nextResetTime || data.lastAutoResetDate === null) {
+                         performAutoReset();
                     }
-                    
-                    // Сортируем по времени (новые первыми)
-                    const sortedStats = [...filteredStats].sort((a, b) => b.timestamp - a.timestamp);
-                    
-                    if (sortedStats.length > 0) {
-                        sortedStats.forEach(stat => {
-                            const timeItem = document.createElement('div');
-                            timeItem.className = 'time-item';
-                            const recordDate = new Date(stat.timestamp);
-                            timeItem.textContent = `${recordDate.toLocaleTimeString('ru-RU')} - ${recordDate.toLocaleDateString('ru-RU')}`;
-                            details.appendChild(timeItem);
-                        });
-                    } else {
-                        const timeItem = document.createElement('div');
-                            timeItem.className = 'time-item';
-                            timeItem.textContent = 'Нет данных';
-                            details.appendChild(timeItem);
-                    }
-                    
-                    card.appendChild(details);
                 }
             }
-            
-                // --- НОВАЯ ЛОГИКА АВТОМАТИЧЕСКОГО СБРОСА ---
-                // Функция для получения времени следующего сброса (06:00 завтра)
-                function getNextResetTime() {
-                    const now = new Date();
-                    // Создаем дату на 06:00 сегодня
-                    const nextReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 6, 0, 0, 0);
-                    // Если сейчас уже прошло 06:00 сегодня, то следующий сброс - завтра в 06:00
-                    if (now >= nextReset) {
-                        nextReset.setDate(nextReset.getDate() + 1);
-                    }
-                    return nextReset;
-                }
+            // --- КОНЕЦ НОВОЙ ЛОГИКИ ---
         
-                // Функция автоматического сброса
-                function performAutoReset() {
-                    console.log("Выполняется автоматический сброс...");
-                    data.today = 0;
-                    // --- ИСПРАВЛЕНИЕ: Удаляем записи за день последнего сброса ---
-                    // Это предотвращает двойное удаление и проблемы с lastCigaretteTime
-                    const resetDateToClearStr = data.lastAutoResetDate; // Дата, которую нужно очистить
-                    data.timeStats = data.timeStats.filter(record => {
-                        const recordDate = new Date(record.timestamp);
-                        return recordDate.toDateString() !== resetDateToClearStr;
+            // Инициализация приложения
+            function initApp() {
+                loadData();
+                updateUI();
+                showRandomQuote();
+                renderAchievements();
+                checkAchievements();
+                startTimer();
+                // Установка обработчиков событий
+                incrementBtn.addEventListener('click', incrementCounter);
+                decrementBtn.addEventListener('click', decrementCounter);
+                themeToggle.addEventListener('click', toggleTheme);
+                settingsBtn.addEventListener('click', openSettings);
+                saveSettingsBtn.addEventListener('click', saveSettings);
+                exportBtn.addEventListener('click', exportData);
+                resetAllBtn.addEventListener('click', resetAll);
+                refreshBtn.addEventListener('click', refreshApp);
+                logoutFromSettingsBtn.addEventListener('click', logout);
+                refreshAppBtnTop.addEventListener('click', refreshApp);
+                document.querySelector('#settingsModal .close-modal').addEventListener('click', closeSettings);
+                manualResetTodayBtn.addEventListener('click', manualResetToday);
+                // Auth handlers
+                document.getElementById('authSubmit').addEventListener('click', handleAuth);
+                document.getElementById('toggleAuth').addEventListener('click', toggleAuthForm);
+                document.getElementById('forgotPasswordBtn').addEventListener('click', toggleForgotPassword);
+                document.getElementById('resetPasswordBtn').addEventListener('click', resetPassword);
+                document.getElementById('closeAuthModal').addEventListener('click', hideAuthModal);
+                document.getElementById('authModal').addEventListener('click', function(e) {
+                    if (e.target === this) hideAuthModal();
+                });
+                // Обработчики для статистики
+                document.getElementById('weekCard').addEventListener('click', function() {
+                    toggleTimeDetails('week');
+                });
+                document.getElementById('monthCard').addEventListener('click', function() {
+                    toggleTimeDetails('month');
+                });
+                // Добавьте это сразу после monthCard.addEventListener(...)
+                document.getElementById('allTimeCard').addEventListener('click', function() {
+                    toggleTimeDetails('all');
+                });
+                // Проверка сессии
+                checkSession();
+                // Регистрация Service Worker
+                if ('serviceWorker' in navigator) {
+                    window.addEventListener('load', function() {
+                        navigator.serviceWorker.register('sw.js')
+                        .then(function(registration) {
+                            console.log('SW registered: ', registration);
+                        })
+                        .catch(function(registrationError) {
+                            console.log('SW registration failed: ', registrationError);
+                        });
                     });
-                    // --- КОНЕЦ ИСПРАВЛЕНИЯ ---
-                
-                    // --- ИСПРАВЛЕНИЕ: Обновляем время последней сигареты ---
-                    // После очистки timeStats, нужно обновить data.lastCigaretteTime
-                    if (data.timeStats.length > 0) {
-                        // Берем самую последнюю запись из оставшихся
-                        const lastRecord = data.timeStats[data.timeStats.length - 1];
-                        data.lastCigaretteTime = lastRecord.timestamp;
-                    } else {
-                        // Если сигарет больше нет вообще
-                        data.lastCigaretteTime = null;
-                    }
-                    // --- КОНЕЦ ИСПРАВЛЕНИЯ ---
-                
-                    data.lastAutoResetDate = new Date().toDateString(); // Обновляем дату последнего сброса
-                    saveData();
-                    updateUI();
-                    console.log("Счетчик на сегодня сброшен. Следующий сброс запланирован.");
                 }
         
-                // Функция проверки необходимости сброса
-                function checkForAutoReset() {
-                    const todayString = new Date().toDateString();
-                    // Проверяем, был ли уже сброс сегодня
-                    if (data.lastAutoResetDate !== todayString) {
-                        const now = new Date();
-                        const nextResetTime = getNextResetTime();
-                        // Проверяем, наступило ли время сброса (06:00)
-                        if (now >= nextResetTime || data.lastAutoResetDate === null) {
-                             performAutoReset();
+                // Запуск периодической проверки автоматического сброса (например, каждую минуту)
+                setInterval(checkForAutoReset, 60 * 1000); // Проверка каждую минуту
+                // Проверка автоматического сброса при запуске
+                checkForAutoReset();
+            }
+            // Проверка сессии
+            async function checkSession() {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    currentUser = session.user;
+                    showUserPanel();
+                    await loadUserData();
+                } else {
+                    showAuthModal();
+                }
+            }
+            // Показать панель пользователя
+            function showUserPanel() {
+                if (currentUser) {
+                    const email = currentUser.email;
+                    userAvatar.textContent = email.charAt(0).toUpperCase();
+                    userName.textContent = email.split('@')[0];
+                    userEmail.textContent = email;
+                    userPanel.style.display = 'block';
+                }
+            }
+            // Скрыть панель пользователя
+            function hideUserPanel() {
+                userPanel.style.display = 'none';
+            }
+            // Выход
+            async function logout() {
+                const confirmed = confirm('Вы уверены, что хотите выйти?');
+                if (confirmed) {
+                    await supabase.auth.signOut();
+                    currentUser = null;
+                    hideUserPanel();
+                    showAuthModal();
+                    showSyncIndicator('success', 'Вы вышли из аккаунта');
+                }
+            }
+            // Показать модальное окно аутентификации
+            function showAuthModal() {
+                authTitle.textContent = 'Вход';
+                authSubmit.textContent = 'Войти';
+                toggleAuth.textContent = 'Нет аккаунта? Зарегистрироваться';
+                forgotPasswordSection.style.display = 'none';
+                resetPasswordBtn.style.display = 'none';
+                forgotPasswordBtn.style.display = 'block';
+                isRegistration = false;
+                isForgotPassword = false;
+                authModal.style.display = 'flex';
+            }
+            // Скрыть модальное окно аутентификации
+            function hideAuthModal() {
+                authModal.style.display = 'none';
+            }
+            // Переключение формы аутентификации
+            function toggleAuthForm() {
+                isRegistration = !isRegistration;
+                if (isRegistration) {
+                    authTitle.textContent = 'Регистрация';
+                    authSubmit.textContent = 'Зарегистрироваться';
+                    toggleAuth.textContent = 'Уже есть аккаунт? Войти';
+                    forgotPasswordSection.style.display = 'none';
+                    resetPasswordBtn.style.display = 'none';
+                    forgotPasswordBtn.style.display = 'block';
+                } else {
+                    authTitle.textContent = 'Вход';
+                    authSubmit.textContent = 'Войти';
+                    toggleAuth.textContent = 'Нет аккаунта? Зарегистрироваться';
+                    forgotPasswordSection.style.display = 'none';
+                    resetPasswordBtn.style.display = 'none';
+                    forgotPasswordBtn.style.display = 'block';
+                }
+                isForgotPassword = false;
+            }
+            // Переключение формы восстановления пароля
+            function toggleForgotPassword() {
+                isForgotPassword = !isForgotPassword;
+                if (isForgotPassword) {
+                    authTitle.textContent = 'Забыли пароль?';
+                    authSubmit.textContent = 'Отправить ссылку';
+                    forgotPasswordSection.style.display = 'block';
+                    resetPasswordBtn.style.display = 'block';
+                    forgotPasswordBtn.style.display = 'none';
+                    toggleAuth.style.display = 'none';
+                } else {
+                    authTitle.textContent = 'Вход';
+                    authSubmit.textContent = 'Войти';
+                    forgotPasswordSection.style.display = 'none';
+                    resetPasswordBtn.style.display = 'none';
+                    forgotPasswordBtn.style.display = 'block';
+                    toggleAuth.style.display = 'block';
+                }
+            }
+            // Обработка аутентификации
+            async function handleAuth() {
+                const email = authEmail.value.trim();
+                const password = authPassword.value;
+                if (!email || !password) {
+                    showSyncIndicator('error', 'Заполните все поля');
+                    return;
+                }
+                try {
+                    let result;
+                    if (isRegistration) {
+                        // Регистрация
+                        result = await supabase.auth.signUp({
+                            email: email,
+                            password: password
+                        });
+                        if (result.error) throw result.error;
+                        showSyncIndicator('success', 'Регистрация успешна!');
+                        hideAuthModal();
+                        currentUser = result.data.user;
+                        showUserPanel();
+                        await saveUserData();
+                    } else if (isForgotPassword) {
+                        // Восстановление пароля
+                        const { error } = await supabase.auth.resetPasswordForEmail(email);
+                        if (error) throw error;
+                        showSyncIndicator('success', 'Ссылка для восстановления отправлена');
+                    } else {
+                        // Вход
+                        result = await supabase.auth.signInWithPassword({
+                            email: email,
+                            password: password
+                        });
+                        if (result.error) throw result.error;
+                        currentUser = result.data.user;
+                        hideAuthModal();
+                        showUserPanel();
+                        showSyncIndicator('success', 'Вход выполнен!');
+                        await loadUserData();
+                    }
+                } catch (error) {
+                    console.error('Ошибка аутентификации:', error);
+                    showSyncIndicator('error', 'Ошибка: ' + error.message);
+                }
+            }
+            // Сброс пароля
+            async function resetPassword() {
+                const email = authEmail.value.trim();
+                const newPasswordVal = newPassword.value;
+                if (!email || !newPasswordVal) {
+                    showSyncIndicator('error', 'Заполните все поля');
+                    return;
+                }
+                try {
+                    const { error } = await supabase.auth.updateUser({
+                        password: newPasswordVal
+                    });
+                    if (error) throw error;
+                    showSyncIndicator('success', 'Пароль успешно изменен');
+                    toggleForgotPassword();
+                } catch (error) {
+                    showSyncIndicator('error', 'Ошибка: ' + error.message);
+                }
+            }
+            // Загрузка данных пользователя
+            async function loadUserData() {
+                if (!currentUser) return;
+                try {
+                    showSyncIndicator('syncing', 'Обновление ...');
+                    const { data: userData, error } = await supabase
+                        .from('smoking_data')
+                        .select('*')
+                        .eq('user_id', currentUser.id)
+                        .single();
+                    if (error && error.code !== 'PGRST116') {
+                        throw error;
+                    }
+                    if (userData) {
+                        data = { ...data, ...userData.data };
+                        showSyncIndicator('success', 'Обновлено');
+                    } else {
+                        await saveUserData();
+                        showSyncIndicator('success', 'Данные сохранены');
+                    }
+                    updateUI();
+                } catch (error) {
+                    console.error('Ошибка загрузки данных:', error);
+                    showSyncIndicator('error', 'Ошибка загрузки данных');
+                }
+            }
+            // Сохранение данных пользователя
+            async function saveUserData() {
+                if (!currentUser) return;
+                try {
+                    const now = new Date().toISOString();
+                    const { error } = await supabase
+                        .from('smoking_data')
+                        .upsert({
+                            user_id: currentUser.id,
+                             data,
+                            updated_at: now
+                        }, {
+                            onConflict: 'user_id'
+                        });
+                    if (error) throw error;
+                    localStorage.setItem('smokingApp_lastUpdate', now);
+                    return true;
+                } catch (error) {
+                    console.error('Ошибка сохранения данных:', error);
+                    return false;
+                }
+            }
+                // Показать индикатор синхронизации (обновленная версия)
+                function showSyncIndicator(status, message) {
+                    // 1. Управление постоянным индикатором в панели пользователя (эмодзи)
+                    if (syncStatusIndicator) {
+                        // Всегда показываем индикатор при вызове
+                        syncStatusIndicator.style.display = 'block';
+                        switch (status) {
+                            case 'syncing':
+                                syncStatusIndicator.textContent = '🟡'; // Желтый для синхронизации
+                                syncStatusIndicator.style.animation = 'spin 1s linear infinite';
+                                break;
+                            case 'success':
+                                syncStatusIndicator.textContent = '🟢'; // Зеленый для успеха
+                                syncStatusIndicator.style.animation = 'none'; // Останавливаем анимацию
+                                break;
+                            case 'error':
+                                syncStatusIndicator.textContent = '🔴'; // Красный для ошибки
+                                syncStatusIndicator.style.animation = 'none'; // Останавливаем анимацию
+                                break;
+                            default:
+                                syncStatusIndicator.textContent = '⚪'; // Серый по умолчанию
+                                syncStatusIndicator.style.animation = 'none';
+                        }
+                        // 2. Обновляем текстовый элемент рядом с индикатором
+                        // Проверяем, существует ли элемент для текста (syncStatusText)
+                        if (syncStatusText) {
+                            // Устанавливаем текст сообщения
+                            syncStatusText.textContent = message;
+                            // Делаем текст видимым
+                            syncStatusText.style.display = 'block';
+                            // Для статусов success/error скрываем текст через некоторое время
+                            if (status === 'success' || status === 'error') {
+                                // Используем setTimeout, чтобы текст исчез через 3 секунды (3000 миллисекунд)
+                                setTimeout(() => {
+                                    // Проверяем еще раз, что элемент существует, на случай,
+                                    // если страница была закрыта или изменена за эти 3 секунды
+                                    if (syncStatusText) {
+                                        // Скрываем текстовый элемент
+                                        syncStatusText.style.display = 'none';
+                                    }
+                                    // Если вы хотите, чтобы сам индикатор тоже скрывался
+                                    // после успеха/ошибки, раскомментируйте следующие строки:
+                                    // if (syncStatusIndicator) {
+                                    //     syncStatusIndicator.style.display = 'none';
+                                    // }
+                                }, 3000); // Текст будет виден 3 секунды
+                            }
+                            // Для статуса 'syncing' текст остается видимым до тех пор,
+                            // пока не будет вызван showSyncIndicator с другим статусом (например, 'success')
                         }
                     }
                 }
-                
-                // Запуск периодической проверки (например, каждую минуту)
-                setInterval(checkForAutoReset, 60 * 1000); // Проверка каждую минуту
-                // --- КОНЕЦ НОВОЙ ЛОГИКИ ---
-
-                // Проверка автоматического сброса при запуске
-                checkForAutoReset();
-        }
-        // Инициализация приложения при загрузке
-        document.addEventListener('DOMContentLoaded', initApp);
-    </script>
+            // Сохранение данных
+            function saveData() {
+                try {
+                    localStorage.setItem('smokingData', JSON.stringify(data));
+                    // Асинхронно сохраняем в облако
+                    setTimeout(() => {
+                        saveUserData();
+                    }, 100);
+                } catch (e) {
+                    console.log('Не удалось сохранить данные');
+                }
+            }
+            // Загрузка данных
+            function loadData() {
+                try {
+                    const saved = localStorage.getItem('smokingData');
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        data = { ...data, ...parsed };
+                    }
+                } catch (e) {
+                    console.log('Не удалось загрузить данные');
+                }
+            }
+            // Обновление интерфейса
+            function updateUI() {
+                counterEl.textContent = data.today;
+                weekEl.textContent = data.week;
+                monthEl.textContent = data.month;
+                goalEl.textContent = data.goal;
+                // Обновление прогресса
+                const percent = Math.min(100, Math.round((data.today / data.goal) * 100));
+                goalPercentEl.textContent = `${percent}%`;
+                progressFillEl.style.width = `${percent}%`;
+                // Обновление стоимости (исправлено)
+                // Обновление стоимости (ИСПРАВЛЕНО - считаем за всё время)
+                const costPerCigarette = data.packPrice / data.cigarettesPerPack;
+                const totalCost = data.totalCost; // Используем общую стоимость
+                costsEl.textContent = `${Math.round(totalCost)} ₽`;
+                packPriceEl.textContent = data.packPrice;
+                // Добавляем дату начала
+                const startDate = new Date(data.firstUseDate);
+                const startDateStr = startDate.toLocaleDateString('ru-RU');
+                const costsContainer = document.querySelector('.costs-container');
+                let startDateEl = costsContainer.querySelector('.start-date');
+                if (!startDateEl) {
+                    startDateEl = document.createElement('p');
+                    startDateEl.className = 'start-date';
+                    startDateEl.style.fontSize = '0.8rem';
+                    startDateEl.style.opacity = '0.8';
+                    startDateEl.style.marginTop = '5px';
+                    costsContainer.appendChild(startDateEl);
+                }
+                startDateEl.textContent = `С ${startDateStr}`;
+                // Обновление счетчика достижений
+                const achievedCount = data.achievements.filter(a => a.achieved).length;
+                achievementsCountEl.textContent = `${achievedCount}/${data.achievements.length}`;
+                // Обновление времени последней сигареты
+                if (data.lastCigaretteTime) {
+                    const lastTime = new Date(data.lastCigaretteTime);
+                    lastCigaretteTimeEl.textContent = lastTime.toLocaleTimeString('ru-RU');
+                } else {
+                    lastCigaretteTimeEl.textContent = '--:--:--';
+                }
+                // Обновление значения "За всё время"  // <-- НАЧАЛО НОВОГО КОДА
+                const allTimeValueEl = document.getElementById('allTimeValue');
+                const firstUseDateLabelEl = document.getElementById('firstUseDateLabel');
+                if (allTimeValueEl) {
+                    // Подсчитываем общее количество сигарет
+                    const allTimeCount = data.timeStats.length;
+                    allTimeValueEl.textContent = allTimeCount;
+                }
+                if (firstUseDateLabelEl) {
+                    // Отображаем дату первой сигареты
+                    if (data.timeStats.length > 0) {
+                        // Берем самую раннюю запись
+                        const earliestStat = data.timeStats.reduce((earliest, current) =>
+                            (current.timestamp < earliest.timestamp) ? current : earliest
+                        );
+                        const firstDate = new Date(earliestStat.timestamp);
+                        firstUseDateLabelEl.textContent = `с ${firstDate.toLocaleDateString('ru-RU')}`;
+                    } else if (data.firstUseDate) {
+                        // Если записей нет, но дата первой сигареты сохранена
+                        const firstDate = new Date(data.firstUseDate);
+                        firstUseDateLabelEl.textContent = `с ${firstDate.toLocaleDateString('ru-RU')}`;
+                    } else {
+                        // Если ничего нет
+                        firstUseDateLabelEl.textContent = 'данных нет';
+                    }
+                }
+            }
+            // Отображение медицинского факта по часам
+            function showMedicalFact() {
+                const factContainer = document.getElementById('medical-fact');
+                if (!factContainer) return;
+                if (data.lastCigaretteTime) {
+                    const now = new Date();
+                    const lastTime = new Date(data.lastCigaretteTime);
+                    const diffHours = Math.floor((now - lastTime) / (1000 * 60 * 60));
+                if (diffHours >= 1 && diffHours <= 24) {
+                    factContainer.textContent = medicalFacts[diffHours - 1];
+                    factContainer.style.display = 'block';
+                } else if (diffHours > 24) {
+                    factContainer.textContent = "Более 24 часов без сигарет! Организм продолжает восстанавливаться!";
+                    factContainer.style.display = 'block';
+                } else {
+                    factContainer.style.display = 'none';
+                }
+                } else {
+                factContainer.style.display = 'none';
+                }
+            }
+            // Таймер времени с последней сигареты
+            function startTimer() {
+                setInterval(() => {
+                if (data.lastCigaretteTime) {
+                    const now = new Date();
+                    const lastTime = new Date(data.lastCigaretteTime);
+                    const diff = now - lastTime;
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                    timerEl.textContent =
+                        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                } else {
+                    timerEl.textContent = '00:00:00';
+                }
+                // Добавляем вызов функции отображения медицинского факта
+                showMedicalFact();
+            }, 1000);
+            }
+            // Увеличение счетчика
+            function incrementCounter() {
+                data.today++;
+                data.week++;
+                data.month++;
+                // Добавляем время сигареты
+                const now = new Date();
+                data.timeStats.push({
+                    time: now.toLocaleTimeString('ru-RU'),
+                    timestamp: now.getTime(),
+                    date: now.toDateString()
+                });
+                // Обновляем время последней сигареты
+                data.lastCigaretteTime = now.getTime();
+                // Обновляем общую стоимость (исправлено)
+                const costPerCigarette = data.packPrice / data.cigarettesPerPack;
+                data.totalCost += costPerCigarette;
+                // Проверка серии дней без курения
+                const today = new Date().toDateString();
+                if (data.lastDate !== today) {
+                    data.lastDate = today;
+                    data.usageDays++;
+                }
+                saveData();
+                updateUI();
+                checkAchievements();
+                renderAchievements();
+                // Анимация дыма
+                createSmokeAnimation();
+            }
+            // Уменьшение счетчика
+            function decrementCounter() {
+                if (data.today > 0) {
+                    data.today--;
+                    data.week = Math.max(0, data.week - 1);
+                    data.month = Math.max(0, data.month - 1);
+                    // Удаляем последнюю сигарету из времени
+                    if (data.timeStats.length > 0) {
+                        data.timeStats.pop();
+                        // Обновляем время последней сигареты
+                        if (data.timeStats.length > 0) {
+                            data.lastCigaretteTime = data.timeStats[data.timeStats.length - 1].timestamp;
+                        } else {
+                            data.lastCigaretteTime = null;
+                        }
+                    } else {
+                        data.lastCigaretteTime = null;
+                    }
+                    // Обновляем общую стоимость (исправлено)
+                    const costPerCigarette = data.packPrice / data.cigarettesPerPack;
+                    data.totalCost -= costPerCigarette;
+                    data.totalCost = Math.max(0, data.totalCost);
+                    saveData();
+                    updateUI();
+                    checkAchievements();
+                    renderAchievements();
+                    // Анимация дыма
+                    createSmokeAnimation();
+                }
+            }
+            // Создание анимации дыма
+            function createSmokeAnimation() {
+                counterEl.classList.add('pulse');
+                setTimeout(() => {
+                    counterEl.classList.remove('pulse');
+                }, 500);
+            }
+            // Сброс всего
+            function resetAll() {
+                const confirmed1 = confirm('Вы уверены, что хотите сбросить ВСЕ данные? Это действие нельзя отменить.');
+                if (confirmed1) {
+                    const confirmed2 = confirm('Последнее предупреждение: ВСЕ данные будут удалены. Продолжить?');
+                    if (confirmed2) {
+                        // Сброс всех данных
+                        data = {
+                            today: 0,
+                            week: 0,
+                            month: 0,
+                            goal: 20,
+                            packPrice: 250,
+                            cigarettesPerPack: 20,
+                            streak: 0,
+                            lastDate: null,
+                            timeStats: [],
+                            lastAutoResetDate: new Date().toDateString(), // Дата последнего автоматического сброса
+                            achievements: [
+                                { id: 1, name: "Первый день", description: "Использовать приложение первый день", target: 1, achieved: false, icon: "📅" },
+                                { id: 2, name: "Неделя использования", description: "Использовать приложение неделю", target: 7, achieved: false, icon: "🗓️" },
+                                { id: 3, name: "Месяц использования", description: "Использовать приложение месяц", target: 30, achieved: false, icon: "📆" },
+                                { id: 4, name: "100 сигарет", description: "Выкурить 100 сигарет", target: 100, achieved: false, icon: "🚬" },
+                                { id: 5, name: "Экономия здоровья", description: "Сократить потребление на 50%", target: 50, achieved: false, icon: "💚" }
+                            ],
+                            totalCost: 0,
+                            usageDays: 0,
+                            firstUseDate: new Date().toDateString(),
+                            lastCigaretteTime: null
+                        };
+                        saveData();
+                        updateUI();
+                        renderAchievements();
+                        // Анимация сброса
+                        document.body.style.backgroundColor = '#FF5252';
+                        setTimeout(() => {
+                            document.body.style.backgroundColor = '';
+                        }, 500);
+                    }
+                }
+            }
+            // Ручной сброс счетчика на сегодня (ИСПРАВЛЕН)
+            function manualResetToday() {
+                const confirmed = confirm('Вы уверены, что хотите сбросить счетчик на сегодня? Все сигареты за сегодня будут удалены.');
+                if (confirmed) {
+                    // Выполняем тот же сброс, что и в автоматическом режиме
+                    // performAutoReset(); // <-- УДАЛЕНО
+                    // --- НАЧАЛО НОВОЙ ЛОГИКИ РУЧНОГО СБРОСА ---
+                    console.log("Выполняется ручной сброс...");
+                    data.today = 0;
+        
+                    // 1. Определяем период "сегодня" (с 06:00 сегодня до 05:59 завтра)
+                    const now = new Date();
+                    const startOfTodayPeriod = new Date(now);
+                    startOfTodayPeriod.setHours(6, 0, 0, 0); // Начало периода
+                    const endOfTodayPeriod = new Date(startOfTodayPeriod);
+                    endOfTodayPeriod.setDate(endOfTodayPeriod.getDate() + 1); // Конец периода (следующий день)
+                    endOfTodayPeriod.setMilliseconds(endOfTodayPeriod.getMilliseconds() - 1); // Минус 1 миллисекунда
+        
+                    // 2. Удаляем записи из data.timeStats, которые попадают в этот период
+                    const initialStatsCount = data.timeStats.length;
+                    data.timeStats = data.timeStats.filter(stat => {
+                        const statTimestamp = stat.timestamp;
+                        // Оставляем записи, которые НЕ входят в период сегодняшнего дня
+                        return !(statTimestamp >= startOfTodayPeriod.getTime() && statTimestamp <= endOfTodayPeriod.getTime());
+                    });
+                    const removedStatsCount = initialStatsCount - data.timeStats.length;
+                    console.log(`Удалено ${removedStatsCount} записей за сегодня.`);
+        
+                    // 3. Обновляем время последней сигареты (lastCigaretteTime)
+                    // Это важно, чтобы таймер и медицинские факты работали правильно
+                    if (data.timeStats.length > 0) {
+                        // Берем самую последнюю (новую) запись из оставшихся
+                        const lastRecord = data.timeStats[data.timeStats.length - 1];
+                        data.lastCigaretteTime = lastRecord.timestamp;
+                        console.log("Новое время последней сигареты:", new Date(data.lastCigaretteTime).toLocaleString('ru-RU'));
+                    } else {
+                        // Если сигарет больше нет вообще
+                        data.lastCigaretteTime = null;
+                        console.log("Все сигареты удалены, время последней сигареты сброшено.");
+                    }
+        
+                    // 4. Обновляем дату последнего автоматического сброса
+                    // Это нужно, чтобы автоматический сброс не сработал снова в тот же день
+                    data.lastAutoResetDate = new Date().toDateString();
+                    console.log("Дата последнего сброса обновлена на:", data.lastAutoResetDate);
+        
+                    // 5. Сохраняем данные и обновляем интерфейс
+                    saveData();
+                    updateUI();
+                    console.log("Ручной сброс завершен.");
+                    // --- КОНЕЦ НОВОЙ ЛОГИКИ РУЧНОГО СБРОСА ---
+        
+                    // Анимация сброса (опционально)
+                    counterEl.style.color = '#FF5252';
+                    setTimeout(() => {
+                        counterEl.style.color = '';
+                    }, 500);
+                }
+            }
+            // Смена темы
+            function toggleTheme() {
+                const currentTheme = document.body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                document.body.setAttribute('data-theme', newTheme);
+                // Обновляем иконку
+                themeToggle.textContent = newTheme === 'light' ? '☀️' : '🌙';
+                // Сохраняем выбор темы
+                localStorage.setItem('theme', newTheme);
+            }
+            // Открытие настроек
+            function openSettings() {
+                document.getElementById('goalSetting').value = data.goal;
+                document.getElementById('priceSetting').value = data.packPrice;
+                document.getElementById('countSetting').value = data.cigarettesPerPack;
+                settingsModal.style.display = 'flex';
+            }
+            // Закрытие настроек
+            function closeSettings() {
+                settingsModal.style.display = 'none';
+            }
+            // Сохранение настроек
+            function saveSettings() {
+                data.goal = parseInt(document.getElementById('goalSetting').value) || 20;
+                data.packPrice = parseInt(document.getElementById('priceSetting').value) || 250;
+                data.cigarettesPerPack = parseInt(document.getElementById('countSetting').value) || 20;
+                saveData();
+                updateUI();
+                closeSettings();
+            }
+            // Экспорт данных
+            function exportData() {
+                const dataStr = JSON.stringify(data, null, 2);
+                const dataUri = 'application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                const exportFileDefaultName = 'smoking-data.json';
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            }
+            // Обновление приложения
+            function refreshApp() {
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for(let registration of registrations) {
+                            registration.update();
+                        }
+                    });
+                }
+                // Принудительное обновление кэша
+                if (window.caches) {
+                    caches.keys().then(function(names) {
+                        for (let name of names) {
+                            caches.delete(name);
+                        }
+                    });
+                }
+                // Перезагрузка страницы
+                location.reload(true);
+            }
+            // Показ случайной цитаты
+            function showRandomQuote() {
+                const randomIndex = Math.floor(Math.random() * quotes.length);
+                quoteEl.textContent = `"${quotes[randomIndex]}"`;
+            }
+            // Проверка достижений
+            function checkAchievements() {
+                data.achievements.forEach(achievement => {
+                    if (!achievement.achieved) {
+                        let achieved = false;
+                        switch(achievement.id) {
+                            case 1: // Первый день
+                                achieved = data.usageDays >= achievement.target;
+                                break;
+                            case 2: // Неделя использования
+                                achieved = data.usageDays >= achievement.target;
+                                break;
+                            case 3: // Месяц использования
+                                achieved = data.usageDays >= achievement.target;
+                                break;
+                            case 4: // 100 сигарет
+                                achieved = data.month >= achievement.target;
+                                break;
+                            case 5: // Экономия здоровья (снижение на 50%)
+                                const reduction = ((data.goal - data.today) / data.goal) * 100;
+                                achieved = reduction >= achievement.target;
+                                break;
+                        }
+                        if (achieved) {
+                            achievement.achieved = true;
+                            showAchievementNotification(achievement);
+                        }
+                    }
+                });
+            }
+            // Показ уведомления о достижении
+            function showAchievementNotification(achievement) {
+                alert(`🎉 Поздравляем! Вы получили достижение: ${achievement.name}
+        ${achievement.description}`);
+            }
+            // Отображение достижений
+            function renderAchievements() {
+                achievementsListEl.innerHTML = '';
+                data.achievements.forEach(achievement => {
+                    const achievementEl = document.createElement('div');
+                    achievementEl.className = `achievement ${achievement.achieved ? 'achieved' : ''}`;
+                    achievementEl.innerHTML = `
+                        <div class="achievement-icon">${achievement.icon}</div>
+                        <div class="achievement-info">
+                            <div class="achievement-name">${achievement.name}</div>
+                            <div class="achievement-desc">${achievement.description}</div>
+                        </div>
+                    `;
+                    achievementsListEl.appendChild(achievementEl);
+                });
+            }
+            // Переключение деталей времени (ИСПРАВЛЕНА)
+            function toggleTimeDetails(period) {
+                // Исправление: правильный способ получения элемента card
+                let card;
+                if (period === 'all') {
+                    card = document.getElementById('allTimeCard');
+                } else {
+                    card = document.getElementById(`${period}Card`);
+                }
+        
+                // Проверка, существует ли элемент card
+                if (!card) {
+                    console.error(`Card element for period '${period}' not found.`);
+                    return; // Прерываем выполнение функции, если элемент не найден
+                }
+        
+                const existingDetails = card.querySelector('.time-details');
+                if (existingDetails) {
+                    existingDetails.remove();
+                } else {
+                    if (data.timeStats.length > 0) {
+                        const details = document.createElement('div');
+                        details.className = 'time-details';
+                        // Фильтруем по периоду
+                        let filteredStats = [];
+                        const now = new Date();
+                        // --- НАЧАЛО ИЗМЕНЕНИЯ ---
+                        if (period === 'today') {
+                            // Определяем начало "нашего дня" (сегодня в 06:00)
+                            const startOfTodayPeriod = new Date(now);
+                            startOfTodayPeriod.setHours(6, 0, 0, 0); // Устанавливаем 06:00:00.000
+                            // Определяем конец "нашего дня" (завтра в 05:59:59.999)
+                            const endOfTodayPeriod = new Date(startOfTodayPeriod);
+                            endOfTodayPeriod.setDate(endOfTodayPeriod.getDate() + 1); // Прибавляем один день
+                            endOfTodayPeriod.setMilliseconds(endOfTodayPeriod.getMilliseconds() - 1); // Вычитаем 1 миллисекунду, чтобы получить 05:59:59.999
+                            filteredStats = data.timeStats.filter(stat => {
+                                const statTimestamp = stat.timestamp; // Предполагается, что это число - миллисекунды
+                                return statTimestamp >= startOfTodayPeriod.getTime() && statTimestamp <= endOfTodayPeriod.getTime();
+                            });
+                        // --- КОНЕЦ ИЗМЕНЕНИЯ ---
+                        } else if (period === 'week') {
+                            const weekAgo = new Date();
+                            weekAgo.setDate(weekAgo.getDate() - 7);
+                            filteredStats = data.timeStats.filter(record => {
+                                const recordDate = new Date(record.timestamp);
+                                return recordDate >= weekAgo;
+                            });
+                        } else if (period === 'month') {
+                            const monthAgo = new Date();
+                            monthAgo.setMonth(monthAgo.getMonth() - 1);
+                            filteredStats = data.timeStats.filter(record => {
+                                const recordDate = new Date(record.timestamp);
+                                return recordDate >= monthAgo;
+                            });
+                        } else if (period === 'all') {
+                            // Для "всё время" берем все записи
+                            filteredStats = [...data.timeStats];
+                        }
+                        // Сортируем по времени (новые первыми)
+                        const sortedStats = [...filteredStats].sort((a, b) => b.timestamp - a.timestamp);
+                        if (sortedStats.length > 0) {
+                            sortedStats.forEach(stat => {
+                                const timeItem = document.createElement('div');
+                                timeItem.className = 'time-item';
+                                const recordDate = new Date(stat.timestamp);
+                                timeItem.textContent = `${recordDate.toLocaleTimeString('ru-RU')} - ${recordDate.toLocaleDateString('ru-RU')}`;
+                                details.appendChild(timeItem);
+                            });
+                        } else {
+                            const timeItem = document.createElement('div');
+                            timeItem.className = 'time-item';
+                            timeItem.textContent = 'Нет данных';
+                            details.appendChild(timeItem);
+                        }
+                        card.appendChild(details);
+                    }
+                }
+            }
+            // Инициализация приложения при загрузке
+            document.addEventListener('DOMContentLoaded', initApp);
+        </script>
 </body>
 </html>
