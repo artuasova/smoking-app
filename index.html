@@ -1750,63 +1750,52 @@
                 }
             }
         }
-        // Ручной сброс счетчика на сегодня (ИСПРАВЛЕН)
+         // Ручной сброс счетчика на сегодня
         function manualResetToday() {
-            const confirmed = confirm('Вы уверены, что хотите сбросить счетчик на сегодня? Все сигареты за сегодня будут удалены.');
+            const confirmed = confirm('Вы уверены, что хотите сбросить счетчик на сегодня? Счетчик "Сегодня" будет установлен в 0, но данные за сегодня останутся в общей статистике.');
             if (confirmed) {
-                // Выполняем тот же сброс, что и в автоматическом режиме
-                // performAutoReset(); // <-- УДАЛЕНО
-                // --- НАЧАЛО НОВОЙ ЛОГИКИ РУЧНОГО СБРОСА ---
-                console.log("Выполняется ручной сброс...");
+                console.log("Выполняется ручной сброс счетчика 'Сегодня'...");
+                // 1. Просто обнуляем счетчик сегодняшнего дня
                 data.today = 0;
 
-                // 1. Определяем период "сегодня" (с 06:00 сегодня до 05:59 завтра)
+                // 2. Обновляем время последней сигареты
+                // Нам нужно найти последнюю сигарету, которая была ДО начала текущего "рабочего дня".
                 const now = new Date();
                 const startOfTodayPeriod = new Date(now);
-                startOfTodayPeriod.setHours(6, 0, 0, 0); // Начало периода
-                const endOfTodayPeriod = new Date(startOfTodayPeriod);
-                endOfTodayPeriod.setDate(endOfTodayPeriod.getDate() + 1); // Конец периода (следующий день)
-                endOfTodayPeriod.setMilliseconds(endOfTodayPeriod.getMilliseconds() - 1); // Минус 1 миллисекунда
+                startOfTodayPeriod.setHours(6, 0, 0, 0); // Начало текущего "рабочего дня")
 
-                // 2. Удаляем записи из data.timeStats, которые попадают в этот период
-                const initialStatsCount = data.timeStats.length;
-                data.timeStats = data.timeStats.filter(stat => {
+                // Фильтруем timeStats, оставляя только те, что были ДО начала сегодняшего дня
+                const statsBeforeToday = data.timeStats.filter(stat => {
                     const statTimestamp = stat.timestamp;
-                    // Оставляем записи, которые НЕ входят в период сегодняшнего дня
-                    return !(statTimestamp >= startOfTodayPeriod.getTime() && statTimestamp <= endOfTodayPeriod.getTime());
+                    return statTimestamp < startOfTodayPeriod.getTime();
                 });
-                const removedStatsCount = initialStatsCount - data.timeStats.length;
-                console.log(`Удалено ${removedStatsCount} записей за сегодня.`);
 
-                // 3. Обновляем время последней сигареты (lastCigaretteTime)
-                // Это важно, чтобы таймер и медицинские факты работали правильно
-                if (data.timeStats.length > 0) {
-                    // Берем самую последнюю (новую) запись из оставшихся
-                    const lastRecord = data.timeStats[data.timeStats.length - 1];
+                if (statsBeforeToday.length > 0) {
+                    // Берем самую последнюю из оставшихся записей
+                    const lastRecord = statsBeforeToday[statsBeforeToday.length - 1];
                     data.lastCigaretteTime = lastRecord.timestamp;
-                    console.log("Новое время последней сигареты:", new Date(data.lastCigaretteTime).toLocaleString('ru-RU'));
+                    console.log("Новое время последней сигареты (до сегодня):", new Date(data.lastCigaretteTime).toLocaleString('ru-RU'));
                 } else {
-                    // Если сигарет больше нет вообще
+                    // Если сигарет до сегодняшнего дня не было
                     data.lastCigaretteTime = null;
-                    console.log("Все сигареты удалены, время последней сигареты сброшено.");
+                    console.log("Сигарет до сегодняшнего дня не было, время последней сигареты сброшено.");
                 }
 
-                // 4. Обновляем дату последнего автоматического сброса
+                // 3. Обновляем дату последнего ручного сброса/автосброса
                 // Это нужно, чтобы автоматический сброс не сработал снова в тот же день
                 data.lastAutoResetDate = new Date().toDateString();
                 console.log("Дата последнего сброса обновлена на:", data.lastAutoResetDate);
 
-                // 5. Сохраняем данные и обновляем интерфейс
+                // 4. Сохраняем данные и обновляем интерфейс
                 saveData();
-                updateUI();
-                console.log("Ручной сброс завершен.");
-                // --- КОНЕЦ НОВОЙ ЛОГИКИ РУЧНОГО СБРОСА ---
+                updateUI(); // updateUI вызовет calculateLastXPeriod, обновив week и month
+                console.log("Ручной сброс счетчика 'Сегодня' завершен.");
 
                 // Анимация сброса (опционально)
                 counterEl.style.color = '#FF5252';
                 setTimeout(() => {
                     counterEl.style.color = '';
-                }, 400); // Уменьшено
+                }, 500);
             }
         }
         // Смена темы
