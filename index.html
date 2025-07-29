@@ -1759,26 +1759,16 @@
                 data.today = 0;
 
                 // 2. Обновляем время последней сигареты
-                // Нам нужно найти последнюю сигарету, которая была ДО начала текущего "рабочего дня".
-                const now = new Date();
-                const startOfTodayPeriod = new Date(now);
-                startOfTodayPeriod.setHours(6, 0, 0, 0); // Начало текущего "рабочего дня")
-
-                // Фильтруем timeStats, оставляя только те, что были ДО начала сегодняшего дня
-                const statsBeforeToday = data.timeStats.filter(stat => {
-                    const statTimestamp = stat.timestamp;
-                    return statTimestamp < startOfTodayPeriod.getTime();
-                });
-
-                if (statsBeforeToday.length > 0) {
-                    // Берем самую последнюю из оставшихся записей
-                    const lastRecord = statsBeforeToday[statsBeforeToday.length - 1];
+                // Устанавливаем lastCigaretteTime на время самой последней сигареты из всех записей.
+                if (data.timeStats.length > 0) {
+                    // Берем самую последнюю запись из всего списка
+                    const lastRecord = data.timeStats[data.timeStats.length - 1];
                     data.lastCigaretteTime = lastRecord.timestamp;
-                    console.log("Новое время последней сигареты (до сегодня):", new Date(data.lastCigaretteTime).toLocaleString('ru-RU'));
+                    console.log("Новое время последней сигареты (самая последняя):", new Date(data.lastCigaretteTime).toLocaleString('ru-RU'));
                 } else {
-                    // Если сигарет до сегодняшнего дня не было
+                    // Если сигарет вообще не было
                     data.lastCigaretteTime = null;
-                    console.log("Сигарет до сегодняшнего дня не было, время последней сигареты сброшено.");
+                    console.log("Сигарет не было, время последней сигареты сброшено.");
                 }
 
                 // 3. Обновляем дату последнего ручного сброса/автосброса
