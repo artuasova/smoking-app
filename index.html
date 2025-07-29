@@ -1082,7 +1082,7 @@
         
         // Проверка сессии
         async function checkSession() {
-            const {  { session } } = await supabase.auth.getSession();
+            const session = (await supabase.auth.getSession()).data.session;
             if (session) {
                 currentUser = session.user;
                 showUserPanel();
