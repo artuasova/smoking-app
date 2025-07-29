@@ -56,13 +56,12 @@
             color: var(--text-color);
             min-height: 100vh;
             min-height: -webkit-fill-available;
-            padding: 15px;
+            padding: 10px; /* Уменьшено для экономии места */
             display: flex;
             flex-direction: column;
             align-items: center;
             touch-action: manipulation;
             margin: 0;
-            padding: 0;
             height: 100vh;
             height: -webkit-fill-available;
             overflow-x: hidden;
@@ -77,11 +76,14 @@
             width: 100%;
             margin: 0 auto;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         header {
             text-align: center;
-            padding: 15px 0;
-            margin-bottom: 20px;
+            padding: 10px 0; /* Уменьшено */
+            margin-bottom: 15px; /* Уменьшено */
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -90,59 +92,59 @@
             flex: 1;
         }
         h1 {
-            font-size: 2rem;
-            margin-bottom: 8px;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            font-size: 1.8rem; /* Уменьшено */
+            margin-bottom: 5px; /* Уменьшено */
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
         .subtitle {
-            font-size: 1rem;
+            font-size: 0.9rem; /* Уменьшено */
             opacity: 0.9;
         }
         .theme-toggle, .settings-btn {
             background: var(--card-bg);
             border: none;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 36px; /* Уменьшено */
+            height: 36px; /* Уменьшено */
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--text-color);
-            font-size: 1.2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            font-size: 1.1rem; /* Уменьшено */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Уменьшено */
         }
         .counter-card {
             background: var(--card-bg);
-            border-radius: 20px;
-            padding: 25px;
+            border-radius: 18px; /* Уменьшено */
+            padding: 20px; /* Уменьшено */
             text-align: center;
             box-shadow: var(--shadow);
-            margin-bottom: 25px;
+            margin-bottom: 15px; /* Уменьшено */
             border: 1px solid var(--border-color);
         }
         .counter-value {
-            font-size: 5rem;
+            font-size: 4.5rem; /* Уменьшено с 5rem */
             font-weight: bold;
-            margin: 15px 0;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            margin: 10px 0; /* Уменьшено */
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
         }
         .counter-buttons {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
+            gap: 12px; /* Уменьшено */
+            margin-top: 12px; /* Уменьшено */
         }
         .btn {
-            padding: 15px 25px;
-            font-size: 1.1rem;
+            padding: 12px 20px; /* Уменьшено */
+            font-size: 1rem; /* Уменьшено */
             border: none;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.2s ease;
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            min-width: 140px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Уменьшено */
+            min-width: 120px; /* Уменьшено */
             touch-action: manipulation;
         }
         .btn-primary {
@@ -161,81 +163,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px; /* Уменьшено */
         }
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transform: translateY(-1px); /* Уменьшено */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25); /* Уменьшено */
         }
         .btn:active {
-            transform: translateY(1px);
+            transform: translateY(0.5px); /* Уменьшено */
         }
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        .stat-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-        .stat-card:hover {
-            transform: translateY(-2px);
-        }
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            margin: 8px 0;
-        }
-        .stat-label {
-            font-size: 1rem;
-            opacity: 0.8;
-        }
-        .time-details {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            padding: 10px;
-            margin-top: 10px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        .time-item {
-            padding: 5px 0;
-            font-size: 0.9rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .time-item:last-child {
-            border-bottom: none;
-        }
-        .timer-container {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-            margin-bottom: 25px;
-        }
-        .timer-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin: 10px 0;
-            color: #4CAF50;
-            text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-        }
+        /* --- ПРОГРЕСС-БАР ПЕРЕМЕЩЕН ВЫШЕ --- */
         .progress-container {
             background: var(--progress-container-bg-start); /* Используем CSS-переменную */
             border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 25px;
+            padding: 15px; /* Уменьшено с 20px */
+            margin-bottom: 15px; /* Уменьшено с 25px */
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
             /* Переход для плавного изменения фона */
@@ -245,71 +187,135 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-            font-size: 1.1rem;
+            margin-bottom: 8px; /* Уменьшено с 12px */
+            font-size: 1rem; /* Уменьшено с 1.1rem */
         }
         .progress-bar {
-            height: 20px;
+            height: 15px; /* Уменьшено с 20px */
             background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
+            border-radius: 8px; /* Уменьшено с 10px */
             overflow: hidden;
         }
         .progress-fill {
             height: 100%;
             /* background: var(--primary-btn); Убираем фиксированный градиент */
-            border-radius: 10px;
+            border-radius: 8px; /* Уменьшено */
             width: 0%;
             transition: width 0.5s ease, background-color 0.5s ease; /* Добавляем переход для background-color */
+        }
+        /* --- КОНЕЦ ПРОГРЕСС-БАРА --- */
+        .timer-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 18px; /* Уменьшено */
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px; /* Уменьшено */
+        }
+        .timer-value {
+            font-size: 2.2rem; /* Уменьшено с 2.5rem */
+            font-weight: bold;
+            margin: 8px 0; /* Уменьшено */
+            color: #4CAF50;
+            text-shadow: 0 0 8px rgba(76, 175, 80, 0.5); /* Уменьшено */
+        }
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Уменьшено minmax */
+            gap: 12px; /* Уменьшено */
+            margin-bottom: 15px; /* Уменьшено */
+        }
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 13px; /* Уменьшено */
+            padding: 13px; /* Уменьшено */
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card:hover {
+            transform: translateY(-1px); /* Уменьшено */
+        }
+        .stat-value {
+            font-size: 1.8rem; /* Уменьшено с 2rem */
+            font-weight: bold;
+            margin: 6px 0; /* Уменьшено */
+        }
+        .stat-label {
+            font-size: 0.95rem; /* Уменьшено с 1rem */
+            opacity: 0.8;
+        }
+        .time-details {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px; /* Уменьшено */
+            padding: 8px; /* Уменьшено */
+            margin-top: 8px; /* Уменьшено */
+            max-height: 180px; /* Уменьшено */
+            overflow-y: auto;
+        }
+        .time-item {
+            padding: 4px 0; /* Уменьшено */
+            font-size: 0.85rem; /* Уменьшено */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .time-item:last-child {
+            border-bottom: none;
         }
         .costs-container {
             background: var(--card-bg);
             border-radius: 15px;
-            padding: 20px;
+            padding: 18px; /* Уменьшено */
             text-align: center;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            margin-bottom: 25px;
+            margin-bottom: 15px; /* Уменьшено */
         }
         .costs-amount {
-            font-size: 2.5rem;
+            font-size: 2.2rem; /* Уменьшено с 2.5rem */
             font-weight: bold;
-            margin: 12px 0;
+            margin: 10px 0; /* Уменьшено */
             color: #FF6B6B;
-            text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+            text-shadow: 0 0 8px rgba(255, 107, 107, 0.5); /* Уменьшено */
         }
         .quote-container {
             background: var(--card-bg);
             border-radius: 15px;
-            padding: 20px;
+            padding: 18px; /* Уменьшено */
             text-align: center;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            margin-bottom: 25px;
+            margin-bottom: 15px; /* Уменьшено */
             font-style: italic;
-            min-height: 80px;
+            min-height: 70px; /* Уменьшено */
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 0.95rem; /* Уменьшено */
         }
         .achievements-container {
             background: var(--card-bg);
             border-radius: 15px;
-            padding: 20px;
+            padding: 18px; /* Уменьшено */
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            margin-bottom: 25px;
+            margin-bottom: 15px; /* Уменьшено */
         }
         .achievements-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px; /* Уменьшено */
+            font-size: 1.2rem; /* Уменьшено */
         }
         .achievement {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
+            padding: 12px; /* Уменьшено */
+            margin-bottom: 8px; /* Уменьшено */
             display: flex;
             align-items: center;
         }
@@ -317,18 +323,19 @@
             background: rgba(76, 175, 80, 0.2);
         }
         .achievement-icon {
-            font-size: 1.5rem;
-            margin-right: 15px;
+            font-size: 1.3rem; /* Уменьшено */
+            margin-right: 12px; /* Уменьшено */
         }
         .achievement-info {
             flex: 1;
         }
         .achievement-name {
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 4px; /* Уменьшено */
+            font-size: 1rem; /* Уменьшено */
         }
         .achievement-desc {
-            font-size: 0.9rem;
+            font-size: 0.85rem; /* Уменьшено */
             opacity: 0.8;
         }
         .modal {
@@ -345,8 +352,8 @@
         }
         .modal-content {
             background: var(--card-bg);
-            border-radius: 20px;
-            padding: 30px;
+            border-radius: 18px; /* Уменьшено */
+            padding: 25px; /* Уменьшено */
             width: 90%;
             max-width: 500px;
             box-shadow: var(--shadow);
@@ -359,31 +366,32 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 18px; /* Уменьшено */
         }
         .close-modal {
             background: none;
             border: none;
             color: var(--text-color);
-            font-size: 1.5rem;
+            font-size: 1.4rem; /* Уменьшено */
             cursor: pointer;
         }
         .setting {
-            margin-bottom: 20px;
+            margin-bottom: 18px; /* Уменьшено */
         }
         .setting label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px; /* Уменьшено */
             font-weight: bold;
+            font-size: 1rem; /* Уменьшено */
         }
         .setting input, .setting select {
             width: 100%;
-            padding: 12px;
-            border-radius: 10px;
+            padding: 10px; /* Уменьшено */
+            border-radius: 8px; /* Уменьшено */
             border: 1px solid var(--border-color);
             background: rgba(255, 255, 255, 0.1);
             color: var(--text-color);
-            font-size: 1rem;
+            font-size: 0.95rem; /* Уменьшено */
         }
         .setting input:focus {
             outline: none;
@@ -392,8 +400,8 @@
         .modal-actions {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 12px; /* Уменьшено */
+            margin-top: 18px; /* Уменьшено */
         }
         .btn-full {
             flex: 1;
@@ -404,9 +412,9 @@
         }
         .user-panel {
             background: var(--card-bg);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
+            border-radius: 13px; /* Уменьшено */
+            padding: 12px; /* Уменьшено */
+            margin-bottom: 15px; /* Уменьшено */
             display: none;
         }
         .user-info {
@@ -415,8 +423,8 @@
             align-items: center;
         }
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 36px; /* Уменьшено */
+            height: 36px; /* Уменьшено */
             border-radius: 50%;
             background: linear-gradient(135deg, #4CAF50, #8BC34A);
             display: flex;
@@ -424,14 +432,15 @@
             justify-content: center;
             font-weight: bold;
             color: white;
+            font-size: 0.9rem; /* Уменьшено */
         }
         .sync-indicator {
             position: fixed;
-            top: 10px;
-            right: 10px;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            top: 8px; /* Уменьшено */
+            right: 8px; /* Уменьшено */
+            padding: 6px 10px; /* Уменьшено */
+            border-radius: 18px; /* Уменьшено */
+            font-size: 0.75rem; /* Уменьшено */
             z-index: 1000;
             display: none;
         }
@@ -440,7 +449,7 @@
             color: white;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px; /* Уменьшено */
         }
         .sync-success {
             background: #4CAF50;
@@ -452,66 +461,66 @@
         }
         footer {
             text-align: center;
-            padding: 15px;
+            padding: 12px; /* Уменьшено */
             margin-top: auto;
             opacity: 0.7;
-            font-size: 0.8rem;
+            font-size: 0.75rem; /* Уменьшено */
         }
         @keyframes pulse {
             0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 0.8; } /* Уменьшено */
             100% { transform: scale(1); opacity: 1; }
         }
         .pulse {
-            animation: pulse 0.5s;
+            animation: pulse 0.4s; /* Уменьшено */
         }
         @media (max-width: 600px) {
             body {
-                padding: 10px;
+                padding: 8px; /* Уменьшено */
             }
             .counter-value {
-                font-size: 4rem;
+                font-size: 3.8rem; /* Уменьшено */
             }
             .counter-buttons {
                 flex-direction: column;
                 align-items: center;
-                gap: 10px;
+                gap: 8px; /* Уменьшено */
             }
             .btn {
                 width: 100%;
-                max-width: 300px;
-                padding: 18px;
-                font-size: 1.2rem;
+                max-width: 280px; /* Уменьшено */
+                padding: 15px; /* Уменьшено */
+                font-size: 1.1rem; /* Уменьшено */
             }
             .stats-container {
                 grid-template-columns: 1fr;
             }
             .stat-card {
-                padding: 15px;
+                padding: 12px; /* Уменьшено */
             }
             .stat-value {
-                font-size: 2.2rem;
+                font-size: 2rem; /* Уменьшено */
             }
             h1 {
-                font-size: 1.8rem;
+                font-size: 1.6rem; /* Уменьшено */
             }
             .subtitle {
-                font-size: 0.9rem;
+                font-size: 0.85rem; /* Уменьшено */
             }
             .header-content {
                 text-align: center;
             }
             .theme-toggle, .settings-btn {
                 position: static;
-                margin: 5px;
+                margin: 4px; /* Уменьшено */
             }
         }
         @media (max-width: 400px) {
             .counter-value {
-                font-size: 3.5rem;
+                font-size: 3.2rem; /* Уменьшено */
             }
             .costs-amount {
-                font-size: 2rem;
+                font-size: 1.8rem; /* Уменьшено */
             }
             /* Глобальные стили для фона */
             html, body {
@@ -540,8 +549,7 @@
                 width: 100%;
                 margin: 0 auto;
                 position: relative;
-                min-height: 100vh;
-                padding: 15px;
+                padding: 10px; /* Уменьшено */
                 display: flex;
                 flex-direction: column;
             }
@@ -609,7 +617,7 @@
         /* Анимации для прелоадера */
         @keyframes appLogoPulse {
             0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
+            50% { transform: scale(1.03); opacity: 0.85; } /* Уменьшено */
             100% { transform: scale(1); opacity: 1; }
         }
         @keyframes appSpin {
@@ -619,22 +627,22 @@
         /* Анимации для прогресс-бара */
         @keyframes pulseDanger {
             0% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0.7; transform: scale(1.02); }
+            100% { opacity: 0.7; transform: scale(1.01); } /* Уменьшено */
         }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+            25% { transform: translateX(-3px); } /* Уменьшено */
+            75% { transform: translateX(3px); } /* Уменьшено */
         }
     </style>
 </head>
 <body>
     <!-- Кастомный экран загрузки (Preloader) -->
-    <div id="app-preloader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease-out;">
-        <img src="icon-192x192.png" alt="SmokeLess Logo" style="width: 100px; height: 100px; margin-bottom: 20px; animation: appLogoPulse 2s infinite;">
-        <div style="color: white; font-size: 1.5rem; font-weight: bold; text-align: center; padding: 0 20px;">SmokeLess загружается...</div>
+    <div id="app-preloader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.4s ease-out;">
+        <img src="icon-192x192.png" alt="SmokeLess Logo" style="width: 90px; height: 90px; margin-bottom: 18px; animation: appLogoPulse 1.8s infinite;">
+        <div style="color: white; font-size: 1.3rem; font-weight: bold; text-align: center; padding: 0 15px;">SmokeLess загружается...</div>
         <!-- Простая анимация спиннера -->
-        <div style="margin-top: 30px; width: 50px; height: 50px; border: 5px solid rgba(255, 255, 255, 0.3); border-top: 5px solid white; border-radius: 50%; animation: appSpin 1s linear infinite;"></div>
+        <div style="margin-top: 25px; width: 40px; height: 40px; border: 4px solid rgba(255, 255, 255, 0.3); border-top: 4px solid white; border-radius: 50%; animation: appSpin 0.9s linear infinite;"></div>
     </div>
     <div class="container">
         <div class="sync-indicator" id="syncIndicator">
@@ -643,21 +651,21 @@
         <div class="user-panel" id="userPanel">
         <div class="user-info" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
             <!-- Левая часть: Аватар и информация -->
-            <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
                 <div class="user-avatar" id="userAvatar">U</div>
                 <div>
                     <div id="userName">Пользователь</div>
-                    <div style="font-size: 0.8rem; opacity: 0.8;" id="userEmail">email@example.com</div>
+                    <div style="font-size: 0.75rem; opacity: 0.8;" id="userEmail">email@example.com</div>
                 </div>
             </div>
             <!-- Правая часть: Кнопки управления -->
-            <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
                 <!-- Индикатор синхронизации -->
-                <div id="syncStatusIndicator" style="font-size: 1.2rem; display: none;">⚪</div>
+                <div id="syncStatusIndicator" style="font-size: 1.1rem; display: none;">⚪</div>
                 <!-- Контейнер для текста статуса -->
-                <div id="syncStatusText" style="font-size: 0.9rem; display: none;"></div>
+                <div id="syncStatusText" style="font-size: 0.8rem; display: none;"></div>
                 <!-- Кнопка обновления -->
-                <button id="refreshAppBtnTop" title="Обновить данные" style="background: none; border: none; cursor: pointer; font-size: 1.2rem;">🔄</button>
+                <button id="refreshAppBtnTop" title="Обновить данные" style="background: none; border: none; cursor: pointer; font-size: 1.1rem;">🔄</button>
             </div>
         </div>
         <header>
@@ -676,14 +684,28 @@
                 <div class="counter-buttons">
                     <button class="btn btn-primary" id="increment">Добавить</button>
                     <button class="btn btn-secondary" id="decrement">Удалить</button>
-                    <button id="manualResetToday" style="background: none; border: none; color: #ff4081; cursor: pointer; font-size: 0.9rem; margin-top: 15px; text-align: center; width: 100%;">Нажмите здесь, чтобы завершить день</button>
                 </div>
+                 <button id="manualResetToday" style="background: none; border: none; color: #ff4081; cursor: pointer; font-size: 0.85rem; margin-top: 12px; text-align: center; width: 100%;">Нажмите здесь, чтобы завершить день</button>
             </div>
+            
+            <!-- ПРОГРЕСС-БАР ПЕРЕМЕЩЕН СЮДА -->
+            <div class="progress-container">
+                <div class="progress-header">
+                    <h3>Прогресс отказа от курения 😊</h3> <!-- Начальный эмодзи -->
+                    <span id="goal-percent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <p style="margin-top: 10px; font-size: 0.9rem;">Цель: <span id="goal">20</span> сигарет в день</p>
+            </div>
+            <!-- КОНЕЦ ПРОГРЕСС-БАРА -->
+            
             <div class="timer-container">
                 <h3>Время с последней сигареты</h3>
                 <div class="timer-value" id="timer">00:00:00</div>
-                <p>Последняя сигарета: <span id="last-cigarette-time">--:--:--</span></p>
-                <div class="medical-fact-container" style="margin-top: 15px; padding: 15px; background: rgba(0, 0, 0, 0.2); border-radius: 10px; display: none;" id="medical-fact">
+                <p style="font-size: 0.9rem;">Последняя сигарета: <span id="last-cigarette-time">--:--:--</span></p>
+                <div class="medical-fact-container" style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.2); border-radius: 8px; display: none; font-size: 0.85rem;" id="medical-fact">
                     <!-- Медицинский факт будет добавлен сюда -->
                 </div>
             </div>
@@ -699,23 +721,14 @@
                 <div class="stat-card" id="allTimeCard" style="cursor: pointer; text-align: center;">
                     <div class="stat-value" id="allTimeValue">0</div>
                     <div class="stat-label">За всё время</div>
-                    <div class="stat-sublabel" id="firstUseDateLabel" style="font-size: 0.7rem; opacity: 0.7; margin-top: 5px;">--.--.----</div>
+                    <div class="stat-sublabel" id="firstUseDateLabel" style="font-size: 0.65rem; opacity: 0.7; margin-top: 4px;">--.--.----</div>
                 </div>
             </div>
-            <div class="progress-container">
-                <div class="progress-header">
-                    <h3>Прогресс отказа от курения 😊</h3> <!-- Начальный эмодзи -->
-                    <span id="goal-percent">0%</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill"></div>
-                </div>
-                <p style="margin-top: 12px;">Цель: <span id="goal">20</span> сигарет в день</p>
-            </div>
+            
             <div class="costs-container">
                 <h3>Потрачено на сигареты</h3>
                 <div class="costs-amount" id="costs">0 ₽</div>
-                <p>При цене пачки <span id="pack-price">250</span> ₽</p>
+                <p style="font-size: 0.9rem;">При цене пачки <span id="pack-price">250</span> ₽</p>
             </div>
             <div class="quote-container">
                 <p id="quote">"Каждая не выкуренная сигарета - шаг к здоровью!"</p>
@@ -786,7 +799,7 @@
                 <button class="btn danger-btn btn-full" id="resetAllBtn">Сбросить всё</button>
                 <button class="btn btn-warning btn-full" id="refreshBtn">Обновить приложение</button>
                 <button class="btn btn-primary btn-full" id="saveSettings">Сохранить</button>
-                <button id="logoutFromSettings" style="background: none; border: none; color: #ff4081; cursor: pointer; font-size: 0.9rem; margin-top: 15px; text-align: center; width: 100%;">Выйти из аккаунта</button>
+                <button id="logoutFromSettings" style="background: none; border: none; color: #ff4081; cursor: pointer; font-size: 0.85rem; margin-top: 12px; text-align: center; width: 100%;">Выйти из аккаунта</button>
             </div>
         </div>
     </div>
@@ -817,10 +830,7 @@
             totalCost: 0,
             usageDays: 0,
             firstUseDate: new Date().toDateString(),
-            lastCigaretteTime: null,
-            // Новые поля для достижения "Экономия здоровья"
-            averageCigarettesPerDay: null, // Среднее за последнюю неделю
-            lastWeekStats: [] // Статистика за последние 7 дней
+            lastCigaretteTime: null
         };
         // Мотивационные цитаты
         const quotes = [
@@ -914,7 +924,7 @@
         let isRegistration = false;
         let isForgotPassword = false;
         let currentUser = null;
-    
+
         // --- НОВАЯ ЛОГИКА АВТОМАТИЧЕСКОГО СБРОСА ---
         // Функция для получения времени следующего сброса (06:00 завтра)
         function getNextResetTime() {
@@ -927,12 +937,12 @@
             }
             return nextReset;
         }
-    
+
         // Функция автоматического сброса (ИСПРАВЛЕНА)
         function performAutoReset() {
             console.log("Выполняется автоматический сброс...");
             data.today = 0;
-    
+
             // 1. Определяем период "сегодня" (с 06:00 сегодня до 05:59 завтра)
             const now = new Date();
             const startOfTodayPeriod = new Date(now);
@@ -940,7 +950,7 @@
             const endOfTodayPeriod = new Date(startOfTodayPeriod);
             endOfTodayPeriod.setDate(endOfTodayPeriod.getDate() + 1); // Конец периода (следующий день)
             endOfTodayPeriod.setMilliseconds(endOfTodayPeriod.getMilliseconds() - 1); // Минус 1 миллисекунда
-    
+
             // 2. Удаляем записи из data.timeStats, которые попадают в этот период
             const initialStatsCount = data.timeStats.length;
             data.timeStats = data.timeStats.filter(stat => {
@@ -950,7 +960,7 @@
             });
             const removedStatsCount = initialStatsCount - data.timeStats.length;
             console.log(`Удалено ${removedStatsCount} записей за сегодня.`);
-    
+
             // 3. Обновляем время последней сигареты (lastCigaretteTime)
             // Это важно, чтобы таймер и медицинские факты работали правильно
             if (data.timeStats.length > 0) {
@@ -963,18 +973,18 @@
                 data.lastCigaretteTime = null;
                 console.log("Все сигареты удалены, время последней сигареты сброшено.");
             }
-    
+
             // 4. Обновляем дату последнего автоматического сброса
             // Это нужно, чтобы автоматический сброс не сработал снова в тот же день
             data.lastAutoResetDate = new Date().toDateString();
             console.log("Дата последнего сброса обновлена на:", data.lastAutoResetDate);
-    
+
             // 5. Сохраняем данные и обновляем интерфейс
             saveData();
             updateUI();
             console.log("Автоматический сброс завершен.");
         }
-    
+
         // Функция проверки необходимости сброса
         function checkForAutoReset() {
             const todayString = new Date().toDateString();
@@ -989,7 +999,7 @@
             }
         }
         // --- КОНЕЦ НОВОЙ ЛОГИКИ ---
-    
+
         // Инициализация приложения
         function initApp() {
             loadData();
@@ -1045,7 +1055,7 @@
                     });
                 });
             }
-    
+
             // Запуск периодической проверки автоматического сброса (например, каждую минуту)
             setInterval(checkForAutoReset, 60 * 1000); // Проверка каждую минуту
             // Проверка автоматического сброса при запуске
@@ -1066,13 +1076,13 @@
                     if (preloader.parentNode) {
                         preloader.parentNode.removeChild(preloader);
                     }
-                }, 500); // Должно совпадать с длительностью transition в CSS (0.5s)
+                }, 400); // Должно совпадать с длительностью transition в CSS (0.4s)
             }
         }
         
         // Проверка сессии
         async function checkSession() {
-            const { data: { session } } = await supabase.auth.getSession();
+            const {  { session } } = await supabase.auth.getSession();
             if (session) {
                 currentUser = session.user;
                 showUserPanel();
@@ -1230,7 +1240,7 @@
             if (!currentUser) return;
             try {
                 showSyncIndicator('syncing', 'Обновление ...');
-                const { data: userData, error } = await supabase
+                const {  userData, error } = await supabase
                     .from('smoking_data')
                     .select('*')
                     .eq('user_id', currentUser.id)
@@ -1366,25 +1376,25 @@
             if (data.timeStats.length === 0) {
                 return 0;
             }
-    
+
             const now = new Date();
             // Создаем дату, которая была X дней назад от текущего момента
             const xDaysAgo = new Date(now);
             xDaysAgo.setDate(xDaysAgo.getDate() - days);
             // Устанавливаем время на начало дня для точного сравнения
             xDaysAgo.setHours(0, 0, 0, 0);
-    
+
             // Фильтруем записи, оставляя только те, что позже xDaysAgo
             const filteredStats = data.timeStats.filter(stat => {
                 const statDate = new Date(stat.timestamp);
                 // Сравниваем даты (statDate >= xDaysAgo)
                 return statDate >= xDaysAgo;
             });
-    
+
             return filteredStats.length;
         }
         // --- КОНЕЦ НОВЫХ ФУНКЦИЙ ---
-    
+
         // Обновление интерфейса
         function updateUI() {
             // --- НАЧАЛО НОВОГО КОДА ---
@@ -1392,7 +1402,7 @@
             data.week = calculateLastXPeriod(7);
             data.month = calculateLastXPeriod(30);
             // --- КОНЕЦ НОВОГО КОДА ---
-    
+
             counterEl.textContent = data.today;
             weekEl.textContent = data.week; // Теперь это актуальное значение
             monthEl.textContent = data.month; // Теперь это актуальное значение
@@ -1406,7 +1416,7 @@
             const percent = Math.round((data.today / data.goal) * 100);
             const clampedPercent = Math.min(100, percent); // Для ширины ограничиваем 100%
             goalPercentEl.textContent = `${percent}%`;
-    
+
             // 1. Определяем цвет прогресс-бара в зависимости от процента
             let progressBarColor;
             if (percent <= 50) {
@@ -1429,7 +1439,7 @@
                 // Добавим пульсацию при превышении
                 // progressFillEl.style.animation = 'pulseDanger 0.5s infinite alternate';
             }
-    
+
             // Применяем цвет и ширину
             progressFillEl.style.width = `${clampedPercent}%`;
             progressFillEl.style.background = progressBarColor;
@@ -1437,13 +1447,13 @@
             if (percent <= 100) {
                 progressFillEl.style.animation = '';
             }
-    
+
             // 2. Определяем текст заголовка и возможно эмодзи
             const progressHeaderEl = document.querySelector('.progress-header h3'); // Найдем заголовок
             let progressMessage = "Прогресс отказа от курения";
             let emoji = "";
             let isShake = false; // Флаг для тряски
-    
+
             if (data.today === 0) {
                 progressMessage = "Начни свой день чистым!";
                 emoji = "😊";
@@ -1495,7 +1505,7 @@
                 emoji = randomMsg.emoji;
                 isShake = true; // Включаем тряску
             }
-    
+
             // Обновляем текст заголовка
             progressHeaderEl.textContent = `${emoji} ${progressMessage}`;
             
@@ -1504,7 +1514,7 @@
             // Сбрасываем анимации
             progressFillEl.style.animation = '';
             progressContainer.style.animation = '';
-    
+
             if (percent >= 110) { // Начинаем анимации с 110%
                 // Пульсация полосы
                 progressFillEl.style.animation = 'pulseDanger 0.5s infinite';
@@ -1695,7 +1705,7 @@
             counterEl.classList.add('pulse');
             setTimeout(() => {
                 counterEl.classList.remove('pulse');
-            }, 500);
+            }, 400); // Уменьшено
         }
         // Сброс всего
         function resetAll() {
@@ -1725,10 +1735,7 @@
                         totalCost: 0,
                         usageDays: 0,
                         firstUseDate: new Date().toDateString(),
-                        lastCigaretteTime: null,
-                        // Новые поля для достижения "Экономия здоровья"
-                        averageCigarettesPerDay: null, // Среднее за последнюю неделю
-                        lastWeekStats: [] // Статистика за последние 7 дней
+                        lastCigaretteTime: null
                     };
                     saveData();
                     updateUI();
@@ -1737,7 +1744,7 @@
                     document.body.style.backgroundColor = '#FF5252';
                     setTimeout(() => {
                         document.body.style.backgroundColor = '';
-                    }, 500);
+                    }, 400); // Уменьшено
                 }
             }
         }
@@ -1750,7 +1757,7 @@
                 // --- НАЧАЛО НОВОЙ ЛОГИКИ РУЧНОГО СБРОСА ---
                 console.log("Выполняется ручной сброс...");
                 data.today = 0;
-    
+
                 // 1. Определяем период "сегодня" (с 06:00 сегодня до 05:59 завтра)
                 const now = new Date();
                 const startOfTodayPeriod = new Date(now);
@@ -1758,7 +1765,7 @@
                 const endOfTodayPeriod = new Date(startOfTodayPeriod);
                 endOfTodayPeriod.setDate(endOfTodayPeriod.getDate() + 1); // Конец периода (следующий день)
                 endOfTodayPeriod.setMilliseconds(endOfTodayPeriod.getMilliseconds() - 1); // Минус 1 миллисекунда
-    
+
                 // 2. Удаляем записи из data.timeStats, которые попадают в этот период
                 const initialStatsCount = data.timeStats.length;
                 data.timeStats = data.timeStats.filter(stat => {
@@ -1768,7 +1775,7 @@
                 });
                 const removedStatsCount = initialStatsCount - data.timeStats.length;
                 console.log(`Удалено ${removedStatsCount} записей за сегодня.`);
-    
+
                 // 3. Обновляем время последней сигареты (lastCigaretteTime)
                 // Это важно, чтобы таймер и медицинские факты работали правильно
                 if (data.timeStats.length > 0) {
@@ -1781,23 +1788,23 @@
                     data.lastCigaretteTime = null;
                     console.log("Все сигареты удалены, время последней сигареты сброшено.");
                 }
-    
+
                 // 4. Обновляем дату последнего автоматического сброса
                 // Это нужно, чтобы автоматический сброс не сработал снова в тот же день
                 data.lastAutoResetDate = new Date().toDateString();
                 console.log("Дата последнего сброса обновлена на:", data.lastAutoResetDate);
-    
+
                 // 5. Сохраняем данные и обновляем интерфейс
                 saveData();
                 updateUI();
                 console.log("Ручной сброс завершен.");
                 // --- КОНЕЦ НОВОЙ ЛОГИКИ РУЧНОГО СБРОСА ---
-    
+
                 // Анимация сброса (опционально)
                 counterEl.style.color = '#FF5252';
                 setTimeout(() => {
                     counterEl.style.color = '';
-                }, 500);
+                }, 400); // Уменьшено
             }
         }
         // Смена темы
@@ -1887,11 +1894,16 @@
                             break;
                         case 5: // Экономия здоровья (снижение на 50% по сравнению с неделей)
                             // Проверяем, есть ли данные за последнюю неделю
-                            if (data.lastWeekStats.length > 0 && data.averageCigarettesPerDay !== null) {
-                                // Рассчитываем процентное снижение
-                                const reduction = ((data.averageCigarettesPerDay - data.today) / data.averageCigarettesPerDay) * 100;
-                                achieved = reduction >= achievement.target;
-                                console.log(`Достижение "Экономия здоровья": Среднее за неделю: ${data.averageCigarettesPerDay}, Сегодня: ${data.today}, Снижение: ${reduction}%`);
+                            // Примечание: Для полной реализации нужно хранить lastWeekStats и averageCigarettesPerDay
+                            // Пока используем упрощенную логику или заглушку
+                            // Пример упрощенной логики (если data.week > 0 и сегодня на 50% меньше):
+                            if (data.week > 0) {
+                                const averageLastWeek = data.week / 7;
+                                if (averageLastWeek > 0) {
+                                    const reduction = ((averageLastWeek - data.today) / averageLastWeek) * 100;
+                                    achieved = reduction >= achievement.target;
+                                    console.log(`Достижение "Экономия здоровья": Среднее за неделю: ${averageLastWeek.toFixed(2)}, Сегодня: ${data.today}, Снижение: ${reduction.toFixed(2)}%`);
+                                }
                             }
                             break;
                     }
@@ -1931,13 +1943,13 @@
             } else {
                 card = document.getElementById(`${period}Card`);
             }
-    
+
             // Проверка, существует ли элемент card
             if (!card) {
                 console.error(`Card element for period '${period}' not found.`);
                 return; // Прерываем выполнение функции, если элемент не найден
             }
-    
+
             const existingDetails = card.querySelector('.time-details');
             if (existingDetails) {
                 existingDetails.remove();
@@ -2005,6 +2017,6 @@
         }
         // Инициализация приложения при загрузке
         document.addEventListener('DOMContentLoaded', initApp);
-</script>
+    </script>
 </body>
 </html>
