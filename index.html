@@ -791,7 +791,7 @@
         </div>
     </div>
     <script>
-                // Конфигурация Supabase
+        // Конфигурация Supabase
         const supabaseUrl = 'https://podwpmokbbyzkrqhygci.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZHdwbW9rYmJ5emtycWh5Z2NpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzNzI1MzQsImV4cCI6MjA2ODk0ODUzNH0.3UH4jmnzgPub0GLCK4yXE692kpYuXVt9LAwJmC5heaA';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -812,12 +812,15 @@
                 { id: 2, name: "Неделя использования", description: "Использовать приложение неделю", target: 7, achieved: false, icon: "🗓️" },
                 { id: 3, name: "Месяц использования", description: "Использовать приложение месяц", target: 30, achieved: false, icon: "📆" },
                 { id: 4, name: "100 сигарет", description: "Выкурить 100 сигарет", target: 100, achieved: false, icon: "🚬" },
-                { id: 5, name: "Экономия здоровья", description: "Сократить потребление на 50%", target: 50, achieved: false, icon: "💚" }
+                { id: 5, name: "Экономия здоровья", description: "Сократить потребление на 50% по сравнению с неделей", target: 50, achieved: false, icon: "💚" }
             ],
             totalCost: 0,
             usageDays: 0,
             firstUseDate: new Date().toDateString(),
-            lastCigaretteTime: null
+            lastCigaretteTime: null,
+            // Новые поля для достижения "Экономия здоровья"
+            averageCigarettesPerDay: null, // Среднее за последнюю неделю
+            lastWeekStats: [] // Статистика за последние 7 дней
         };
         // Мотивационные цитаты
         const quotes = [
@@ -911,7 +914,7 @@
         let isRegistration = false;
         let isForgotPassword = false;
         let currentUser = null;
-
+    
         // --- НОВАЯ ЛОГИКА АВТОМАТИЧЕСКОГО СБРОСА ---
         // Функция для получения времени следующего сброса (06:00 завтра)
         function getNextResetTime() {
@@ -924,12 +927,12 @@
             }
             return nextReset;
         }
-
+    
         // Функция автоматического сброса (ИСПРАВЛЕНА)
         function performAutoReset() {
             console.log("Выполняется автоматический сброс...");
             data.today = 0;
-
+    
             // 1. Определяем период "сегодня" (с 06:00 сегодня до 05:59 завтра)
             const now = new Date();
             const startOfTodayPeriod = new Date(now);
@@ -937,7 +940,7 @@
             const endOfTodayPeriod = new Date(startOfTodayPeriod);
             endOfTodayPeriod.setDate(endOfTodayPeriod.getDate() + 1); // Конец периода (следующий день)
             endOfTodayPeriod.setMilliseconds(endOfTodayPeriod.getMilliseconds() - 1); // Минус 1 миллисекунда
-
+    
             // 2. Удаляем записи из data.timeStats, которые попадают в этот период
             const initialStatsCount = data.timeStats.length;
             data.timeStats = data.timeStats.filter(stat => {
@@ -947,7 +950,7 @@
             });
             const removedStatsCount = initialStatsCount - data.timeStats.length;
             console.log(`Удалено ${removedStatsCount} записей за сегодня.`);
-
+    
             // 3. Обновляем время последней сигареты (lastCigaretteTime)
             // Это важно, чтобы таймер и медицинские факты работали правильно
             if (data.timeStats.length > 0) {
@@ -960,18 +963,18 @@
                 data.lastCigaretteTime = null;
                 console.log("Все сигареты удалены, время последней сигареты сброшено.");
             }
-
+    
             // 4. Обновляем дату последнего автоматического сброса
             // Это нужно, чтобы автоматический сброс не сработал снова в тот же день
             data.lastAutoResetDate = new Date().toDateString();
             console.log("Дата последнего сброса обновлена на:", data.lastAutoResetDate);
-
+    
             // 5. Сохраняем данные и обновляем интерфейс
             saveData();
             updateUI();
             console.log("Автоматический сброс завершен.");
         }
-
+    
         // Функция проверки необходимости сброса
         function checkForAutoReset() {
             const todayString = new Date().toDateString();
@@ -986,7 +989,7 @@
             }
         }
         // --- КОНЕЦ НОВОЙ ЛОГИКИ ---
-
+    
         // Инициализация приложения
         function initApp() {
             loadData();
@@ -1042,7 +1045,7 @@
                     });
                 });
             }
-
+    
             // Запуск периодической проверки автоматического сброса (например, каждую минуту)
             setInterval(checkForAutoReset, 60 * 1000); // Проверка каждую минуту
             // Проверка автоматического сброса при запуске
@@ -1232,20 +1235,30 @@
                     .select('*')
                     .eq('user_id', currentUser.id)
                     .single();
-                if (error && error.code !== 'PGRST116') {
+                if (error && error.code !== 'PGRST116') { // PGRST116 означает "не найдено"
                     throw error;
                 }
                 if (userData) {
-                    data = { ...data, ...userData.data };
+                    // --- ВАЖНО: Обновляем весь объект data ---
+                    data = { ...data, ...userData.data }; // Объединяем с дефолтными значениями
+                    console.log("Данные загружены из облака:", data);
                     showSyncIndicator('success', 'Обновлено');
                 } else {
+                    // Если данных нет, сохраняем текущие (дефолтные или из localStorage)
                     await saveUserData();
                     showSyncIndicator('success', 'Данные сохранены');
                 }
+                // --- ВАЖНО: Обновляем UI и проверяем достижения ПОСЛЕ загрузки ---
                 updateUI();
+                checkAchievements(); // <-- Проверяем достижения после загрузки данных
+                renderAchievements(); // <-- Обновляем отображение достижений
             } catch (error) {
                 console.error('Ошибка загрузки данных:', error);
                 showSyncIndicator('error', 'Ошибка загрузки данных');
+                // Даже при ошибке обновляем UI тем, что есть
+                updateUI();
+                checkAchievements();
+                renderAchievements();
             }
         }
         // Сохранение данных пользователя
@@ -1353,25 +1366,25 @@
             if (data.timeStats.length === 0) {
                 return 0;
             }
-
+    
             const now = new Date();
             // Создаем дату, которая была X дней назад от текущего момента
             const xDaysAgo = new Date(now);
             xDaysAgo.setDate(xDaysAgo.getDate() - days);
             // Устанавливаем время на начало дня для точного сравнения
             xDaysAgo.setHours(0, 0, 0, 0);
-
+    
             // Фильтруем записи, оставляя только те, что позже xDaysAgo
             const filteredStats = data.timeStats.filter(stat => {
                 const statDate = new Date(stat.timestamp);
                 // Сравниваем даты (statDate >= xDaysAgo)
                 return statDate >= xDaysAgo;
             });
-
+    
             return filteredStats.length;
         }
         // --- КОНЕЦ НОВЫХ ФУНКЦИЙ ---
-
+    
         // Обновление интерфейса
         function updateUI() {
             // --- НАЧАЛО НОВОГО КОДА ---
@@ -1379,7 +1392,7 @@
             data.week = calculateLastXPeriod(7);
             data.month = calculateLastXPeriod(30);
             // --- КОНЕЦ НОВОГО КОДА ---
-
+    
             counterEl.textContent = data.today;
             weekEl.textContent = data.week; // Теперь это актуальное значение
             monthEl.textContent = data.month; // Теперь это актуальное значение
@@ -1393,7 +1406,7 @@
             const percent = Math.round((data.today / data.goal) * 100);
             const clampedPercent = Math.min(100, percent); // Для ширины ограничиваем 100%
             goalPercentEl.textContent = `${percent}%`;
-
+    
             // 1. Определяем цвет прогресс-бара в зависимости от процента
             let progressBarColor;
             if (percent <= 50) {
@@ -1416,7 +1429,7 @@
                 // Добавим пульсацию при превышении
                 // progressFillEl.style.animation = 'pulseDanger 0.5s infinite alternate';
             }
-
+    
             // Применяем цвет и ширину
             progressFillEl.style.width = `${clampedPercent}%`;
             progressFillEl.style.background = progressBarColor;
@@ -1424,13 +1437,13 @@
             if (percent <= 100) {
                 progressFillEl.style.animation = '';
             }
-
+    
             // 2. Определяем текст заголовка и возможно эмодзи
             const progressHeaderEl = document.querySelector('.progress-header h3'); // Найдем заголовок
             let progressMessage = "Прогресс отказа от курения";
             let emoji = "";
             let isShake = false; // Флаг для тряски
-
+    
             if (data.today === 0) {
                 progressMessage = "Начни свой день чистым!";
                 emoji = "😊";
@@ -1482,7 +1495,7 @@
                 emoji = randomMsg.emoji;
                 isShake = true; // Включаем тряску
             }
-
+    
             // Обновляем текст заголовка
             progressHeaderEl.textContent = `${emoji} ${progressMessage}`;
             
@@ -1491,7 +1504,7 @@
             // Сбрасываем анимации
             progressFillEl.style.animation = '';
             progressContainer.style.animation = '';
-
+    
             if (percent >= 110) { // Начинаем анимации с 110%
                 // Пульсация полосы
                 progressFillEl.style.animation = 'pulseDanger 0.5s infinite';
@@ -1707,12 +1720,15 @@
                             { id: 2, name: "Неделя использования", description: "Использовать приложение неделю", target: 7, achieved: false, icon: "🗓️" },
                             { id: 3, name: "Месяц использования", description: "Использовать приложение месяц", target: 30, achieved: false, icon: "📆" },
                             { id: 4, name: "100 сигарет", description: "Выкурить 100 сигарет", target: 100, achieved: false, icon: "🚬" },
-                            { id: 5, name: "Экономия здоровья", description: "Сократить потребление на 50%", target: 50, achieved: false, icon: "💚" }
+                            { id: 5, name: "Экономия здоровья", description: "Сократить потребление на 50% по сравнению с неделей", target: 50, achieved: false, icon: "💚" }
                         ],
                         totalCost: 0,
                         usageDays: 0,
                         firstUseDate: new Date().toDateString(),
-                        lastCigaretteTime: null
+                        lastCigaretteTime: null,
+                        // Новые поля для достижения "Экономия здоровья"
+                        averageCigarettesPerDay: null, // Среднее за последнюю неделю
+                        lastWeekStats: [] // Статистика за последние 7 дней
                     };
                     saveData();
                     updateUI();
@@ -1734,7 +1750,7 @@
                 // --- НАЧАЛО НОВОЙ ЛОГИКИ РУЧНОГО СБРОСА ---
                 console.log("Выполняется ручной сброс...");
                 data.today = 0;
-
+    
                 // 1. Определяем период "сегодня" (с 06:00 сегодня до 05:59 завтра)
                 const now = new Date();
                 const startOfTodayPeriod = new Date(now);
@@ -1742,7 +1758,7 @@
                 const endOfTodayPeriod = new Date(startOfTodayPeriod);
                 endOfTodayPeriod.setDate(endOfTodayPeriod.getDate() + 1); // Конец периода (следующий день)
                 endOfTodayPeriod.setMilliseconds(endOfTodayPeriod.getMilliseconds() - 1); // Минус 1 миллисекунда
-
+    
                 // 2. Удаляем записи из data.timeStats, которые попадают в этот период
                 const initialStatsCount = data.timeStats.length;
                 data.timeStats = data.timeStats.filter(stat => {
@@ -1752,7 +1768,7 @@
                 });
                 const removedStatsCount = initialStatsCount - data.timeStats.length;
                 console.log(`Удалено ${removedStatsCount} записей за сегодня.`);
-
+    
                 // 3. Обновляем время последней сигареты (lastCigaretteTime)
                 // Это важно, чтобы таймер и медицинские факты работали правильно
                 if (data.timeStats.length > 0) {
@@ -1765,18 +1781,18 @@
                     data.lastCigaretteTime = null;
                     console.log("Все сигареты удалены, время последней сигареты сброшено.");
                 }
-
+    
                 // 4. Обновляем дату последнего автоматического сброса
                 // Это нужно, чтобы автоматический сброс не сработал снова в тот же день
                 data.lastAutoResetDate = new Date().toDateString();
                 console.log("Дата последнего сброса обновлена на:", data.lastAutoResetDate);
-
+    
                 // 5. Сохраняем данные и обновляем интерфейс
                 saveData();
                 updateUI();
                 console.log("Ручной сброс завершен.");
                 // --- КОНЕЦ НОВОЙ ЛОГИКИ РУЧНОГО СБРОСА ---
-
+    
                 // Анимация сброса (опционально)
                 counterEl.style.color = '#FF5252';
                 setTimeout(() => {
@@ -1869,9 +1885,14 @@
                         case 4: // 100 сигарет
                             achieved = data.month >= achievement.target;
                             break;
-                        case 5: // Экономия здоровья (снижение на 50%)
-                            const reduction = ((data.goal - data.today) / data.goal) * 100;
-                            achieved = reduction >= achievement.target;
+                        case 5: // Экономия здоровья (снижение на 50% по сравнению с неделей)
+                            // Проверяем, есть ли данные за последнюю неделю
+                            if (data.lastWeekStats.length > 0 && data.averageCigarettesPerDay !== null) {
+                                // Рассчитываем процентное снижение
+                                const reduction = ((data.averageCigarettesPerDay - data.today) / data.averageCigarettesPerDay) * 100;
+                                achieved = reduction >= achievement.target;
+                                console.log(`Достижение "Экономия здоровья": Среднее за неделю: ${data.averageCigarettesPerDay}, Сегодня: ${data.today}, Снижение: ${reduction}%`);
+                            }
                             break;
                     }
                     if (achieved) {
@@ -1910,13 +1931,13 @@
             } else {
                 card = document.getElementById(`${period}Card`);
             }
-
+    
             // Проверка, существует ли элемент card
             if (!card) {
                 console.error(`Card element for period '${period}' not found.`);
                 return; // Прерываем выполнение функции, если элемент не найден
             }
-
+    
             const existingDetails = card.querySelector('.time-details');
             if (existingDetails) {
                 existingDetails.remove();
@@ -1984,6 +2005,6 @@
         }
         // Инициализация приложения при загрузке
         document.addEventListener('DOMContentLoaded', initApp);
-    </script>
+</script>
 </body>
 </html>
