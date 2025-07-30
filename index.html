@@ -51,45 +51,27 @@
             -webkit-tap-highlight-color: transparent;
             transition: background-color 0.3s, color 0.3s;
         }
-        /* --- ИЗМЕНЕНИЯ ДЛЯ ФОНА --- */
-        html {
-            height: 100%; /* Упрощаем для html */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
         }
         body {
-            /* Убираем все предыдущие фоновые свойства из body */
+            background: var(--bg-gradient) !important;
             color: var(--text-color);
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             display: flex;
             flex-direction: column;
             align-items: center;
             touch-action: manipulation;
             margin: 0;
-            /* --- КЛЮЧЕВЫЕ ИЗМЕНЕНИЯ ДЛЯ ФОНА --- */
-            min-height: 100%; /* Растягиваем body минимум на высоту html (100%) */
-            height: auto; /* Позволяем body расти больше 100% при необходимости */
-            /* --- КОНЕЦ КЛЮЧЕВЫХ ИЗМЕНЕНИЙ --- */
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-            background-attachment: scroll; /* Меняем на scroll для псевдоэлемента */
-            background-size: auto; /* Сбрасываем background-size для body */
-            background-repeat: no-repeat; /* Сбрасываем background-repeat для body */
-            /* --- НОВОЕ: Псевдоэлемент для фона --- */
-            position: relative; /* Делаем body относительно позиционированным */
+            /* Удалены дублирующиеся height и overflow, которые могут конфликтовать */
+            background-attachment: fixed !important;
+            background-size: cover !important;
+            background-repeat: no-repeat !important;
         }
-        /* Псевдоэлемент ::before для создания полноэкранного фона */
-        body::before {
-            content: '';
-            position: fixed; /* Фиксируем фон относительно viewport */
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            /* Применяем градиент к псевдоэлементу */
-            background: var(--bg-gradient);
-            background-attachment: scroll; /* Не фиксируем фон псевдоэлемента */
-            background-size: cover; /* Растягиваем фон псевдоэлемента */
-            background-repeat: no-repeat; /* Не повторяем фон псевдоэлемента */
-            z-index: -1; /* Помещаем фон позади всего содержимого body */
-        }
-        /* --- КОНЕЦ ИЗМЕНЕНИЙ ДЛЯ ФОНА --- */
         .container {
             max-width: 800px;
             width: 100%;
@@ -97,9 +79,8 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            /* height: 100%; Убираем фиксированную высоту */
-            flex: 1; /* Позволяем контейнеру расти */
-            min-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); /* Минимальная высота с учетом safe area */
+            /* Убрана фиксированная height: 100%, чтобы контент мог прокручиваться */
+            min-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
         }
         header {
             text-align: center;
@@ -557,7 +538,10 @@
                 height: -webkit-fill-available;
                 margin: 0;
                 padding: 0;
-                /* Убираем дублирующиеся фоновые свойства */
+                background: var(--bg-gradient) !important;
+                background-attachment: fixed !important;
+                background-size: cover !important;
+                background-repeat: no-repeat !important;
             }
             /* Фикс для PWA */
             * {
@@ -578,9 +562,6 @@
                 padding: 10px; /* Уменьшено */
                 display: flex;
                 flex-direction: column;
-                /* height: 100%; Убираем фиксированную высоту */
-                flex: 1; /* Позволяем контейнеру расти */
-                min-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
             }
             /* Фикс для overscroll */
             body::-webkit-scrollbar {
@@ -590,10 +571,22 @@
                 -ms-overflow-style: none;
                 scrollbar-width: none;
             }
-            /* УДАЛЕН body::before из media query, так как он уже определен выше */
+            /* Добавьте эти стили для предотвращения белого фона */
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: var(--bg-gradient);
+                z-index: -1;
+                background-attachment: fixed;
+            }
             /* Фикс для pull-to-refresh */
             body {
-                /* Убираем дублирующиеся фоновые свойства */
+                background: var(--bg-gradient) !important;
+                background-attachment: fixed !important;
                 overscroll-behavior: contain;
                 -webkit-overscroll-behavior: contain;
             }
@@ -622,7 +615,15 @@
             }
         }
         /* Минимальный фон для предотвращения черного экрана на старте */
-        /* УДАЛЕН, так как теперь используется body::before */
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c) !important;
+            background-attachment: fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
         /* Анимации для прелоадера */
         @keyframes appLogoPulse {
             0% { transform: scale(1); opacity: 1; }
@@ -1079,7 +1080,7 @@
         // Проверка сессии
         async function checkSession() {
             // --- ИСПРАВЛЕНА СИНТАКСИЧЕСКАЯ ОШИБКА ---
-            const { data: { session } } = await supabase.auth.getSession();
+            const {  { session } } = await supabase.auth.getSession();
             // --- КОНЕЦ ИСПРАВЛЕНИЯ ---
             if (session) {
                 currentUser = session.user;
@@ -1238,7 +1239,7 @@
             if (!currentUser) return;
             try {
                 showSyncIndicator('syncing', 'Обновление ...');
-                const { data: userData, error } = await supabase
+                const {  userData, error } = await supabase
                     .from('smoking_data')
                     .select('*')
                     .eq('user_id', currentUser.id)
@@ -1250,6 +1251,7 @@
                     // --- ВАЖНО: Обновляем весь объект data ---
                     // Создаем новый объект, объединяя дефолтные значения с загруженными данными
                     const newData = { ...data, ...userData.data };
+                    
                     // Проверяем, существуют ли timeStats в загруженных данных
                     if (userData.data && Array.isArray(userData.data.timeStats)) {
                         // Если timeStats есть, используем их
@@ -1258,6 +1260,7 @@
                         // Если timeStats нет, сохраняем текущие (из localStorage или дефолтные)
                         newData.timeStats = data.timeStats;
                     }
+                    
                     // Проверяем, существует ли firstUseDate в загруженных данных
                     if (userData.data && userData.data.firstUseDate) {
                         // Если firstUseDate есть, используем его
@@ -1266,6 +1269,7 @@
                         // Если firstUseDate нет, сохраняем текущую дату (если это первый запуск)
                         newData.firstUseDate = data.firstUseDate;
                     }
+                    
                     // Проверяем, существуют ли achievements в загруженных данных
                     if (userData.data && Array.isArray(userData.data.achievements)) {
                         // Если achievements есть, используем их
@@ -1274,6 +1278,7 @@
                         // Если achievements нет, сохраняем текущие (из localStorage или дефолтные)
                         newData.achievements = data.achievements;
                     }
+                    
                     data = newData;
                     console.log("Данные загружены из облака:", data);
                     showSyncIndicator('success', 'Обновлено');
@@ -1389,6 +1394,7 @@
                     const parsed = JSON.parse(saved);
                     // Создаем новый объект, объединяя дефолтные значения с загруженными данными
                     const newData = { ...data, ...parsed };
+                    
                     // Проверяем, существуют ли timeStats в загруженных данных
                     if (parsed && Array.isArray(parsed.timeStats)) {
                         // Если timeStats есть, используем их
@@ -1397,6 +1403,7 @@
                         // Если timeStats нет, сохраняем дефолтные
                         newData.timeStats = data.timeStats;
                     }
+                    
                     // Проверяем, существует ли firstUseDate в загруженных данных
                     if (parsed && parsed.firstUseDate) {
                         // Если firstUseDate есть, используем его
@@ -1405,6 +1412,7 @@
                         // Если firstUseDate нет, сохраняем дефолтную дату
                         newData.firstUseDate = data.firstUseDate;
                     }
+                    
                     // Проверяем, существуют ли achievements в загруженных данных
                     if (parsed && Array.isArray(parsed.achievements)) {
                         // Если achievements есть, используем их
@@ -1413,6 +1421,7 @@
                         // Если achievements нет, сохраняем дефолтные
                         newData.achievements = data.achievements;
                     }
+                    
                     data = newData;
                 }
             } catch (e) {
