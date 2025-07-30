@@ -51,8 +51,10 @@
             -webkit-tap-highlight-color: transparent;
             transition: background-color 0.3s, color 0.3s;
         }
-        html {
-            height: -webkit-fill-available;
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
         }
         body {
             background: var(--bg-gradient) !important;
@@ -65,11 +67,7 @@
             align-items: center;
             touch-action: manipulation;
             margin: 0;
-            height: 100vh;
-            height: -webkit-fill-available;
-            overflow-x: hidden;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            /* Удалены дублирующиеся height и overflow, которые могут конфликтовать */
             background-attachment: fixed !important;
             background-size: cover !important;
             background-repeat: no-repeat !important;
@@ -81,7 +79,8 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            height: 100%;
+            /* Убрана фиксированная height: 100%, чтобы контент мог прокручиваться */
+            min-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
         }
         header {
             text-align: center;
@@ -413,17 +412,24 @@
             background: linear-gradient(to right, #f44336, #d32f2f);
             color: white;
         }
+        /* --- ИСПРАВЛЕНИЕ: Стили для user-panel --- */
         .user-panel {
             background: var(--card-bg);
             border-radius: 13px; /* Уменьшено */
             padding: 12px; /* Уменьшено */
             margin-bottom: 15px; /* Уменьшено */
             display: none;
+            /* Добавлен padding-top с учетом safe-area для статус-бара */
+            padding-top: env(safe-area-inset-top, 0px);
+            /* Добавлен box-sizing для корректного расчета padding */
+            box-sizing: border-box;
+            width: 100%; /* Убедимся, что панель занимает всю ширину */
         }
         .user-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            width: 100%;
         }
         .user-avatar {
             width: 36px; /* Уменьшено */
@@ -437,6 +443,7 @@
             color: white;
             font-size: 0.9rem; /* Уменьшено */
         }
+        /* --- КОНЕЦ ИСПРАВЛЕНИЯ user-panel --- */
         .sync-indicator {
             position: fixed;
             top: 8px; /* Уменьшено */
@@ -651,26 +658,29 @@
         <div class="sync-indicator" id="syncIndicator">
             <span id="syncText">Синхронизация...</span>
         </div>
+        <!-- ИСПРАВЛЕНИЕ: Обновлен HTML user-panel для корректного отображения и позиционирования -->
         <div class="user-panel" id="userPanel">
-        <div class="user-info" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-            <!-- Левая часть: Аватар и информация -->
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <div class="user-avatar" id="userAvatar">U</div>
-                <div>
-                    <div id="userName">Пользователь</div>
-                    <div style="font-size: 0.75rem; opacity: 0.8;" id="userEmail">email@example.com</div>
+            <div class="user-info">
+                <!-- Левая часть: Аватар и информация -->
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div>
+                        <div id="userName">Пользователь</div>
+                        <div style="font-size: 0.75rem; opacity: 0.8;" id="userEmail">email@example.com</div>
+                    </div>
+                </div>
+                <!-- Правая часть: Кнопки управления -->
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <!-- Индикатор синхронизации -->
+                    <div id="syncStatusIndicator" style="font-size: 1.1rem; display: none;">⚪</div>
+                    <!-- Контейнер для текста статуса -->
+                    <div id="syncStatusText" style="font-size: 0.8rem; display: none;"></div>
+                    <!-- Кнопка обновления -->
+                    <button id="refreshAppBtnTop" title="Обновить данные" style="background: none; border: none; cursor: pointer; font-size: 1.1rem;">🔄</button>
                 </div>
             </div>
-            <!-- Правая часть: Кнопки управления -->
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <!-- Индикатор синхронизации -->
-                <div id="syncStatusIndicator" style="font-size: 1.1rem; display: none;">⚪</div>
-                <!-- Контейнер для текста статуса -->
-                <div id="syncStatusText" style="font-size: 0.8rem; display: none;"></div>
-                <!-- Кнопка обновления -->
-                <button id="refreshAppBtnTop" title="Обновить данные" style="background: none; border: none; cursor: pointer; font-size: 1.1rem;">🔄</button>
-            </div>
         </div>
+        <!-- КОНЕЦ ИСПРАВЛЕНИЯ user-panel -->
         <header>
             <div class="header-content">
                 <h1>Счетчик сигарет</h1>
