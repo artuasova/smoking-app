@@ -56,43 +56,22 @@
             margin: 0;
             padding: 0;
         }
-        /* --- ИСПРАВЛЕНИЯ ФОНА --- */
-        html {
-            /* Убираем background у html, он будет у body::before */
-            background: transparent !important;
-        }
         body {
-            /* Делаем фон прозрачным */
-            background: transparent !important;
+            background: var(--bg-gradient) !important;
             color: var(--text-color);
             min-height: 100vh;
             min-height: -webkit-fill-available;
-            /* Используем padding для safe-area, а не margin */
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             display: flex;
             flex-direction: column;
             align-items: center;
             touch-action: manipulation;
             margin: 0;
-            position: relative; /* Для позиционирования псевдоэлемента */
-        }
-        /* Создаем псевдоэлемент для сплошного фона */
-        body::before {
-            content: '';
-            position: fixed; /* Фиксируем относительно viewport */
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            /* Применяем ваш градиент */
-            background: var(--bg-gradient) !important;
+            /* Удалены дублирующиеся height и overflow, которые могут конфликтовать */
+            background-attachment: fixed !important;
             background-size: cover !important;
             background-repeat: no-repeat !important;
-            background-attachment: scroll !important; /* scroll для псевдоэлемента */
-            z-index: -1; /* Помещаем фон позади всего контента */
         }
-        /* --- КОНЕЦ ИСПРАВЛЕНИЙ ФОНА --- */
-
         .container {
             max-width: 800px;
             width: 100%;
@@ -137,28 +116,26 @@
             font-size: 1.1rem; /* Уменьшено */
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Уменьшено */
         }
-        /* --- ИЗМЕНЕНИЯ В .counter-card --- */
         .counter-card {
             background: var(--card-bg);
             border-radius: 18px; /* Уменьшено */
-            padding: 15px; /* Уменьшено с 20px */
+            padding: 20px; /* Уменьшено */
             text-align: center;
             box-shadow: var(--shadow);
-            margin-bottom: 12px; /* Уменьшено с 15px */
+            margin-bottom: 15px; /* Уменьшено */
             border: 1px solid var(--border-color);
         }
-        /* --- КОНЕЦ ИЗМЕНЕНИЙ .counter-card --- */
         .counter-value {
             font-size: 4.5rem; /* Уменьшено с 5rem */
             font-weight: bold;
-            margin: 8px 0; /* Уменьшено с 10px */
+            margin: 10px 0; /* Уменьшено */
             text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
         }
         .counter-buttons {
             display: flex;
             justify-content: center;
             gap: 12px; /* Уменьшено */
-            margin-top: 10px; /* Уменьшено с 12px */
+            margin-top: 12px; /* Уменьшено */
         }
         .btn {
             padding: 12px 20px; /* Уменьшено */
@@ -439,14 +416,13 @@
         .user-panel {
             background: var(--card-bg);
             border-radius: 13px; /* Уменьшено */
-            /* Убираем height и используем padding для внутреннего отступа */
             padding: 12px; /* Уменьшено */
             margin-bottom: 15px; /* Уменьшено */
             display: none;
             /* Добавлен padding-top с учетом safe-area для статус-бара */
             padding-top: env(safe-area-inset-top, 0px);
             /* Добавлен box-sizing для корректного расчета padding */
-            box-sizing: border-box; /* ВАЖНО: чтобы padding не увеличивал высоту */
+            box-sizing: border-box;
             width: 100%; /* Убедимся, что панель занимает всю ширину */
         }
         .user-info {
@@ -562,8 +538,10 @@
                 height: -webkit-fill-available;
                 margin: 0;
                 padding: 0;
-                /* Убираем background у html и body в медиа-запросе */
-                background: transparent !important;
+                background: var(--bg-gradient) !important;
+                background-attachment: fixed !important;
+                background-size: cover !important;
+                background-repeat: no-repeat !important;
             }
             /* Фикс для PWA */
             * {
@@ -594,10 +572,21 @@
                 scrollbar-width: none;
             }
             /* Добавьте эти стили для предотвращения белого фона */
-            /* body::before уже определен выше, не дублируем */
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: var(--bg-gradient);
+                z-index: -1;
+                background-attachment: fixed;
+            }
             /* Фикс для pull-to-refresh */
             body {
-                background: transparent !important;
+                background: var(--bg-gradient) !important;
+                background-attachment: fixed !important;
                 overscroll-behavior: contain;
                 -webkit-overscroll-behavior: contain;
             }
@@ -626,8 +615,7 @@
             }
         }
         /* Минимальный фон для предотвращения черного экрана на старте */
-        /* Убираем, так как теперь фон у body::before */
-        /* body {
+        body {
             background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c) !important;
             background-attachment: fixed;
             background-size: cover;
@@ -635,7 +623,7 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
-        } */
+        }
         /* Анимации для прелоадера */
         @keyframes appLogoPulse {
             0% { transform: scale(1); opacity: 1; }
@@ -1263,6 +1251,7 @@
                     // --- ВАЖНО: Обновляем весь объект data ---
                     // Создаем новый объект, объединяя дефолтные значения с загруженными данными
                     const newData = { ...data, ...userData.data };
+                    
                     // Проверяем, существуют ли timeStats в загруженных данных
                     if (userData.data && Array.isArray(userData.data.timeStats)) {
                         // Если timeStats есть, используем их
@@ -1271,6 +1260,7 @@
                         // Если timeStats нет, сохраняем текущие (из localStorage или дефолтные)
                         newData.timeStats = data.timeStats;
                     }
+                    
                     // Проверяем, существует ли firstUseDate в загруженных данных
                     if (userData.data && userData.data.firstUseDate) {
                         // Если firstUseDate есть, используем его
@@ -1279,6 +1269,7 @@
                         // Если firstUseDate нет, сохраняем текущую дату (если это первый запуск)
                         newData.firstUseDate = data.firstUseDate;
                     }
+                    
                     // Проверяем, существуют ли achievements в загруженных данных
                     if (userData.data && Array.isArray(userData.data.achievements)) {
                         // Если achievements есть, используем их
@@ -1287,6 +1278,7 @@
                         // Если achievements нет, сохраняем текущие (из localStorage или дефолтные)
                         newData.achievements = data.achievements;
                     }
+                    
                     data = newData;
                     console.log("Данные загружены из облака:", data);
                     showSyncIndicator('success', 'Обновлено');
@@ -1402,6 +1394,7 @@
                     const parsed = JSON.parse(saved);
                     // Создаем новый объект, объединяя дефолтные значения с загруженными данными
                     const newData = { ...data, ...parsed };
+                    
                     // Проверяем, существуют ли timeStats в загруженных данных
                     if (parsed && Array.isArray(parsed.timeStats)) {
                         // Если timeStats есть, используем их
@@ -1410,6 +1403,7 @@
                         // Если timeStats нет, сохраняем дефолтные
                         newData.timeStats = data.timeStats;
                     }
+                    
                     // Проверяем, существует ли firstUseDate в загруженных данных
                     if (parsed && parsed.firstUseDate) {
                         // Если firstUseDate есть, используем его
@@ -1418,6 +1412,7 @@
                         // Если firstUseDate нет, сохраняем дефолтную дату
                         newData.firstUseDate = data.firstUseDate;
                     }
+                    
                     // Проверяем, существуют ли achievements в загруженных данных
                     if (parsed && Array.isArray(parsed.achievements)) {
                         // Если achievements есть, используем их
@@ -1426,6 +1421,7 @@
                         // Если achievements нет, сохраняем дефолтные
                         newData.achievements = data.achievements;
                     }
+                    
                     data = newData;
                 }
             } catch (e) {
