@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#4CAF50">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#1a2a6c">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Счетчик сигарет">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -51,21 +51,15 @@
             -webkit-tap-highlight-color: transparent;
             transition: background-color 0.3s, color 0.3s;
         }
-        html, body {
-            height: 100%;
+        html {
             height: -webkit-fill-available;
-            margin: 0;
-            padding: 0;
-            background: var(--bg-gradient) !important;
-            background-attachment: fixed !important;
-            background-size: cover !important;
-            background-repeat: no-repeat !important;
         }
         body {
+            background: var(--bg-gradient) !important;
             color: var(--text-color);
             min-height: 100vh;
             min-height: -webkit-fill-available;
-            padding: 10px; /* Уменьшено для экономии места */
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -485,7 +479,7 @@
         }
         @media (max-width: 600px) {
             body {
-                padding: 8px; /* Уменьшено */
+                padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             }
             .counter-value {
                 font-size: 3.8rem; /* Уменьшено */
@@ -643,22 +637,9 @@
             25% { transform: translateX(-3px); } /* Уменьшено */
             75% { transform: translateX(3px); } /* Уменьшено */
         }
-        /* Фикс для статус-бара на мобильных устройствах */
-        .status-bar-fix {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: env(safe-area-inset-top);
-            background: var(--bg-gradient);
-            z-index: -1;
-        }
     </style>
 </head>
 <body>
-    <!-- Фикс для статус-бара на мобильных устройствах -->
-    <div class="status-bar-fix"></div>
-    
     <!-- Кастомный экран загрузки (Preloader) -->
     <div id="app-preloader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.4s ease-out;">
         <img src="icon-192x192.png" alt="SmokeLess Logo" style="width: 90px; height: 90px; margin-bottom: 18px; animation: appLogoPulse 1.8s infinite;">
@@ -1971,6 +1952,19 @@ ${achievement.description}`);
         }
         // Инициализация приложения при загрузке
         document.addEventListener('DOMContentLoaded', initApp);
+        
+        // Динамическое обновление theme-color для соответствия градиенту
+        function updateThemeColor() {
+            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            if (metaThemeColor) {
+                metaThemeColor.setAttribute('content', '#1a2a6c');
+            }
+        }
+        
+        // Инициализация theme-color
+        document.addEventListener('DOMContentLoaded', () => {
+            updateThemeColor();
+        });
     </script>
 </body>
 </html>
