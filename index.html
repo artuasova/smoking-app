@@ -1250,7 +1250,6 @@
                     // --- ВАЖНО: Обновляем весь объект data ---
                     // Создаем новый объект, объединяя дефолтные значения с загруженными данными
                     const newData = { ...data, ...userData.data };
-                    
                     // Проверяем, существуют ли timeStats в загруженных данных
                     if (userData.data && Array.isArray(userData.data.timeStats)) {
                         // Если timeStats есть, используем их
@@ -1259,7 +1258,6 @@
                         // Если timeStats нет, сохраняем текущие (из localStorage или дефолтные)
                         newData.timeStats = data.timeStats;
                     }
-                    
                     // Проверяем, существует ли firstUseDate в загруженных данных
                     if (userData.data && userData.data.firstUseDate) {
                         // Если firstUseDate есть, используем его
@@ -1268,7 +1266,6 @@
                         // Если firstUseDate нет, сохраняем текущую дату (если это первый запуск)
                         newData.firstUseDate = data.firstUseDate;
                     }
-                    
                     // Проверяем, существуют ли achievements в загруженных данных
                     if (userData.data && Array.isArray(userData.data.achievements)) {
                         // Если achievements есть, используем их
@@ -1277,7 +1274,6 @@
                         // Если achievements нет, сохраняем текущие (из localStorage или дефолтные)
                         newData.achievements = data.achievements;
                     }
-                    
                     data = newData;
                     console.log("Данные загружены из облака:", data);
                     showSyncIndicator('success', 'Обновлено');
@@ -1393,7 +1389,6 @@
                     const parsed = JSON.parse(saved);
                     // Создаем новый объект, объединяя дефолтные значения с загруженными данными
                     const newData = { ...data, ...parsed };
-                    
                     // Проверяем, существуют ли timeStats в загруженных данных
                     if (parsed && Array.isArray(parsed.timeStats)) {
                         // Если timeStats есть, используем их
@@ -1402,7 +1397,6 @@
                         // Если timeStats нет, сохраняем дефолтные
                         newData.timeStats = data.timeStats;
                     }
-                    
                     // Проверяем, существует ли firstUseDate в загруженных данных
                     if (parsed && parsed.firstUseDate) {
                         // Если firstUseDate есть, используем его
@@ -1411,7 +1405,6 @@
                         // Если firstUseDate нет, сохраняем дефолтную дату
                         newData.firstUseDate = data.firstUseDate;
                     }
-                    
                     // Проверяем, существуют ли achievements в загруженных данных
                     if (parsed && Array.isArray(parsed.achievements)) {
                         // Если achievements есть, используем их
@@ -1420,7 +1413,6 @@
                         // Если achievements нет, сохраняем дефолтные
                         newData.achievements = data.achievements;
                     }
-                    
                     data = newData;
                 }
             } catch (e) {
