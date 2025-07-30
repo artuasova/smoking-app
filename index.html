@@ -1239,7 +1239,37 @@
                 }
                 if (userData) {
                     // --- ВАЖНО: Обновляем весь объект data ---
-                    data = { ...data, ...userData.data }; // Объединяем с дефолтными значениями
+                    // Создаем новый объект, объединяя дефолтные значения с загруженными данными
+                    const newData = { ...data, ...userData.data };
+                    
+                    // Проверяем, существуют ли timeStats в загруженных данных
+                    if (userData.data && Array.isArray(userData.data.timeStats)) {
+                        // Если timeStats есть, используем их
+                        newData.timeStats = userData.data.timeStats;
+                    } else {
+                        // Если timeStats нет, сохраняем текущие (из localStorage или дефолтные)
+                        newData.timeStats = data.timeStats;
+                    }
+                    
+                    // Проверяем, существует ли firstUseDate в загруженных данных
+                    if (userData.data && userData.data.firstUseDate) {
+                        // Если firstUseDate есть, используем его
+                        newData.firstUseDate = userData.data.firstUseDate;
+                    } else {
+                        // Если firstUseDate нет, сохраняем текущую дату (если это первый запуск)
+                        newData.firstUseDate = data.firstUseDate;
+                    }
+                    
+                    // Проверяем, существуют ли achievements в загруженных данных
+                    if (userData.data && Array.isArray(userData.data.achievements)) {
+                        // Если achievements есть, используем их
+                        newData.achievements = userData.data.achievements;
+                    } else {
+                        // Если achievements нет, сохраняем текущие (из localStorage или дефолтные)
+                        newData.achievements = data.achievements;
+                    }
+                    
+                    data = newData;
                     console.log("Данные загружены из облака:", data);
                     showSyncIndicator('success', 'Обновлено');
                 } else {
@@ -1352,7 +1382,37 @@
                 const saved = localStorage.getItem('smokingData');
                 if (saved) {
                     const parsed = JSON.parse(saved);
-                    data = { ...data, ...parsed };
+                    // Создаем новый объект, объединяя дефолтные значения с загруженными данными
+                    const newData = { ...data, ...parsed };
+                    
+                    // Проверяем, существуют ли timeStats в загруженных данных
+                    if (parsed && Array.isArray(parsed.timeStats)) {
+                        // Если timeStats есть, используем их
+                        newData.timeStats = parsed.timeStats;
+                    } else {
+                        // Если timeStats нет, сохраняем дефолтные
+                        newData.timeStats = data.timeStats;
+                    }
+                    
+                    // Проверяем, существует ли firstUseDate в загруженных данных
+                    if (parsed && parsed.firstUseDate) {
+                        // Если firstUseDate есть, используем его
+                        newData.firstUseDate = parsed.firstUseDate;
+                    } else {
+                        // Если firstUseDate нет, сохраняем дефолтную дату
+                        newData.firstUseDate = data.firstUseDate;
+                    }
+                    
+                    // Проверяем, существуют ли achievements в загруженных данных
+                    if (parsed && Array.isArray(parsed.achievements)) {
+                        // Если achievements есть, используем их
+                        newData.achievements = parsed.achievements;
+                    } else {
+                        // Если achievements нет, сохраняем дефолтные
+                        newData.achievements = data.achievements;
+                    }
+                    
+                    data = newData;
                 }
             } catch (e) {
                 console.log('Не удалось загрузить данные');
@@ -1826,7 +1886,8 @@
                             achieved = data.usageDays >= achievement.target;
                             break;
                         case 4: // 100 сигарет
-                            achieved = data.month >= achievement.target;
+                            // Исправлено: проверяем общее количество сигарет за всё время
+                            achieved = data.timeStats.length >= achievement.target;
                             break;
                         case 5: // Экономия здоровья (снижение на 50% по сравнению с неделей)
                             // Проверяем, есть ли данные за последнюю неделю
@@ -1952,7 +2013,6 @@ ${achievement.description}`);
         }
         // Инициализация приложения при загрузке
         document.addEventListener('DOMContentLoaded', initApp);
-        
         // Динамическое обновление theme-color для соответствия градиенту
         function updateThemeColor() {
             const metaThemeColor = document.querySelector('meta[name="theme-color"]');
@@ -1960,7 +2020,6 @@ ${achievement.description}`);
                 metaThemeColor.setAttribute('content', '#1a2a6c');
             }
         }
-        
         // Инициализация theme-color
         document.addEventListener('DOMContentLoaded', () => {
             updateThemeColor();
