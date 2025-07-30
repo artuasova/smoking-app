@@ -33,6 +33,10 @@
             --progress-container-bg-start: rgba(255, 255, 255, 0.1);
             /* Конечный цвет фона для progress-container при >100% */
             --progress-container-bg-end: rgba(255, 100, 100, 0.2);
+            /* Начальный градиент фона (0% цели) */
+            --bg-gradient-start: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            /* Конечный градиент фона (100% и более цели) */
+            --bg-gradient-end: linear-gradient(135deg, #b21f1f, #1a2a6c, #b21f1f);
         }
         [data-theme="light"] {
             --bg-gradient: linear-gradient(135deg, #e0e0e0, #f5f5f5, #e0e0e0);
@@ -42,6 +46,9 @@
             --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             --progress-container-bg-start: rgba(0, 0, 0, 0.1);
             --progress-container-bg-end: rgba(255, 100, 100, 0.2);
+            /* Базовый градиент для светлой темы */
+            --bg-gradient-start: linear-gradient(135deg, #e0e0e0, #f5f5f5, #e0e0e0);
+            --bg-gradient-end: linear-gradient(135deg, #ff9a8b, #ff6b6b, #ff9a8b); /* Пример красного оттенка для светлой темы */
         }
         * {
             margin: 0;
@@ -52,7 +59,7 @@
             transition: background-color 0.3s, color 0.3s;
         }
         body {
-            background: var(--bg-gradient) !important;
+            background: var(--bg-gradient-start) !important;
             color: var(--text-color);
             min-height: 100vh;
             min-height: -webkit-fill-available;
@@ -1513,6 +1520,125 @@
             const bgColor = `rgba(${currentRed}, 100, 100, ${currentAlpha})`;
             progressContainer.style.background = bgColor;
             // --- КОНЕЦ ИЗМЕНЕНИЙ ДЛЯ ПРОГРЕСС-БАРА ---
+            // --- НАЧАЛО ИЗМЕНЕНИЙ ДЛЯ ФОНА BODY ---
+            // 5. Динамическое изменение фона body в зависимости от процента выполнения цели
+            try {
+                // Получаем элемент body
+                const bodyElement = document.body;
+
+                // Получаем начальный и конечный градиенты из CSS переменных
+                const startGradient = getComputedStyle(bodyElement).getPropertyValue('--bg-gradient-start').trim();
+                const endGradient = getComputedStyle(bodyElement).getPropertyValue('--bg-gradient-end').trim();
+
+                // Определяем коэффициент смешивания (0..1)
+                // Используем 'percent' из предыдущих расчетов (data.today / data.goal * 100)
+                // Ограничиваем коэффициент 1.0, чтобы фон не становился "более красным", чем на 100%
+                const mixRatio = Math.min(1, percent / 100);
+
+                // --- Функция для интерполяции между двумя градиентами ---
+                // Эта функция упрощена и работает для градиентов с одинаковым количеством цветовых точек
+                // и предполагает, что точки останавливаются в процентах (например, 0%, 50%, 100%).
+                function interpolateGradients(grad1, grad2, ratio) {
+                    // Извлекаем часть "135deg, #color1, #color2, #color3" из "linear-gradient(135deg, #color1, #color2, #color3)"
+                    const extractColors = (gradientStr) => {
+                        const match = gradientStr.match(/linear-gradient$$[^)]*$$\s*(.*)/);
+                        if (match && match[1]) {
+                            return match[1].split(',').map(color => color.trim());
+                        }
+                        // fallback
+                        return ['#1a2a6c', '#b21f1f', '#1a2a6c'];
+                    };
+
+                    const colors1 = extractColors(grad1);
+                    const colors2 = extractColors(grad2);
+
+                    // Проверка на совпадение количества цветов
+                    if (colors1.length !== colors2.length) {
+                        console.warn("Градиенты имеют разное количество цветов, используется fallback.");
+                        return ratio < 0.5 ? grad1 : grad2; // Простой переключатель
+                    }
+
+                    // Интерполируем каждый цвет
+                    const interpolatedColors = colors1.map((color1, index) => {
+                        const color2 = colors2[index];
+                        // Простая интерполяция RGB
+                        // (Для более точной работы с HSL или другими моделями нужен более сложный парсинг)
+                        const parseColor = (colorStr) => {
+                            let match;
+                            // Проверка на hex
+                            if (match = /^#([A-Fa-f0-9]{6})$/.exec(colorStr)) {
+                                return {
+                                    r: parseInt(match[1].substring(0, 2), 16),
+                                    g: parseInt(match[1].substring(2, 4), 16),
+                                    b: parseInt(match[1].substring(4, 6), 16)
+                                };
+                            }
+                            // Проверка на rgb()
+                            else if (match = /^rgb$$(\d+),\s*(\d+),\s*(\d+)$$/.exec(colorStr)) {
+                                return {
+                                    r: parseInt(match[1], 10),
+                                    g: parseInt(match[2], 10),
+                                    b: parseInt(match[3], 10)
+                                };
+                            }
+                            // fallback
+                            console.warn(`Не удалось распарсить цвет: ${colorStr}`);
+                            return { r: 0, g: 0, b: 0 };
+                        };
+
+                        const c1 = parseColor(color1);
+                        const c2 = parseColor(color2);
+
+                        const r = Math.round(c1.r + (c2.r - c1.r) * ratio);
+                        const g = Math.round(c1.g + (c2.g - c1.g) * ratio);
+                        const b = Math.round(c1.b + (c2.b - c1.b) * ratio);
+
+                        return `rgb(${r}, ${g}, ${b})`;
+                    });
+
+                    // Собираем новый градиент. Предполагаем, что углы одинаковые.
+                    const angleMatch = grad1.match(/linear-gradient$$(\d+)deg/);
+                    const angle = angleMatch ? angleMatch[1] + 'deg' : '135deg';
+
+                    return `linear-gradient(${angle}, ${interpolatedColors.join(', ')})`;
+                }
+
+                // Вычисляем промежуточный градиент
+                let currentGradient;
+                if (mixRatio <= 0) {
+                    currentGradient = startGradient;
+                } else if (mixRatio >= 1) {
+                    currentGradient = endGradient;
+                } else {
+                    currentGradient = interpolateGradients(startGradient, endGradient, mixRatio);
+                }
+
+                // Применяем новый градиент к фону body
+                bodyElement.style.background = currentGradient + ' !important';
+                // Также обновляем свойства, используемые в медиа-запросах и кастомном фоне
+                bodyElement.style.backgroundAttachment = 'fixed !important';
+                bodyElement.style.backgroundSize = 'cover !important';
+                bodyElement.style.backgroundRepeat = 'no-repeat !important';
+
+                // Обновляем минимальный фон для предотвращения черного экрана
+                const minBgStyle = `background: ${currentGradient} !important; background-attachment: fixed; background-size: cover; background-repeat: no-repeat;`;
+                let minBgElement = document.getElementById('dynamic-min-bg');
+                if (!minBgElement) {
+                     minBgElement = document.createElement('style');
+                     minBgElement.id = 'dynamic-min-bg';
+                     minBgElement.textContent = `body { ${minBgStyle} }`;
+                     document.head.appendChild(minBgElement);
+                } else {
+                     minBgElement.textContent = `body { ${minBgStyle} }`;
+                }
+
+
+            } catch (e) {
+                console.error("Ошибка при обновлении фона:", e);
+                // В случае ошибки возвращаемся к начальному градиенту
+                document.body.style.background = 'var(--bg-gradient-start) !important';
+            }
+            // --- КОНЕЦ ИЗМЕНЕНИЙ ДЛЯ ФОНА BODY ---
             // Обновление стоимости (исправлено)
             // Обновление стоимости (ИСПРАВЛЕНО - считаем за всё время)
             const costPerCigarette = data.packPrice / data.cigarettesPerPack;
