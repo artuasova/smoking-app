@@ -56,36 +56,43 @@
             margin: 0;
             padding: 0;
         }
+        /* --- ИСПРАВЛЕНИЯ ФОНА --- */
+        html {
+            /* Убираем background у html, он будет у body::before */
+            background: transparent !important;
+        }
         body {
+            /* Делаем фон прозрачным */
+            background: transparent !important;
             color: var(--text-color);
             min-height: 100vh;
             min-height: -webkit-fill-available;
+            /* Используем padding для safe-area, а не margin */
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             display: flex;
             flex-direction: column;
             align-items: center;
             touch-action: manipulation;
             margin: 0;
-            /* Удалены дублирующиеся height и overflow, которые могут конфликтовать */
-            background: transparent !important;
-            position: relative;
+            position: relative; /* Для позиционирования псевдоэлемента */
         }
-        
         /* Создаем псевдоэлемент для сплошного фона */
         body::before {
             content: '';
-            position: fixed;
+            position: fixed; /* Фиксируем относительно viewport */
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
+            /* Применяем ваш градиент */
             background: var(--bg-gradient) !important;
             background-size: cover !important;
             background-repeat: no-repeat !important;
-            background-attachment: scroll !important;
-            z-index: -1;
+            background-attachment: scroll !important; /* scroll для псевдоэлемента */
+            z-index: -1; /* Помещаем фон позади всего контента */
         }
-        
+        /* --- КОНЕЦ ИСПРАВЛЕНИЙ ФОНА --- */
+
         .container {
             max-width: 800px;
             width: 100%;
@@ -430,13 +437,14 @@
         .user-panel {
             background: var(--card-bg);
             border-radius: 13px; /* Уменьшено */
+            /* Убираем height и используем padding для внутреннего отступа */
             padding: 12px; /* Уменьшено */
             margin-bottom: 15px; /* Уменьшено */
             display: none;
             /* Добавлен padding-top с учетом safe-area для статус-бара */
             padding-top: env(safe-area-inset-top, 0px);
             /* Добавлен box-sizing для корректного расчета padding */
-            box-sizing: border-box;
+            box-sizing: border-box; /* ВАЖНО: чтобы padding не увеличивал высоту */
             width: 100%; /* Убедимся, что панель занимает всю ширину */
         }
         .user-info {
@@ -552,6 +560,8 @@
                 height: -webkit-fill-available;
                 margin: 0;
                 padding: 0;
+                /* Убираем background у html и body в медиа-запросе */
+                background: transparent !important;
             }
             /* Фикс для PWA */
             * {
@@ -581,8 +591,11 @@
                 -ms-overflow-style: none;
                 scrollbar-width: none;
             }
+            /* Добавьте эти стили для предотвращения белого фона */
+            /* body::before уже определен выше, не дублируем */
             /* Фикс для pull-to-refresh */
             body {
+                background: transparent !important;
                 overscroll-behavior: contain;
                 -webkit-overscroll-behavior: contain;
             }
@@ -610,6 +623,17 @@
                 position: relative;
             }
         }
+        /* Минимальный фон для предотвращения черного экрана на старте */
+        /* Убираем, так как теперь фон у body::before */
+        /* body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c) !important;
+            background-attachment: fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        } */
         /* Анимации для прелоадера */
         @keyframes appLogoPulse {
             0% { transform: scale(1); opacity: 1; }
