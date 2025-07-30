@@ -667,26 +667,26 @@
             <span id="syncText">Синхронизация...</span>
         </div>
         <!-- ИСПРАВЛЕНИЕ: Обновлен HTML user-panel для корректного отображения и позиционирования -->
-        <div class="user-panel" id="userPanel">
-            <div class="user-info">
-                <!-- Левая часть: Аватар и информация -->
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <div class="user-avatar" id="userAvatar">U</div>
-                    <div>
-                        <div id="userName">Пользователь</div>
-                        <div style="font-size: 0.75rem; opacity: 0.8;" id="userEmail">email@example.com</div>
-                    </div>
-                </div>
-                <!-- Правая часть: Кнопки управления -->
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <!-- Индикатор синхронизации -->
-                    <div id="syncStatusIndicator" style="font-size: 1.1rem; display: none;">⚪</div>
-                    <!-- Контейнер для текста статуса -->
-                    <div id="syncStatusText" style="font-size: 0.8rem; display: none;"></div>
-                    <!-- Кнопка обновления -->
-                    <button id="refreshAppBtnTop" title="Обновить данные" style="background: none; border: none; cursor: pointer; font-size: 1.1rem;">🔄</button>
+        <!-- Информация пользователя теперь отображается прямо на фоне -->
+        <div class="user-info" id="userPanel" style="display: none; width: 100%; padding: 10px env(safe-area-inset-right, 10px) 10px env(safe-area-inset-left, 10px); padding-top: env(safe-area-inset-top, 10px); box-sizing: border-box; margin-bottom: 10px;">
+            <!-- Левая часть: Аватар и информация -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div>
+                    <div id="userName">Пользователь</div>
+                    <div style="font-size: 0.75rem; opacity: 0.8;" id="userEmail">email@example.com</div>
                 </div>
             </div>
+            <!-- Правая часть: Кнопки управления -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <!-- Индикатор синхронизации -->
+                <div id="syncStatusIndicator" style="font-size: 1.1rem; display: none;">⚪</div>
+                <!-- Контейнер для текста статуса -->
+                <div id="syncStatusText" style="font-size: 0.8rem; display: none;"></div>
+                <!-- Кнопка обновления -->
+                <button id="refreshAppBtnTop" title="Обновить данные" style="background: none; border: none; cursor: pointer; font-size: 1.1rem;">🔄</button>
+            </div>
+        </div>
         </div>
         <!-- КОНЕЦ ИСПРАВЛЕНИЯ user-panel -->
         <header>
