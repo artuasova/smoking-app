@@ -57,7 +57,7 @@
             padding: 0;
         }
         body {
-            background: var(--bg-gradient) !important;
+            /* Убираем дублирующиеся стили фона */
             color: var(--text-color);
             min-height: 100vh;
             min-height: -webkit-fill-available;
@@ -67,10 +67,17 @@
             align-items: center;
             touch-action: manipulation;
             margin: 0;
-            /* Удалены дублирующиеся height и overflow, которые могут конфликтовать */
-            background-attachment: fixed !important;
-            background-size: cover !important;
-            background-repeat: no-repeat !important;
+        }
+        /* Создаем бесшовный градиентный фон */
+        html {
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+        body {
+            /* Тело становится прозрачным, чтобы показать фон html */
+            background: transparent;
         }
         .container {
             max-width: 800px;
@@ -81,7 +88,6 @@
             flex-direction: column;
             /* Убрана фиксированная height: 100%, чтобы контент мог прокручиваться */
             min-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-            padding-top: env(safe-area-inset-top, 0px);
         }
         header {
             text-align: center;
@@ -417,7 +423,8 @@
         .user-panel {
             background: var(--card-bg);
             border-radius: 13px; /* Уменьшено */
-            padding: 12px; /* Уменьшено */
+            /* Уменьшаем padding */
+            padding: 8px 12px; 
             margin-bottom: 15px; /* Уменьшено */
             display: none;
             /* Добавлен padding-top с учетом safe-area для статус-бара */
@@ -539,10 +546,10 @@
                 height: -webkit-fill-available;
                 margin: 0;
                 padding: 0;
-                background: var(--bg-gradient) !important;
-                background-attachment: fixed !important;
-                background-size: cover !important;
-                background-repeat: no-repeat !important;
+                background: var(--bg-gradient);
+                background-attachment: fixed;
+                background-size: cover;
+                background-repeat: no-repeat;
             }
             /* Фикс для PWA */
             * {
@@ -572,58 +579,6 @@
                 -ms-overflow-style: none;
                 scrollbar-width: none;
             }
-            /* Добавьте эти стили для предотвращения белого фона */
-            body::before {
-                content: '';
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: var(--bg-gradient);
-                z-index: -1;
-                background-attachment: fixed;
-            }
-            /* Фикс для pull-to-refresh */
-            body {
-                background: var(--bg-gradient) !important;
-                background-attachment: fixed !important;
-                overscroll-behavior: contain;
-                -webkit-overscroll-behavior: contain;
-            }
-            /* Улучшенный градиент */
-            :root {
-                --bg-gradient: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c) !important;
-            }
-            [data-theme="light"] {
-                --bg-gradient: linear-gradient(135deg, #e0e0e0, #f5f5f5, #e0e0e0) !important;
-            }
-            /* Фикс для iOS PWA */
-            @supports (-webkit-touch-callout: none) {
-                .container {
-                    min-height: -webkit-fill-available;
-                }
-                body {
-                    min-height: -webkit-fill-available;
-                }
-            }
-            /* Добавьте это в конец CSS секции */
-            .scroll-container {
-                height: 100%;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-                position: relative;
-            }
-        }
-        /* Минимальный фон для предотвращения черного экрана на старте */
-        body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c) !important;
-            background-attachment: fixed;
-            background-size: cover;
-            background-repeat: no-repeat;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
         }
         /* Анимации для прелоадера */
         @keyframes appLogoPulse {
@@ -690,7 +645,6 @@
             <button class="settings-btn" id="settingsBtn" title="Настройки">⚙️</button>
             <button class="theme-toggle" id="themeToggle" title="Сменить тему">🌙</button>
         </header>
-        <div class="scroll-container">
         <main>
             <div class="counter-card">
                 <h2>Сегодня выкуренных сигарет</h2>
@@ -754,7 +708,6 @@
                 </div>
             </div>
         </main>
-        </div>
         <footer>
             <p>SmokeLess - Smoking Tracker App by Artuasova | © 2025 Ver.0.8</p>
         </footer>
@@ -1081,7 +1034,7 @@
         // Проверка сессии
         async function checkSession() {
             // --- ИСПРАВЛЕНА СИНТАКСИЧЕСКАЯ ОШИБКА ---
-            const { data: { session } } = await supabase.auth.getSession();
+            const {  { session } } = await supabase.auth.getSession();
             // --- КОНЕЦ ИСПРАВЛЕНИЯ ---
             if (session) {
                 currentUser = session.user;
@@ -1240,7 +1193,7 @@
             if (!currentUser) return;
             try {
                 showSyncIndicator('syncing', 'Обновление ...');
-                const { data: userData, error } = await supabase
+                const {  userData, error } = await supabase
                     .from('smoking_data')
                     .select('*')
                     .eq('user_id', currentUser.id)
