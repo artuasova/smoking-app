@@ -414,17 +414,15 @@
         }
         /* --- ИСПРАВЛЕНИЕ: Стили для user-panel --- */
         .user-panel {
-            background: var(--card-bg);
-            border-radius: 13px; /* Уменьшено */
-            padding: 12px; /* Уменьшено */
-            margin-bottom: 15px; /* Уменьшено */
-            display: none;
-            /* Добавлен padding-top с учетом safe-area для статус-бара */
-            padding-top: env(safe-area-inset-top, 0px);
-            /* Добавлен box-sizing для корректного расчета padding */
-            box-sizing: border-box;
-            width: 100%; /* Убедимся, что панель занимает всю ширину */
+          background: var(--card-bg);
+          border-radius: 13px;
+          padding: calc(12px + env(safe-area-inset-top, 0px)) 12px 12px 12px;
+          margin-bottom: 15px;
+          display: none;
+          box-sizing: border-box;
+          width: 100%;
         }
+
         .user-info {
             display: flex;
             justify-content: space-between;
