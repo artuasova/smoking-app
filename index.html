@@ -655,6 +655,76 @@
             25% { transform: translateX(-3px); }
             75% { transform: translateX(3px); }
         }
+        /* --- Добавлено для расширенной статистики --- */
+        .advanced-stats-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+            display: none; /* Скрыто по умолчанию */
+        }
+
+        .advanced-stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            cursor: pointer; /* Указываем, что заголовок кликабелен */
+        }
+
+        .advanced-stats-content {
+            display: none; /* Скрыто по умолчанию */
+        }
+
+        .advanced-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .advanced-stats-section h4 {
+            margin-bottom: 8px;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .advanced-stats-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 150px; /* Ограничиваем высоту для прокрутки */
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 5px 0;
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .advanced-stats-item {
+            padding: 4px 10px;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .advanced-stats-item:nth-child(odd) {
+             background: rgba(255, 255, 255, 0.05);
+        }
+
+        .advanced-stats-item-value {
+            font-weight: bold;
+        }
+
+        /* Адаптивность для маленьких экранов */
+        @media (max-width: 600px) {
+            .advanced-stats-grid {
+                grid-template-columns: 1fr; /* Одна колонка на мобильных */
+            }
+        }
+        /* --- Конец добавления для расширенной статистики --- */
     </style>
 </head>
 <body>
@@ -754,6 +824,31 @@
             <div class="quote-container">
                 <p id="quote">"Каждая не выкуренная сигарета - шаг к здоровью!"</p>
             </div>
+            <!-- --- Добавлено для расширенной статистики --- -->
+            <div class="advanced-stats-container" id="advancedStatsContainer">
+                <div class="advanced-stats-header" id="advancedStatsHeader">
+                    <h3>📊 Расширенная статистика</h3>
+                    <span>▼</span> <!-- Стрелка вниз -->
+                </div>
+                <div class="advanced-stats-content" id="advancedStatsContent">
+                    <div class="advanced-stats-grid">
+                        <div class="advanced-stats-section">
+                            <h4>🕒 По часам суток</h4>
+                            <ul class="advanced-stats-list" id="hourlyStatsList">
+                                <!-- Статистика по часам будет добавлена сюда -->
+                            </ul>
+                        </div>
+                        <div class="advanced-stats-section">
+                            <h4>📅 По дням недели</h4>
+                            <ul class="advanced-stats-list" id="weekdayStatsList">
+                                <!-- Статистика по дням недели будет добавлена сюда -->
+                            </ul>
+                        </div>
+                        <!-- Можно добавить больше разделов, например, по месяцам -->
+                    </div>
+                </div>
+            </div>
+            <!-- --- Конец добавления для расширенной статистики --- -->
             <div class="achievements-container">
                 <div class="achievements-header">
                     <h3>Достижения</h3>
@@ -941,6 +1036,13 @@
         const resetAllBtn = document.getElementById('resetAllBtn');
         const refreshBtn = document.getElementById('refreshBtn');
         const manualResetTodayBtn = document.getElementById('manualResetToday');
+        // --- Добавлено для расширенной статистики ---
+        const advancedStatsContainer = document.getElementById('advancedStatsContainer');
+        const advancedStatsHeader = document.getElementById('advancedStatsHeader');
+        const advancedStatsContent = document.getElementById('advancedStatsContent');
+        const hourlyStatsList = document.getElementById('hourlyStatsList');
+        const weekdayStatsList = document.getElementById('weekdayStatsList');
+        // --- Конец добавления для расширенной статистики ---
         // Auth state
         let isRegistration = false;
         let isForgotPassword = false;
@@ -1053,6 +1155,19 @@
             document.getElementById('allTimeCard').addEventListener('click', function() {
                 toggleTimeDetails('all');
             });
+            // --- Добавлено для расширенной статистики ---
+            // Переключение отображения содержимого расширенной статистики
+            advancedStatsHeader.addEventListener('click', () => {
+                const isHidden = advancedStatsContent.style.display === 'none';
+                advancedStatsContent.style.display = isHidden ? 'block' : 'none';
+                // Меняем стрелку
+                advancedStatsHeader.querySelector('span').textContent = isHidden ? '▲' : '▼';
+                // Если открываем, обновляем данные
+                if (isHidden) {
+                    calculateAndRenderAdvancedStats();
+                }
+            });
+            // --- Конец добавления для расширенной статистики ---
             // Проверка сессии
             checkSession();
             // Регистрация Service Worker
@@ -1645,6 +1760,18 @@
                     firstUseDateLabelEl.textContent = 'данных нет';
                 }
             }
+            // --- Добавлено для расширенной статистики ---
+            // Показываем контейнер расширенной статистики, если есть данные
+            if (data.timeStats.length > 0) {
+                advancedStatsContainer.style.display = 'block';
+            } else {
+                advancedStatsContainer.style.display = 'none';
+            }
+            // Если расширенная статистика открыта, обновляем её
+            if (advancedStatsContent.style.display !== 'none') {
+                calculateAndRenderAdvancedStats();
+            }
+            // --- Конец добавления в updateUI ---
         }
         // Отображение медицинского факта по часам
         function showMedicalFact() {
@@ -2024,6 +2151,94 @@ ${achievement.description}`);
                 }
             }
         }
+        // --- Добавлено для расширенной статистики ---
+        // Функция для вычисления расширенной статистики
+        function calculateAdvancedStats() {
+            const hourlyStats = new Array(24).fill(0); // Массив для 0-23 часов
+            const weekdayStats = new Array(7).fill(0); // Массив для 0 (Вс) - 6 (Сб) или 1 (Пн) - 7 (Вс)
+            const weekdayNames = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+
+            if (data.timeStats.length === 0) {
+                return { hourlyStats, weekdayStats, weekdayNames };
+            }
+
+            data.timeStats.forEach(stat => {
+                const statDate = new Date(stat.timestamp);
+                const hour = statDate.getHours(); // 0-23
+                const weekday = statDate.getDay(); // 0 (Вс) - 6 (Сб)
+
+                hourlyStats[hour]++;
+                weekdayStats[weekday]++;
+            });
+
+            return { hourlyStats, weekdayStats, weekdayNames };
+        }
+
+        // Функция для отображения расширенной статистики
+        function renderAdvancedStats(stats) {
+            const { hourlyStats, weekdayStats, weekdayNames } = stats;
+
+            // Очищаем списки
+            hourlyStatsList.innerHTML = '';
+            weekdayStatsList.innerHTML = '';
+
+            // --- Отображение статистики по часам ---
+            // Создаем массив объектов {hour, count} для сортировки
+            const hourlyData = hourlyStats.map((count, hour) => ({ hour, count }));
+            // Сортируем по убыванию количества
+            hourlyData.sort((a, b) => b.count - a.count);
+
+            if (hourlyData.some(item => item.count > 0)) {
+                hourlyData.forEach(item => {
+                    if (item.count > 0) { // Отображаем только часы с записями
+                        const li = document.createElement('li');
+                        li.className = 'advanced-stats-item';
+                        li.innerHTML = `
+                            <span>${item.hour.toString().padStart(2, '0')}:00</span>
+                            <span class="advanced-stats-item-value">${item.count}</span>
+                        `;
+                        hourlyStatsList.appendChild(li);
+                    }
+                });
+            } else {
+                const li = document.createElement('li');
+                li.className = 'advanced-stats-item';
+                li.textContent = 'Нет данных';
+                hourlyStatsList.appendChild(li);
+            }
+
+            // --- Отображение статистики по дням недели ---
+            // Создаем массив объектов {dayIndex, name, count} для сортировки
+            const weekdayData = weekdayStats.map((count, index) => ({ dayIndex: index, name: weekdayNames[index], count }));
+            // Сортируем по убыванию количества
+            weekdayData.sort((a, b) => b.count - a.count);
+
+            if (weekdayData.some(item => item.count > 0)) {
+                weekdayData.forEach(item => {
+                    if (item.count > 0) { // Отображаем только дни с записями
+                        const li = document.createElement('li');
+                        li.className = 'advanced-stats-item';
+                        li.innerHTML = `
+                            <span>${item.name}</span>
+                            <span class="advanced-stats-item-value">${item.count}</span>
+                        `;
+                        weekdayStatsList.appendChild(li);
+                    }
+                });
+            } else {
+                const li = document.createElement('li');
+                li.className = 'advanced-stats-item';
+                li.textContent = 'Нет данных';
+                weekdayStatsList.appendChild(li);
+            }
+        }
+
+        // Функция для одновременного расчета и отображения
+        function calculateAndRenderAdvancedStats() {
+            const stats = calculateAdvancedStats();
+            renderAdvancedStats(stats);
+        }
+        // --- Конец добавления для расширенной статистики ---
         // Инициализация приложения при загрузке
         document.addEventListener('DOMContentLoaded', initApp);
         // Динамическое обновление theme-color для соответствия градиенту
