@@ -81,6 +81,7 @@
             flex-direction: column;
             /* Убрана фиксированная height: 100%, чтобы контент мог прокручиваться */
             min-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+            padding-top: env(safe-area-inset-top, 0px);
         }
         header {
             text-align: center;
