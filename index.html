@@ -51,26 +51,23 @@
             -webkit-tap-highlight-color: transparent;
             transition: background-color 0.3s, color 0.3s;
         }
-        html, body {
+        html {
             height: 100%;
-            margin: 0;
-            padding: 0;
         }
         body {
             background: var(--bg-gradient) !important;
             color: var(--text-color);
             min-height: 100vh;
-            min-height: -webkit-fill-available;
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             display: flex;
             flex-direction: column;
             align-items: center;
             touch-action: manipulation;
             margin: 0;
-            /* Удалены дублирующиеся height и overflow, которые могут конфликтовать */
             background-attachment: fixed !important;
             background-size: cover !important;
             background-repeat: no-repeat !important;
+            background-position: center center !important;
         }
         .container {
             max-width: 800px;
@@ -79,13 +76,12 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            /* Убрана фиксированная height: 100%, чтобы контент мог прокручиваться */
             min-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
         }
         header {
             text-align: center;
-            padding: 10px 0; /* Уменьшено */
-            margin-bottom: 15px; /* Уменьшено */
+            padding: 10px 0;
+            margin-bottom: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -94,59 +90,59 @@
             flex: 1;
         }
         h1 {
-            font-size: 1.8rem; /* Уменьшено */
-            margin-bottom: 5px; /* Уменьшено */
+            font-size: 1.8rem;
+            margin-bottom: 5px;
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
         .subtitle {
-            font-size: 0.9rem; /* Уменьшено */
+            font-size: 0.9rem;
             opacity: 0.9;
         }
         .theme-toggle, .settings-btn {
             background: var(--card-bg);
             border: none;
             border-radius: 50%;
-            width: 36px; /* Уменьшено */
-            height: 36px; /* Уменьшено */
+            width: 36px;
+            height: 36px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--text-color);
-            font-size: 1.1rem; /* Уменьшено */
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Уменьшено */
+            font-size: 1.1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
         .counter-card {
             background: var(--card-bg);
-            border-radius: 18px; /* Уменьшено */
-            padding: 20px; /* Уменьшено */
+            border-radius: 18px;
+            padding: 20px;
             text-align: center;
             box-shadow: var(--shadow);
-            margin-bottom: 15px; /* Уменьшено */
+            margin-bottom: 15px;
             border: 1px solid var(--border-color);
         }
         .counter-value {
-            font-size: 4.5rem; /* Уменьшено с 5rem */
+            font-size: 4.5rem;
             font-weight: bold;
-            margin: 10px 0; /* Уменьшено */
+            margin: 10px 0;
             text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
         }
         .counter-buttons {
             display: flex;
             justify-content: center;
-            gap: 12px; /* Уменьшено */
-            margin-top: 12px; /* Уменьшено */
+            gap: 12px;
+            margin-top: 12px;
         }
         .btn {
-            padding: 12px 20px; /* Уменьшено */
-            font-size: 1rem; /* Уменьшено */
+            padding: 12px 20px;
+            font-size: 1rem;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.2s ease;
             font-weight: bold;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Уменьшено */
-            min-width: 120px; /* Уменьшено */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            min-width: 120px;
             touch-action: manipulation;
         }
         .btn-primary {
@@ -165,21 +161,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px; /* Уменьшено */
+            gap: 6px;
         }
         .btn:hover {
-            transform: translateY(-1px); /* Уменьшено */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25); /* Уменьшено */
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
         }
         .btn:active {
-            transform: translateY(0.5px); /* Уменьшено */
+            transform: translateY(0.5px);
         }
         /* --- ПРОГРЕСС-БАР ПЕРЕМЕЩЕН ВЫШЕ --- */
         .progress-container {
-            background: var(--progress-container-bg-start); /* Используем CSS-переменную */
+            background: var(--progress-container-bg-start);
             border-radius: 15px;
-            padding: 15px; /* Уменьшено с 20px */
-            margin-bottom: 15px; /* Уменьшено с 25px */
+            padding: 15px;
+            margin-bottom: 15px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
             /* Переход для плавного изменения фона */
@@ -189,49 +185,48 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px; /* Уменьшено с 12px */
-            font-size: 1rem; /* Уменьшено с 1.1rem */
+            margin-bottom: 8px;
+            font-size: 1rem;
         }
         .progress-bar {
-            height: 15px; /* Уменьшено с 20px */
+            height: 15px;
             background: rgba(255, 255, 255, 0.2);
-            border-radius: 8px; /* Уменьшено с 10px */
+            border-radius: 8px;
             overflow: hidden;
         }
         .progress-fill {
             height: 100%;
-            /* background: var(--primary-btn); Убираем фиксированный градиент */
-            border-radius: 8px; /* Уменьшено */
+            border-radius: 8px;
             width: 0%;
-            transition: width 0.5s ease, background-color 0.5s ease; /* Добавляем переход для background-color */
+            transition: width 0.5s ease, background-color 0.5s ease;
         }
         /* --- КОНЕЦ ПРОГРЕСС-БАРА --- */
         .timer-container {
             background: var(--card-bg);
             border-radius: 15px;
-            padding: 18px; /* Уменьшено */
+            padding: 18px;
             text-align: center;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            margin-bottom: 15px; /* Уменьшено */
+            margin-bottom: 15px;
         }
         .timer-value {
-            font-size: 2.2rem; /* Уменьшено с 2.5rem */
+            font-size: 2.2rem;
             font-weight: bold;
-            margin: 8px 0; /* Уменьшено */
+            margin: 8px 0;
             color: #4CAF50;
-            text-shadow: 0 0 8px rgba(76, 175, 80, 0.5); /* Уменьшено */
+            text-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
         }
         .stats-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Уменьшено minmax */
-            gap: 12px; /* Уменьшено */
-            margin-bottom: 15px; /* Уменьшено */
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
         }
         .stat-card {
             background: var(--card-bg);
-            border-radius: 13px; /* Уменьшено */
-            padding: 13px; /* Уменьшено */
+            border-radius: 13px;
+            padding: 13px;
             text-align: center;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
@@ -240,28 +235,28 @@
             overflow: hidden;
         }
         .stat-card:hover {
-            transform: translateY(-1px); /* Уменьшено */
+            transform: translateY(-1px);
         }
         .stat-value {
-            font-size: 1.8rem; /* Уменьшено с 2rem */
+            font-size: 1.8rem;
             font-weight: bold;
-            margin: 6px 0; /* Уменьшено */
+            margin: 6px 0;
         }
         .stat-label {
-            font-size: 0.95rem; /* Уменьшено с 1rem */
+            font-size: 0.95rem;
             opacity: 0.8;
         }
         .time-details {
             background: rgba(0, 0, 0, 0.2);
-            border-radius: 8px; /* Уменьшено */
-            padding: 8px; /* Уменьшено */
-            margin-top: 8px; /* Уменьшено */
-            max-height: 180px; /* Уменьшено */
+            border-radius: 8px;
+            padding: 8px;
+            margin-top: 8px;
+            max-height: 180px;
             overflow-y: auto;
         }
         .time-item {
-            padding: 4px 0; /* Уменьшено */
-            font-size: 0.85rem; /* Уменьшено */
+            padding: 4px 0;
+            font-size: 0.85rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         .time-item:last-child {
@@ -270,54 +265,54 @@
         .costs-container {
             background: var(--card-bg);
             border-radius: 15px;
-            padding: 18px; /* Уменьшено */
+            padding: 18px;
             text-align: center;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            margin-bottom: 15px; /* Уменьшено */
+            margin-bottom: 15px;
         }
         .costs-amount {
-            font-size: 2.2rem; /* Уменьшено с 2.5rem */
+            font-size: 2.2rem;
             font-weight: bold;
-            margin: 10px 0; /* Уменьшено */
+            margin: 10px 0;
             color: #FF6B6B;
-            text-shadow: 0 0 8px rgba(255, 107, 107, 0.5); /* Уменьшено */
+            text-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
         }
         .quote-container {
             background: var(--card-bg);
             border-radius: 15px;
-            padding: 18px; /* Уменьшено */
+            padding: 18px;
             text-align: center;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            margin-bottom: 15px; /* Уменьшено */
+            margin-bottom: 15px;
             font-style: italic;
-            min-height: 70px; /* Уменьшено */
+            min-height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.95rem; /* Уменьшено */
+            font-size: 0.95rem;
         }
         .achievements-container {
             background: var(--card-bg);
             border-radius: 15px;
-            padding: 18px; /* Уменьшено */
+            padding: 18px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            margin-bottom: 15px; /* Уменьшено */
+            margin-bottom: 15px;
         }
         .achievements-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px; /* Уменьшено */
-            font-size: 1.2rem; /* Уменьшено */
+            margin-bottom: 12px;
+            font-size: 1.2rem;
         }
         .achievement {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
-            padding: 12px; /* Уменьшено */
-            margin-bottom: 8px; /* Уменьшено */
+            padding: 12px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
         }
@@ -325,19 +320,19 @@
             background: rgba(76, 175, 80, 0.2);
         }
         .achievement-icon {
-            font-size: 1.3rem; /* Уменьшено */
-            margin-right: 12px; /* Уменьшено */
+            font-size: 1.3rem;
+            margin-right: 12px;
         }
         .achievement-info {
             flex: 1;
         }
         .achievement-name {
             font-weight: bold;
-            margin-bottom: 4px; /* Уменьшено */
-            font-size: 1rem; /* Уменьшено */
+            margin-bottom: 4px;
+            font-size: 1rem;
         }
         .achievement-desc {
-            font-size: 0.85rem; /* Уменьшено */
+            font-size: 0.85rem;
             opacity: 0.8;
         }
         .modal {
@@ -354,8 +349,8 @@
         }
         .modal-content {
             background: var(--card-bg);
-            border-radius: 18px; /* Уменьшено */
-            padding: 25px; /* Уменьшено */
+            border-radius: 18px;
+            padding: 25px;
             width: 90%;
             max-width: 500px;
             box-shadow: var(--shadow);
@@ -368,32 +363,32 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 18px; /* Уменьшено */
+            margin-bottom: 18px;
         }
         .close-modal {
             background: none;
             border: none;
             color: var(--text-color);
-            font-size: 1.4rem; /* Уменьшено */
+            font-size: 1.4rem;
             cursor: pointer;
         }
         .setting {
-            margin-bottom: 18px; /* Уменьшено */
+            margin-bottom: 18px;
         }
         .setting label {
             display: block;
-            margin-bottom: 6px; /* Уменьшено */
+            margin-bottom: 6px;
             font-weight: bold;
-            font-size: 1rem; /* Уменьшено */
+            font-size: 1rem;
         }
         .setting input, .setting select {
             width: 100%;
-            padding: 10px; /* Уменьшено */
-            border-radius: 8px; /* Уменьшено */
+            padding: 10px;
+            border-radius: 8px;
             border: 1px solid var(--border-color);
             background: rgba(255, 255, 255, 0.1);
             color: var(--text-color);
-            font-size: 0.95rem; /* Уменьшено */
+            font-size: 0.95rem;
         }
         .setting input:focus {
             outline: none;
@@ -402,8 +397,8 @@
         .modal-actions {
             display: flex;
             flex-direction: column;
-            gap: 12px; /* Уменьшено */
-            margin-top: 18px; /* Уменьшено */
+            gap: 12px;
+            margin-top: 18px;
         }
         .btn-full {
             flex: 1;
@@ -422,7 +417,6 @@
           box-sizing: border-box;
           width: 100%;
         }
-
         .user-info {
             display: flex;
             justify-content: space-between;
@@ -430,8 +424,8 @@
             width: 100%;
         }
         .user-avatar {
-            width: 36px; /* Уменьшено */
-            height: 36px; /* Уменьшено */
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: linear-gradient(135deg, #4CAF50, #8BC34A);
             display: flex;
@@ -439,16 +433,16 @@
             justify-content: center;
             font-weight: bold;
             color: white;
-            font-size: 0.9rem; /* Уменьшено */
+            font-size: 0.9rem;
         }
         /* --- КОНЕЦ ИСПРАВЛЕНИЯ user-panel --- */
         .sync-indicator {
             position: fixed;
-            top: 8px; /* Уменьшено */
-            right: 8px; /* Уменьшено */
-            padding: 6px 10px; /* Уменьшено */
-            border-radius: 18px; /* Уменьшено */
-            font-size: 0.75rem; /* Уменьшено */
+            top: 8px;
+            right: 8px;
+            padding: 6px 10px;
+            border-radius: 18px;
+            font-size: 0.75rem;
             z-index: 1000;
             display: none;
         }
@@ -457,7 +451,7 @@
             color: white;
             display: flex;
             align-items: center;
-            gap: 4px; /* Уменьшено */
+            gap: 4px;
         }
         .sync-success {
             background: #4CAF50;
@@ -469,66 +463,66 @@
         }
         footer {
             text-align: center;
-            padding: 12px; /* Уменьшено */
+            padding: 12px;
             margin-top: auto;
             opacity: 0.7;
-            font-size: 0.75rem; /* Уменьшено */
+            font-size: 0.75rem;
         }
         @keyframes pulse {
             0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; } /* Уменьшено */
+            50% { transform: scale(1.05); opacity: 0.8; }
             100% { transform: scale(1); opacity: 1; }
         }
         .pulse {
-            animation: pulse 0.4s; /* Уменьшено */
+            animation: pulse 0.4s;
         }
         @media (max-width: 600px) {
             body {
                 padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             }
             .counter-value {
-                font-size: 3.8rem; /* Уменьшено */
+                font-size: 3.8rem;
             }
             .counter-buttons {
                 flex-direction: column;
                 align-items: center;
-                gap: 8px; /* Уменьшено */
+                gap: 8px;
             }
             .btn {
                 width: 100%;
-                max-width: 280px; /* Уменьшено */
-                padding: 15px; /* Уменьшено */
-                font-size: 1.1rem; /* Уменьшено */
+                max-width: 280px;
+                padding: 15px;
+                font-size: 1.1rem;
             }
             .stats-container {
                 grid-template-columns: 1fr;
             }
             .stat-card {
-                padding: 12px; /* Уменьшено */
+                padding: 12px;
             }
             .stat-value {
-                font-size: 2rem; /* Уменьшено */
+                font-size: 2rem;
             }
             h1 {
-                font-size: 1.6rem; /* Уменьшено */
+                font-size: 1.6rem;
             }
             .subtitle {
-                font-size: 0.85rem; /* Уменьшено */
+                font-size: 0.85rem;
             }
             .header-content {
                 text-align: center;
             }
             .theme-toggle, .settings-btn {
                 position: static;
-                margin: 4px; /* Уменьшено */
+                margin: 4px;
             }
         }
         @media (max-width: 400px) {
             .counter-value {
-                font-size: 3.2rem; /* Уменьшено */
+                font-size: 3.2rem;
             }
             .costs-amount {
-                font-size: 1.8rem; /* Уменьшено */
+                font-size: 1.8rem;
             }
             /* Глобальные стили для фона */
             html, body {
@@ -557,7 +551,7 @@
                 width: 100%;
                 margin: 0 auto;
                 position: relative;
-                padding: 10px; /* Уменьшено */
+                padding: 10px;
                 display: flex;
                 flex-direction: column;
             }
@@ -618,6 +612,7 @@
             background-attachment: fixed;
             background-size: cover;
             background-repeat: no-repeat;
+            background-position: center center;
             margin: 0;
             padding: 0;
             min-height: 100vh;
@@ -625,7 +620,7 @@
         /* Анимации для прелоадера */
         @keyframes appLogoPulse {
             0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.03); opacity: 0.85; } /* Уменьшено */
+            50% { transform: scale(1.03); opacity: 0.85; }
             100% { transform: scale(1); opacity: 1; }
         }
         @keyframes appSpin {
@@ -635,12 +630,12 @@
         /* Анимации для прогресс-бара */
         @keyframes pulseDanger {
             0% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0.7; transform: scale(1.01); } /* Уменьшено */
+            100% { opacity: 0.7; transform: scale(1.01); }
         }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-3px); } /* Уменьшено */
-            75% { transform: translateX(3px); } /* Уменьшено */
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
         }
     </style>
 </head>
@@ -1249,7 +1244,6 @@
                     // --- ВАЖНО: Обновляем весь объект data ---
                     // Создаем новый объект, объединяя дефолтные значения с загруженными данными
                     const newData = { ...data, ...userData.data };
-                    
                     // Проверяем, существуют ли timeStats в загруженных данных
                     if (userData.data && Array.isArray(userData.data.timeStats)) {
                         // Если timeStats есть, используем их
@@ -1258,7 +1252,6 @@
                         // Если timeStats нет, сохраняем текущие (из localStorage или дефолтные)
                         newData.timeStats = data.timeStats;
                     }
-                    
                     // Проверяем, существует ли firstUseDate в загруженных данных
                     if (userData.data && userData.data.firstUseDate) {
                         // Если firstUseDate есть, используем его
@@ -1267,7 +1260,6 @@
                         // Если firstUseDate нет, сохраняем текущую дату (если это первый запуск)
                         newData.firstUseDate = data.firstUseDate;
                     }
-                    
                     // Проверяем, существуют ли achievements в загруженных данных
                     if (userData.data && Array.isArray(userData.data.achievements)) {
                         // Если achievements есть, используем их
@@ -1276,7 +1268,6 @@
                         // Если achievements нет, сохраняем текущие (из localStorage или дефолтные)
                         newData.achievements = data.achievements;
                     }
-                    
                     data = newData;
                     console.log("Данные загружены из облака:", data);
                     showSyncIndicator('success', 'Обновлено');
@@ -1392,7 +1383,6 @@
                     const parsed = JSON.parse(saved);
                     // Создаем новый объект, объединяя дефолтные значения с загруженными данными
                     const newData = { ...data, ...parsed };
-                    
                     // Проверяем, существуют ли timeStats в загруженных данных
                     if (parsed && Array.isArray(parsed.timeStats)) {
                         // Если timeStats есть, используем их
@@ -1401,7 +1391,6 @@
                         // Если timeStats нет, сохраняем дефолтные
                         newData.timeStats = data.timeStats;
                     }
-                    
                     // Проверяем, существует ли firstUseDate в загруженных данных
                     if (parsed && parsed.firstUseDate) {
                         // Если firstUseDate есть, используем его
@@ -1410,7 +1399,6 @@
                         // Если firstUseDate нет, сохраняем дефолтную дату
                         newData.firstUseDate = data.firstUseDate;
                     }
-                    
                     // Проверяем, существуют ли achievements в загруженных данных
                     if (parsed && Array.isArray(parsed.achievements)) {
                         // Если achievements есть, используем их
@@ -1419,7 +1407,6 @@
                         // Если achievements нет, сохраняем дефолтные
                         newData.achievements = data.achievements;
                     }
-                    
                     data = newData;
                 }
             } catch (e) {
