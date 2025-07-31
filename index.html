@@ -19,24 +19,22 @@
     <!-- Apple Touch Icon для homescreen -->
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192x192.png">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Chart.js для красивых графиков -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #e0e0e0, #f5f5f5, #e0e0e0);
-            --card-bg: rgba(0, 0, 0, 0.1);
-            --text-color: #333;
-            --border-color: rgba(0, 0, 0, 0.2);
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --bg-gradient: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --text-color: white;
+            --border-color: rgba(255, 255, 255, 0.2);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             --primary-btn: linear-gradient(to right, #4CAF50, #8BC34A);
             --secondary-btn: linear-gradient(to right, #f44336, #FF9800);
             --warning-btn: linear-gradient(to right, #FF9800, #FF5722);
             /* Начальный цвет фона для progress-container */
-            --progress-container-bg-start: rgba(0, 0, 0, 0.1);
+            --progress-container-bg-start: rgba(255, 255, 255, 0.1);
             /* Конечный цвет фона для progress-container при >100% */
             --progress-container-bg-end: rgba(255, 100, 100, 0.2);
         }
-        /* data-theme="light" удален */
+        /* data-theme="light" удален, так как функционал убран */
         * {
             margin: 0;
             padding: 0;
@@ -107,6 +105,7 @@
             font-size: 0.9rem;
             opacity: 0.9;
         }
+        /* Кнопка настроек */
         .settings-btn {
             background: var(--card-bg);
             border: none;
@@ -120,8 +119,9 @@
             color: var(--text-color);
             font-size: 1.1rem;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            margin-right: 8px;
+            margin-right: 8px; /* Добавим отступ справа */
         }
+        /* Кнопка статистики (ранее переключатель темы) */
         .stats-btn {
             background: var(--card-bg);
             border: none;
@@ -376,8 +376,7 @@
             border-radius: 18px;
             padding: 25px;
             width: 90%;
-            /* max-width изменен для лучшего отображения графика */
-            max-width: 700px;
+            max-width: 500px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
             backdrop-filter: blur(10px);
@@ -612,7 +611,7 @@
             }
             /* Улучшенный градиент */
             :root {
-                --bg-gradient: linear-gradient(135deg, #e0e0e0, #f5f5f5, #e0e0e0) !important;
+                --bg-gradient: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c) !important;
             }
             /* Фикс для iOS PWA */
             @supports (-webkit-touch-callout: none) {
@@ -633,7 +632,7 @@
         }
         /* Минимальный фон для предотвращения черного экрана на старте */
         body {
-            background: linear-gradient(135deg, #e0e0e0, #f5f5f5, #e0e0e0) !important;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c) !important;
             background-attachment: fixed;
             background-size: cover;
             background-repeat: no-repeat;
@@ -662,6 +661,44 @@
             25% { transform: translateX(-3px); }
             75% { transform: translateX(3px); }
         }
+        /* --- Стили для модального окна статистики --- */
+        .stats-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .stats-modal-content {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 25px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            max-height: 90vh;
+            overflow-y: auto;
+            text-align: center; /* Центрируем содержимое */
+        }
+        .stats-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .stats-modal-header h2 {
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
+        }
+        /* --- Конец стилей для модального окна статистики --- */
     </style>
 </head>
 <body>
@@ -705,6 +742,7 @@
                 <p class="subtitle">Отслеживайте свое потребление и работайте над улучшением здоровья</p>
             </div>
             <button class="settings-btn" id="settingsBtn" title="Настройки">⚙️</button>
+            <!-- Кнопка статистики вместо переключателя темы -->
             <button class="stats-btn" id="statsBtn" title="Статистика">📊</button>
         </header>
         <div class="scroll-container">
@@ -831,15 +869,20 @@
             </div>
         </div>
     </div>
-    <!-- Модальное окно расширенной статистики (Chart.js) -->
-    <div class="modal" id="statsModal" style="display: none;">
-        <div class="modal-content" style="max-width: 700px; width: 95%;">
-            <div class="modal-header">
+    <!-- Модальное окно расширенной статистики -->
+    <div class="stats-modal" id="statsModal">
+        <div class="stats-modal-content">
+            <div class="stats-modal-header">
                 <h2>📊 Расширенная статистика</h2>
                 <button class="close-modal" id="closeStatsModal">&times;</button>
             </div>
-            <div style="position: relative; height: 300px; margin-top: 20px;">
-                <canvas id="weekdayChart"></canvas>
+            <div style="position: relative; height: 250px; margin-bottom: 15px;">
+                <canvas id="weekdayChart" style="width: 100%; height: 100%;"></canvas>
+            </div>
+            <!-- Подписи осей -->
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; opacity: 0.8; margin-top: 5px;">
+                <span>Количество</span>
+                <span>Дни недели</span>
             </div>
         </div>
     </div>
@@ -952,8 +995,8 @@
         // Settings elements
         const settingsModal = document.getElementById('settingsModal');
         const settingsBtn = document.getElementById('settingsBtn');
-        // const themeToggle = document.getElementById('themeToggle'); // Удалено
-        const statsBtn = document.getElementById('statsBtn'); // Новое
+        // Кнопка статистики (ранее переключатель темы)
+        const statsBtn = document.getElementById('statsBtn');
         const incrementBtn = document.getElementById('increment');
         const decrementBtn = document.getElementById('decrement');
         const saveSettingsBtn = document.getElementById('saveSettings');
@@ -961,6 +1004,11 @@
         const resetAllBtn = document.getElementById('resetAllBtn');
         const refreshBtn = document.getElementById('refreshBtn');
         const manualResetTodayBtn = document.getElementById('manualResetToday');
+        // --- Элементы модального окна статистики ---
+        const statsModal = document.getElementById('statsModal');
+        const closeStatsModal = document.getElementById('closeStatsModal');
+        const weekdayChartCanvas = document.getElementById('weekdayChart');
+        // --- Конец элементов модального окна статистики ---
         // Auth state
         let isRegistration = false;
         let isForgotPassword = false;
@@ -1043,9 +1091,10 @@
             // Установка обработчиков событий
             incrementBtn.addEventListener('click', incrementCounter);
             decrementBtn.addEventListener('click', decrementCounter);
-            // themeToggle.addEventListener('click', toggleTheme); // Удалено
+            // Обработчик для кнопки настроек
             settingsBtn.addEventListener('click', openSettings);
-            statsBtn.addEventListener('click', openStatsModal); // Новое
+            // Обработчик для кнопки статистики
+            statsBtn.addEventListener('click', openStatsModal);
             saveSettingsBtn.addEventListener('click', saveSettings);
             exportBtn.addEventListener('click', exportData);
             resetAllBtn.addEventListener('click', resetAll);
@@ -1054,6 +1103,12 @@
             refreshAppBtnTop.addEventListener('click', refreshApp);
             document.querySelector('#settingsModal .close-modal').addEventListener('click', closeSettings);
             manualResetTodayBtn.addEventListener('click', manualResetToday);
+            // --- Обработчики для модального окна статистики ---
+            closeStatsModal.addEventListener('click', closeStatsModalFunc);
+            statsModal.addEventListener('click', function(e) {
+                if (e.target === this) closeStatsModalFunc();
+            });
+            // --- Конец обработчиков для модального окна статистики ---
             // Auth handlers
             document.getElementById('authSubmit').addEventListener('click', handleAuth);
             document.getElementById('toggleAuth').addEventListener('click', toggleAuthForm);
@@ -1601,12 +1656,10 @@
             // Начальный цвет: rgba(255, 255, 255, 0.1) или rgba(0, 0, 0, 0.1) в зависимости от темы
             // Конечный цвет: rgba(255, 100, 100, 0.2)
             // Мы будем добавлять красный компонент и увеличивать альфа
-            // const startAlpha = document.body.getAttribute('data-theme') === 'light' ? 0.1 : 0.1;
-            const startAlpha = 0.1; // Значение по умолчанию для светлой темы
+            const startAlpha = 0.1; // Значение по умолчанию для темной темы
             const endAlpha = 0.2;
             const currentAlpha = startAlpha + (endAlpha - startAlpha) * mixRatio;
-            // const startRed = document.body.getAttribute('data-theme') === 'light' ? 0 : 255;
-            const startRed = 0; // Значение по умолчанию для светлой темы
+            const startRed = 255; // Значение по умолчанию для темной темы
             const endRed = 255;
             const currentRed = Math.round(startRed + (endRed - startRed) * mixRatio);
             const bgColor = `rgba(${currentRed}, 100, 100, ${currentAlpha})`;
@@ -1654,7 +1707,7 @@
                 // Отображаем дату первой сигареты
                 if (data.timeStats.length > 0) {
                     // Берем самую раннюю запись
-                    const earliestStat = data.timeStats.reduce((earliest, current) => 
+                    const earliestStat = data.timeStats.reduce((earliest, current) =>
                         (current.timestamp < earliest.timestamp) ? current : earliest
                     );
                     const firstDate = new Date(earliestStat.timestamp);
@@ -1700,7 +1753,7 @@
                 const hours = Math.floor(diff / (1000 * 60 * 60));
                 const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-                timerEl.textContent = 
+                timerEl.textContent =
                     `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             } else {
                 timerEl.textContent = '00:00:00';
@@ -2013,7 +2066,7 @@ ${achievement.description}`);
                             return recordDate >= monthAgo;
                         });
                     } else if (period === 'all') {
-                        filteredStats = [...data.timeStats]; 
+                        filteredStats = [...data.timeStats];
                     }
                     // Сортируем по времени (новые первыми)
                     const sortedStats = [...filteredStats].sort((a, b) => b.timestamp - a.timestamp);
@@ -2035,154 +2088,149 @@ ${achievement.description}`);
                 }
             }
         }
-        // --- Логика модального окна и графика (Chart.js) ---
-        // Получаем элементы модального окна
-        const statsModal = document.getElementById('statsModal');
-        const closeStatsModalBtn = document.getElementById('closeStatsModal');
-        const weekdayChartCanvas = document.getElementById('weekdayChart');
-        let weekdayChartInstance = null; // Переменная для хранения созданного графика
-
-        // Функция открытия модального окна статистики
+        // --- Функции для модального окна статистики ---
+        // Открытие модального окна статистики
         function openStatsModal() {
-            statsModal.style.display = 'flex'; // Показываем модальное окно
-            // Небольшая задержка, чтобы canvas точно появился на странице
-            setTimeout(() => {
-                drawWeekdayChart(); // Рисуем график
-            }, 10);
+            statsModal.style.display = 'flex';
+            drawWeekdayChart(); // Рисуем график при открытии
         }
-
-        // Функция закрытия модального окна статистики
+        // Закрытие модального окна статистики
         function closeStatsModalFunc() {
-            statsModal.style.display = 'none'; // Скрываем модальное окно
+            statsModal.style.display = 'none';
         }
-
-        // Назначаем обработчики событий для закрытия модального окна
-        closeStatsModalBtn.addEventListener('click', closeStatsModalFunc);
-        statsModal.addEventListener('click', function(e) {
-            // Закрываем модальное окно, если клик был не по его содержимому
-            if (e.target === this) closeStatsModalFunc();
-        });
-
-        // Функция для создания и отрисовки графика "По дням недели"
+        // Функция для рисования графика "По дням недели"
         function drawWeekdayChart() {
             if (!weekdayChartCanvas || !weekdayChartCanvas.getContext) {
-                console.error("Canvas для графика не найден или не поддерживается");
+                console.error("Canvas не поддерживается или не найден");
                 return;
             }
 
             const ctx = weekdayChartCanvas.getContext('2d');
+            // Убедимся, что размеры canvas установлены правильно
+            const dpr = window.devicePixelRatio || 1;
+            const rect = weekdayChartCanvas.getBoundingClientRect();
+            weekdayChartCanvas.width = rect.width * dpr;
+            weekdayChartCanvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
 
-            // Подготавливаем данные
-            const weekdayStats = new Array(7).fill(0); // Массив для подсчета [Вс, Пн, Вт, Ср, Чт, Пт, Сб]
-            const weekdayLabels = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+            const width = rect.width;
+            const height = rect.height;
 
-            // Если данных нет, рисуем пустой график
+            // Очистка canvas
+            ctx.clearRect(0, 0, width, height);
+
+            // Подготовка данных
+            const weekdayStats = new Array(7).fill(0);
+            const weekdayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']; // Сокращенные названия
+
             if (data.timeStats.length === 0) {
-                 if (weekdayChartInstance) {
-                    weekdayChartInstance.destroy(); // Удаляем старый график, если был
-                }
-                weekdayChartInstance = new Chart(ctx, {
-                    type: 'bar',
-                     {
-                        labels: ['Нет данных'],
-                        datasets: [{
-                            label: 'Сигареты',
-                             [0],
-                            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            title: {
-                                display: true,
-                                text: 'Нет данных для отображения'
-                            }
-                        }
-                    }
-                });
+                // Рисуем надпись "Нет данных"
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Нет данных', width / 2, height / 2);
                 return;
             }
 
-            // Считаем количество сигарет по дням недели
             data.timeStats.forEach(stat => {
                 const statDate = new Date(stat.timestamp);
-                const weekday = statDate.getDay(); // 0 - Воскресенье, 6 - Суббота
+                const weekday = statDate.getDay(); // 0 (Вс) - 6 (Сб)
                 weekdayStats[weekday]++;
             });
 
-            // Удаляем старый график, если он был создан ранее
-            if (weekdayChartInstance) {
-                weekdayChartInstance.destroy();
-            }
+            // Найти максимальное значение для масштабирования
+            const maxCount = Math.max(...weekdayStats, 1); // Минимум 1, чтобы избежать деления на 0
 
-            // Создаем новый график с помощью Chart.js
-            weekdayChartInstance = new Chart(ctx, {
-                type: 'bar', // Тип - столбчатая диаграмма
-                 {
-                    labels: weekdayLabels, // Подписи по оси X
-                    datasets: [{
-                        label: 'Количество сигарет', // Название набора данных
-                         weekdayStats, // Данные по оси Y
-                        backgroundColor: 'rgba(52, 152, 219, 0.7)', // Цвет столбцов
-                        borderColor: 'rgba(52, 152, 219, 1)', // Цвет рамки
-                        borderWidth: 1 // Ширина рамки
-                    }]
-                },
-                options: {
-                    responsive: true, // График будет подстраиваться под размер контейнера
-                    maintainAspectRatio: false, // Отключаем фиксированное соотношение сторон
-                    animation: {
-                        duration: 1000, // Анимация рисования 1 секунда
-                        easing: 'easeOutQuart' // Плавная анимация
-                    },
-                    plugins: {
-                        legend: {
-                            labels: {
-                                // Стиль текста легенды
-                                color: 'rgba(0, 0, 0, 0.9)', // Черный цвет с прозрачностью для светлой темы
-                                font: { size: 14 }
-                            }
-                        },
-                        tooltip: {
-                            // Стиль всплывающих подсказок
-                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                            titleColor: 'rgba(52, 152, 219, 1)',
-                            bodyColor: 'rgba(255, 255, 255, 0.9)',
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true, // Ось Y начинается с 0
-                            ticks: {
-                                // Стиль подписей оси Y
-                                color: 'rgba(0, 0, 0, 0.7)', // Цвет для светлой темы
-                                precision: 0 // Только целые числа
-                            },
-                            grid: {
-                                // Стиль горизонтальной сетки
-                                color: 'rgba(0, 0, 0, 0.1)' // Цвет для светлой темы
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                // Стиль подписей оси X
-                                color: 'rgba(0, 0, 0, 0.7)', // Цвет для светлой темы
-                                autoSkip: false, // Показывать все подписи
-                                maxRotation: 45, // Поворот подписей
-                                minRotation: 45
-                            },
-                            grid: {
-                                display: false // Скрыть вертикальную сетку
-                            }
-                        }
-                    }
+            // Параметры графика
+            const padding = 10; // Отступы
+            const bottomPadding = 30; // Отступ снизу для подписей
+            const leftPadding = 30; // Отступ слева для оси Y
+            const graphWidth = width - leftPadding - padding;
+            const graphHeight = height - bottomPadding - padding;
+            const barWidth = graphWidth / weekdayStats.length * 0.8; // Ширина столбца с зазором
+            const gap = (graphWidth - (barWidth * weekdayStats.length)) / (weekdayStats.length - 1); // Зазор между столбцами
+
+            // Определение цветов (тема по умолчанию - темная)
+            const barColor = 'rgba(52, 152, 219, 0.9)';
+            const axisColor = 'rgba(255, 255, 255, 0.7)';
+            const labelColor = 'rgba(255, 255, 255, 0.9)';
+            const gridColor = 'rgba(255, 255, 255, 0.1)';
+
+            // Рисование осей
+            ctx.strokeStyle = axisColor;
+            ctx.lineWidth = 1;
+            // Ось X
+            ctx.beginPath();
+            ctx.moveTo(leftPadding, height - bottomPadding);
+            ctx.lineTo(width - padding, height - bottomPadding);
+            ctx.stroke();
+            // Ось Y
+            ctx.beginPath();
+            ctx.moveTo(leftPadding, padding);
+            ctx.lineTo(leftPadding, height - bottomPadding);
+            ctx.stroke();
+
+            // Рисование сетки и подписей по оси Y (пример для 0, max/2, max)
+            ctx.fillStyle = labelColor;
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            // 0
+            ctx.fillText('0', leftPadding - 5, height - bottomPadding);
+            // max/2
+            const midY = padding + graphHeight / 2;
+            ctx.fillText(Math.round(maxCount / 2), leftPadding - 5, midY);
+            // max
+            ctx.fillText(maxCount, leftPadding - 5, padding);
+
+            // Рисование линий сетки
+            ctx.strokeStyle = gridColor;
+            ctx.setLineDash([2, 2]); // Пунктир
+            // Линия для max/2
+            ctx.beginPath();
+            ctx.moveTo(leftPadding, midY);
+            ctx.lineTo(width - padding, midY);
+            ctx.stroke();
+            // Линия для max
+            ctx.beginPath();
+            ctx.moveTo(leftPadding, padding);
+            ctx.lineTo(width - padding, padding);
+            ctx.stroke();
+            ctx.setLineDash([]); // Сброс пунктира
+
+            // Рисование столбцов
+            ctx.fillStyle = barColor;
+            for (let i = 0; i < weekdayStats.length; i++) {
+                const count = weekdayStats[i];
+                const barHeight = (count / maxCount) * graphHeight;
+                const x = leftPadding + i * (barWidth + gap);
+                const y = height - bottomPadding - barHeight;
+
+                ctx.fillRect(x, y, barWidth, barHeight);
+
+                // Подпись дня недели под столбцом (по центру)
+                ctx.fillStyle = labelColor;
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                const labelX = x + barWidth / 2;
+                const labelY = height - bottomPadding + 5;
+                ctx.fillText(weekdayNames[i], labelX, labelY);
+
+                // Подпись значения над столбцом
+                if (count > 0) {
+                    ctx.fillStyle = labelColor;
+                    ctx.font = '10px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    ctx.fillText(count, labelX, y - 2);
                 }
-            });
+                 // Восстанавливаем цвет столбцов для следующей итерации
+                ctx.fillStyle = barColor;
+            }
         }
-        // --- Конец логики модального окна и графика ---
+        // --- Конец функций для модального окна статистики ---
         // Инициализация приложения при загрузке
         document.addEventListener('DOMContentLoaded', initApp);
         // Динамическое обновление theme-color для соответствия градиенту
