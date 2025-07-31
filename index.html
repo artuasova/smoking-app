@@ -679,46 +679,12 @@
             display: none; /* Скрыто по умолчанию */
         }
 
-        .advanced-stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
         .advanced-stats-section h4 {
             margin-bottom: 8px;
             font-size: 1rem;
-            text-align: center;
         }
 
-        .advanced-stats-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            max-height: 150px; /* Ограничиваем высоту для прокрутки */
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 5px 0;
-            background: rgba(0, 0, 0, 0.05);
-        }
-
-        .advanced-stats-item {
-            padding: 4px 10px;
-            font-size: 0.85rem;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .advanced-stats-item:nth-child(odd) {
-             background: rgba(255, 255, 255, 0.05);
-        }
-
-        .advanced-stats-item-value {
-            font-weight: bold;
-        }
-
-        /* Адаптивность для маленьких экранов */
+        /* Адаптивность */
         @media (max-width: 600px) {
             .advanced-stats-grid {
                 grid-template-columns: 1fr; /* Одна колонка на мобильных */
@@ -831,20 +797,17 @@
                     <span>▼</span> <!-- Стрелка вниз -->
                 </div>
                 <div class="advanced-stats-content" id="advancedStatsContent">
-                    <div class="advanced-stats-grid">
-                        <div class="advanced-stats-section">
-                            <h4>🕒 По часам суток</h4>
-                            <ul class="advanced-stats-list" id="hourlyStatsList">
-                                <!-- Статистика по часам будет добавлена сюда -->
-                            </ul>
+                    <div class="advanced-stats-section">
+                        <h4 style="text-align: center; margin-bottom: 15px;">📅 По дням недели</h4>
+                        <!-- Контейнер для графика -->
+                        <div style="position: relative; height: 200px; margin-bottom: 15px;">
+                            <canvas id="weekdayChart" style="width: 100%; height: 100%;"></canvas>
                         </div>
-                        <div class="advanced-stats-section">
-                            <h4>📅 По дням недели</h4>
-                            <ul class="advanced-stats-list" id="weekdayStatsList">
-                                <!-- Статистика по дням недели будет добавлена сюда -->
-                            </ul>
+                        <!-- Подписи осей -->
+                        <div style="display: flex; justify-content: space-between; font-size: 0.7rem; opacity: 0.8; margin-top: 5px;">
+                            <span>Количество</span>
+                            <span>Дни недели</span>
                         </div>
-                        <!-- Можно добавить больше разделов, например, по месяцам -->
                     </div>
                 </div>
             </div>
@@ -1040,8 +1003,148 @@
         const advancedStatsContainer = document.getElementById('advancedStatsContainer');
         const advancedStatsHeader = document.getElementById('advancedStatsHeader');
         const advancedStatsContent = document.getElementById('advancedStatsContent');
-        const hourlyStatsList = document.getElementById('hourlyStatsList');
-        const weekdayStatsList = document.getElementById('weekdayStatsList');
+        const weekdayChartCanvas = document.getElementById('weekdayChart');
+
+        // Переключение отображения содержимого расширенной статистики
+        advancedStatsHeader.addEventListener('click', () => {
+            const isHidden = advancedStatsContent.style.display === 'none';
+            advancedStatsContent.style.display = isHidden ? 'block' : 'none';
+            // Меняем стрелку
+            advancedStatsHeader.querySelector('span').textContent = isHidden ? '▲' : '▼';
+            // Если открываем, обновляем данные и рисуем график
+            if (isHidden) {
+                drawWeekdayChart();
+            }
+        });
+
+        // Функция для рисования графика "По дням недели"
+        function drawWeekdayChart() {
+            if (!weekdayChartCanvas || !weekdayChartCanvas.getContext) {
+                console.error("Canvas не поддерживается или не найден");
+                return;
+            }
+
+            const ctx = weekdayChartCanvas.getContext('2d');
+            const width = weekdayChartCanvas.width;
+            const height = weekdayChartCanvas.height;
+
+            // Очистка canvas
+            ctx.clearRect(0, 0, width, height);
+
+            // Подготовка данных
+            const weekdayStats = new Array(7).fill(0);
+            const weekdayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']; // Сокращенные названия
+
+            if (data.timeStats.length === 0) {
+                // Рисуем надпись "Нет данных"
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Нет данных', width / 2, height / 2);
+                return;
+            }
+
+            data.timeStats.forEach(stat => {
+                const statDate = new Date(stat.timestamp);
+                const weekday = statDate.getDay(); // 0 (Вс) - 6 (Сб)
+                weekdayStats[weekday]++;
+            });
+
+            // Найти максимальное значение для масштабирования
+            const maxCount = Math.max(...weekdayStats, 1); // Минимум 1, чтобы избежать деления на 0
+
+            // Параметры графика
+            const padding = 10; // Отступы
+            const bottomPadding = 30; // Отступ снизу для подписей
+            const leftPadding = 30; // Отступ слева для оси Y
+            const graphWidth = width - leftPadding - padding;
+            const graphHeight = height - bottomPadding - padding;
+            const barWidth = graphWidth / weekdayStats.length * 0.8; // Ширина столбца с зазором
+            const gap = (graphWidth - (barWidth * weekdayStats.length)) / (weekdayStats.length - 1); // Зазор между столбцами
+
+            // Определение цветов в зависимости от темы
+            const isLightTheme = document.body.getAttribute('data-theme') === 'light';
+            const barColor = isLightTheme ? 'rgba(52, 152, 219, 0.8)' : 'rgba(52, 152, 219, 0.9)';
+            const axisColor = isLightTheme ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.7)';
+            const labelColor = isLightTheme ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)';
+            const gridColor = isLightTheme ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
+
+            // Рисование осей
+            ctx.strokeStyle = axisColor;
+            ctx.lineWidth = 1;
+            // Ось X
+            ctx.beginPath();
+            ctx.moveTo(leftPadding, height - bottomPadding);
+            ctx.lineTo(width - padding, height - bottomPadding);
+            ctx.stroke();
+            // Ось Y
+            ctx.beginPath();
+            ctx.moveTo(leftPadding, padding);
+            ctx.lineTo(leftPadding, height - bottomPadding);
+            ctx.stroke();
+
+            // Рисование сетки и подписей по оси Y (пример для 0, max/2, max)
+            ctx.fillStyle = labelColor;
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            // 0
+            ctx.fillText('0', leftPadding - 5, height - bottomPadding);
+            // max/2
+            const midY = padding + graphHeight / 2;
+            ctx.fillText(Math.round(maxCount / 2), leftPadding - 5, midY);
+            // max
+            ctx.fillText(maxCount, leftPadding - 5, padding);
+
+            // Рисование линий сетки
+            ctx.strokeStyle = gridColor;
+            ctx.setLineDash([2, 2]); // Пунктир
+            // Линия для max/2
+            ctx.beginPath();
+            ctx.moveTo(leftPadding, midY);
+            ctx.lineTo(width - padding, midY);
+            ctx.stroke();
+            // Линия для max
+            ctx.beginPath();
+            ctx.moveTo(leftPadding, padding);
+            ctx.lineTo(width - padding, padding);
+            ctx.stroke();
+            ctx.setLineDash([]); // Сброс пунктира
+
+            // Рисование столбцов
+            ctx.fillStyle = barColor;
+            for (let i = 0; i < weekdayStats.length; i++) {
+                const count = weekdayStats[i];
+                const barHeight = (count / maxCount) * graphHeight;
+                const x = leftPadding + i * (barWidth + gap);
+                const y = height - bottomPadding - barHeight;
+
+                ctx.fillRect(x, y, barWidth, barHeight);
+
+                // Подпись дня недели под столбцом (по центру)
+                ctx.fillStyle = labelColor;
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                const labelX = x + barWidth / 2;
+                const labelY = height - bottomPadding + 5;
+                ctx.fillText(weekdayNames[i], labelX, labelY);
+
+                // Подпись значения над столбцом
+                if (count > 0) {
+                    ctx.fillStyle = labelColor;
+                    ctx.font = '10px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    ctx.fillText(count, labelX, y - 2);
+                }
+                 // Восстанавливаем цвет столбцов для следующей итерации
+                ctx.fillStyle = barColor;
+            }
+        }
+
+        // Вызовите drawWeekdayChart() в updateUI, если раздел открыт
         // --- Конец добавления для расширенной статистики ---
         // Auth state
         let isRegistration = false;
@@ -1155,19 +1258,6 @@
             document.getElementById('allTimeCard').addEventListener('click', function() {
                 toggleTimeDetails('all');
             });
-            // --- Добавлено для расширенной статистики ---
-            // Переключение отображения содержимого расширенной статистики
-            advancedStatsHeader.addEventListener('click', () => {
-                const isHidden = advancedStatsContent.style.display === 'none';
-                advancedStatsContent.style.display = isHidden ? 'block' : 'none';
-                // Меняем стрелку
-                advancedStatsHeader.querySelector('span').textContent = isHidden ? '▲' : '▼';
-                // Если открываем, обновляем данные
-                if (isHidden) {
-                    calculateAndRenderAdvancedStats();
-                }
-            });
-            // --- Конец добавления для расширенной статистики ---
             // Проверка сессии
             checkSession();
             // Регистрация Service Worker
@@ -1767,9 +1857,10 @@
             } else {
                 advancedStatsContainer.style.display = 'none';
             }
-            // Если расширенная статистика открыта, обновляем её
-            if (advancedStatsContent.style.display !== 'none') {
-                calculateAndRenderAdvancedStats();
+            // Если расширенная статистика открыта, обновляем её (перерисовываем график)
+            if (advancedStatsContent && advancedStatsContent.style.display !== 'none') {
+                // calculateAndRenderAdvancedStats(); // Удаляем старый вызов
+                drawWeekdayChart(); // Вызываем новую функцию рисования
             }
             // --- Конец добавления в updateUI ---
         }
@@ -2151,94 +2242,6 @@ ${achievement.description}`);
                 }
             }
         }
-        // --- Добавлено для расширенной статистики ---
-        // Функция для вычисления расширенной статистики
-        function calculateAdvancedStats() {
-            const hourlyStats = new Array(24).fill(0); // Массив для 0-23 часов
-            const weekdayStats = new Array(7).fill(0); // Массив для 0 (Вс) - 6 (Сб) или 1 (Пн) - 7 (Вс)
-            const weekdayNames = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
-
-            if (data.timeStats.length === 0) {
-                return { hourlyStats, weekdayStats, weekdayNames };
-            }
-
-            data.timeStats.forEach(stat => {
-                const statDate = new Date(stat.timestamp);
-                const hour = statDate.getHours(); // 0-23
-                const weekday = statDate.getDay(); // 0 (Вс) - 6 (Сб)
-
-                hourlyStats[hour]++;
-                weekdayStats[weekday]++;
-            });
-
-            return { hourlyStats, weekdayStats, weekdayNames };
-        }
-
-        // Функция для отображения расширенной статистики
-        function renderAdvancedStats(stats) {
-            const { hourlyStats, weekdayStats, weekdayNames } = stats;
-
-            // Очищаем списки
-            hourlyStatsList.innerHTML = '';
-            weekdayStatsList.innerHTML = '';
-
-            // --- Отображение статистики по часам ---
-            // Создаем массив объектов {hour, count} для сортировки
-            const hourlyData = hourlyStats.map((count, hour) => ({ hour, count }));
-            // Сортируем по убыванию количества
-            hourlyData.sort((a, b) => b.count - a.count);
-
-            if (hourlyData.some(item => item.count > 0)) {
-                hourlyData.forEach(item => {
-                    if (item.count > 0) { // Отображаем только часы с записями
-                        const li = document.createElement('li');
-                        li.className = 'advanced-stats-item';
-                        li.innerHTML = `
-                            <span>${item.hour.toString().padStart(2, '0')}:00</span>
-                            <span class="advanced-stats-item-value">${item.count}</span>
-                        `;
-                        hourlyStatsList.appendChild(li);
-                    }
-                });
-            } else {
-                const li = document.createElement('li');
-                li.className = 'advanced-stats-item';
-                li.textContent = 'Нет данных';
-                hourlyStatsList.appendChild(li);
-            }
-
-            // --- Отображение статистики по дням недели ---
-            // Создаем массив объектов {dayIndex, name, count} для сортировки
-            const weekdayData = weekdayStats.map((count, index) => ({ dayIndex: index, name: weekdayNames[index], count }));
-            // Сортируем по убыванию количества
-            weekdayData.sort((a, b) => b.count - a.count);
-
-            if (weekdayData.some(item => item.count > 0)) {
-                weekdayData.forEach(item => {
-                    if (item.count > 0) { // Отображаем только дни с записями
-                        const li = document.createElement('li');
-                        li.className = 'advanced-stats-item';
-                        li.innerHTML = `
-                            <span>${item.name}</span>
-                            <span class="advanced-stats-item-value">${item.count}</span>
-                        `;
-                        weekdayStatsList.appendChild(li);
-                    }
-                });
-            } else {
-                const li = document.createElement('li');
-                li.className = 'advanced-stats-item';
-                li.textContent = 'Нет данных';
-                weekdayStatsList.appendChild(li);
-            }
-        }
-
-        // Функция для одновременного расчета и отображения
-        function calculateAndRenderAdvancedStats() {
-            const stats = calculateAdvancedStats();
-            renderAdvancedStats(stats);
-        }
-        // --- Конец добавления для расширенной статистики ---
         // Инициализация приложения при загрузке
         document.addEventListener('DOMContentLoaded', initApp);
         // Динамическое обновление theme-color для соответствия градиенту
