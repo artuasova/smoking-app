@@ -911,7 +911,7 @@
                 <button class="chart-btn active" data-chart="weekday">Дни недели</button>
                 <button class="chart-btn" data-chart="daily">По дням</button>
                 <button class="chart-btn" data-chart="hourly">По часам</button>
-                <button class="chart-btn" data-chart="savings">Экономия</button>
+                <button class="chart-btn" data-chart="spending">Расходы</button>
             </div>
 
             <div style="position: relative; height: 250px; margin-bottom: 15px;">
@@ -2102,23 +2102,40 @@ ${achievement.description}`);
                         });
                     // --- КОНЕЦ ИЗМЕНЕНИЯ ---
                     } else if (period === 'week') {
-                        // Фильтруем за последние 7 календарных дней
+                        // --- ИСПРАВЛЕНА ЛОГИКА ДЛЯ "НЕДЕЛИ" ---
+                        // Используем ту же логику, что и в calculateLastXPeriod(7)
                         const weekAgo = new Date();
                         weekAgo.setDate(weekAgo.getDate() - 7);
-                        weekAgo.setHours(0, 0, 0, 0); // Начало 7-дневного периода
-                        filteredStats = data.timeStats.filter(record => {
-                            const recordDate = new Date(record.timestamp);
-                            return recordDate >= weekAgo;
+                        weekAgo.setHours(0, 0, 0, 0); // Начало 7-дневного периода (включительно)
+                        // Конец периода - это "сейчас" или конец сегодняшнего дня, в зависимости от требований.
+                        // Для согласованности с calculateLastXPeriod будем считать до "сейчас".
+                        // Если нужно до конца сегодняшнего дня, раскомментируйте следующие строки:
+                        // const endOfPeriod = new Date();
+                        // endOfPeriod.setHours(23, 59, 59, 999);
+                        const endOfPeriod = now;
+
+                        filteredStats = data.timeStats.filter(stat => {
+                            const statDate = new Date(stat.timestamp);
+                            return statDate >= weekAgo && statDate <= endOfPeriod;
                         });
+                        // --- КОНЕЦ ИСПРАВЛЕНИЯ ЛОГИКИ ДЛЯ "НЕДЕЛИ" ---
                     } else if (period === 'month') {
-                        // Фильтруем за последние 30 календарных дней
+                         // --- ИСПРАВЛЕНА ЛОГИКА ДЛЯ "МЕСЯЦА" ---
+                        // Используем ту же логику, что и в calculateLastXPeriod(30)
                         const monthAgo = new Date();
                         monthAgo.setDate(monthAgo.getDate() - 30);
-                        monthAgo.setHours(0, 0, 0, 0); // Начало 30-дневного периода
-                        filteredStats = data.timeStats.filter(record => {
-                            const recordDate = new Date(record.timestamp);
-                            return recordDate >= monthAgo;
+                        monthAgo.setHours(0, 0, 0, 0); // Начало 30-дневного периода (включительно)
+                        // Конец периода - это "сейчас" или конец сегодняшнего дня, в зависимости от требований.
+                        // Для согласованности с calculateLastXPeriod будем считать до "сейчас".
+                        // const endOfPeriod = new Date();
+                        // endOfPeriod.setHours(23, 59, 59, 999);
+                        const endOfPeriod = now;
+
+                        filteredStats = data.timeStats.filter(stat => {
+                            const statDate = new Date(stat.timestamp);
+                            return statDate >= monthAgo && statDate <= endOfPeriod;
                         });
+                        // --- КОНЕЦ ИСПРАВЛЕНИЯ ЛОГИКИ ДЛЯ "МЕСЯЦА" ---
                     } else if (period === 'all') {
                         filteredStats = [...data.timeStats];
                     }
@@ -2184,11 +2201,11 @@ ${achievement.description}`);
                     xAxisLabel.textContent = 'Часы';
                     yAxisLabel.textContent = 'Количество сигарет';
                     break;
-                case 'savings':
-                    chartData = getSavingsChartData();
-                    chartOptions = getSavingsChartOptions();
+                case 'spending':
+                    chartData = getSpendingChartData();
+                    chartOptions = getSpendingChartOptions();
                     xAxisLabel.textContent = 'Дата';
-                    yAxisLabel.textContent = 'Экономия (₽)';
+                    yAxisLabel.textContent = 'Расходы (₽)';
                     break;
                 default:
                     return; // Неизвестный тип графика
@@ -2197,7 +2214,7 @@ ${achievement.description}`);
             // Создаем новый график с помощью Chart.js
             statsChartInstance = new Chart(ctx, {
                 type: 'bar', // По умолчанию столбчатая диаграмма
-                data: chartData,
+                 chartData,
                 options: chartOptions
             });
         }
@@ -2279,7 +2296,7 @@ ${achievement.description}`);
                 labels: dates,
                 datasets: [{
                     label: 'Количество сигарет',
-                    data: counts,
+                     counts,
                     backgroundColor: 'rgba(54, 162, 235, 0.7)',
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1
@@ -2308,7 +2325,7 @@ ${achievement.description}`);
                 labels: hourLabels,
                 datasets: [{
                     label: 'Количество сигарет',
-                    data: hourlyStats,
+                     hourlyStats,
                     backgroundColor: 'rgba(255, 159, 64, 0.7)',
                     borderColor: 'rgba(255, 159, 64, 1)',
                     borderWidth: 1
@@ -2338,12 +2355,11 @@ ${achievement.description}`);
             };
         }
 
-        // 4. График "Накопительная экономия"
-        function getSavingsChartData() {
+        // 4. График "Расходы по дням"
+        function getSpendingChartData() {
             const now = new Date();
             const dates = [];
-            const savings = [];
-            let cumulativeSavings = 0;
+            const spending = [];
             const costPerCigarette = data.packPrice / data.cigarettesPerPack;
 
             // Создаем массив последних 30 дней
@@ -2365,35 +2381,27 @@ ${achievement.description}`);
                 }
             });
 
-            // Рассчитываем накопительную экономию
+            // Рассчитываем расходы по дням
             Object.entries(dailyData).forEach(([dateStr, count], index) => {
-                // Предположим, что цель - data.goal сигарет в день
-                const potentialCigarettes = data.goal;
-                const savedCigarettes = Math.max(0, potentialCigarettes - count);
-                cumulativeSavings += savedCigarettes * costPerCigarette;
-                savings.push(parseFloat(cumulativeSavings.toFixed(2)));
+                const daySpending = count * costPerCigarette;
+                spending.push(parseFloat(daySpending.toFixed(2)));
             });
 
             return {
                 labels: dates,
                 datasets: [{
-                    label: 'Накопительная экономия (₽)',
-                    data: savings,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2,
-                    pointBackgroundColor: 'rgba(75, 192, 192, 1)',
-                    pointRadius: 3,
-                    fill: true,
-                    tension: 0.3 // Сглаживание линии
+                    label: 'Расходы на сигареты (₽)',
+                     spending,
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
                 }]
             };
         }
 
-        function getSavingsChartOptions() {
+        function getSpendingChartOptions() {
             return {
                 ...getDefaultBarChartOptions(),
-                type: 'line', // Линейный график для экономии
                 scales: {
                     ...getDefaultBarChartOptions().scales,
                     y: {
