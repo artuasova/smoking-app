@@ -701,6 +701,33 @@
             text-align: center;
         }
         /* --- Конец стилей для модального окна статистики --- */
+        /* --- Стили для переключателя графиков --- */
+        .chart-selector {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .chart-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 6px 12px;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+        .chart-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .chart-btn.active {
+            background: var(--primary-btn);
+            border-color: transparent;
+            font-weight: bold;
+        }
+        /* --- Конец стилей для переключателя графиков --- */
     </style>
 </head>
 <body>
@@ -878,13 +905,22 @@
                 <h2>📊 Расширенная статистика</h2>
                 <button class="close-modal" id="closeStatsModal">&times;</button>
             </div>
+            
+            <!-- Переключатель графиков -->
+            <div class="chart-selector">
+                <button class="chart-btn active" data-chart="weekday">Дни недели</button>
+                <button class="chart-btn" data-chart="daily">По дням</button>
+                <button class="chart-btn" data-chart="hourly">По часам</button>
+                <button class="chart-btn" data-chart="savings">Экономия</button>
+            </div>
+
             <div style="position: relative; height: 250px; margin-bottom: 15px;">
-                <canvas id="weekdayChart" style="width: 100%; height: 100%;"></canvas>
+                <canvas id="statsChart" style="width: 100%; height: 100%;"></canvas>
             </div>
             <!-- Подписи осей -->
-            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; opacity: 0.8; margin-top: 5px;">
-                <span>Количество</span>
-                <span>Дни недели</span>
+            <div id="chart-axis-labels" style="display: flex; justify-content: space-between; font-size: 0.7rem; opacity: 0.8; margin-top: 5px;">
+                <span id="y-axis-label">Количество</span>
+                <span id="x-axis-label">Дни недели</span>
             </div>
         </div>
     </div>
@@ -1009,7 +1045,10 @@
         // --- Элементы модального окна статистики ---
         const statsModal = document.getElementById('statsModal');
         const closeStatsModal = document.getElementById('closeStatsModal');
-        const weekdayChartCanvas = document.getElementById('weekdayChart');
+        const statsChartCanvas = document.getElementById('statsChart');
+        const chartSelector = document.querySelector('.chart-selector');
+        const xAxisLabel = document.getElementById('x-axis-label');
+        const yAxisLabel = document.getElementById('y-axis-label');
         // --- Конец элементов модального окна статистики ---
         // Auth state
         let isRegistration = false;
@@ -1109,6 +1148,19 @@
             closeStatsModal.addEventListener('click', closeStatsModalFunc);
             statsModal.addEventListener('click', function(e) {
                 if (e.target === this) closeStatsModalFunc();
+            });
+            // Обработчики для переключения графиков
+            chartSelector.addEventListener('click', function(e) {
+                if (e.target.classList.contains('chart-btn')) {
+                    // Убираем активный класс у всех кнопок
+                    document.querySelectorAll('.chart-btn').forEach(btn => btn.classList.remove('active'));
+                    // Добавляем активный класс нажатой кнопке
+                    e.target.classList.add('active');
+                    // Получаем тип графика из data-атрибута
+                    const chartType = e.target.getAttribute('data-chart');
+                    // Рисуем выбранный график
+                    renderStatsChart(chartType);
+                }
             });
             // --- Конец обработчиков для модального окна статистики ---
             // Auth handlers
@@ -2091,11 +2143,12 @@ ${achievement.description}`);
             }
         }
         // --- Функции для модального окна статистики ---
-        // --- НОВАЯ ФУНКЦИЯ ДЛЯ ОТРИСОВКИ ГРАФИКА С ПОМОЩЬЮ Chart.js ---
-        let weekdayChartInstance = null; // Переменная для хранения экземпляра графика
+        // --- НОВАЯ ЛОГИКА ДЛЯ ГРАФИКОВ С CHART.JS ---
+        let statsChartInstance = null; // Переменная для хранения экземпляра графика
 
-        function renderWeekdayChartWithChartJS() {
-            const canvas = document.getElementById('weekdayChart');
+        // Функция для рендеринга графиков
+        function renderStatsChart(chartType) {
+            const canvas = document.getElementById('statsChart');
             if (!canvas) {
                 console.error("Canvas элемент для графика не найден");
                 return;
@@ -2103,9 +2156,57 @@ ${achievement.description}`);
 
             const ctx = canvas.getContext('2d');
 
-            // 1. Подготавливаем данные
+            // Уничтожаем предыдущий экземпляр графика, если он существует
+            if (statsChartInstance) {
+                statsChartInstance.destroy();
+            }
+
+            let chartData = {};
+            let chartOptions = {};
+
+            // Определяем данные и опции в зависимости от типа графика
+            switch (chartType) {
+                case 'weekday':
+                    chartData = getWeekdayChartData();
+                    chartOptions = getWeekdayChartOptions();
+                    xAxisLabel.textContent = 'Дни недели';
+                    yAxisLabel.textContent = 'Количество сигарет';
+                    break;
+                case 'daily':
+                    chartData = getDailyChartData();
+                    chartOptions = getDailyChartOptions();
+                    xAxisLabel.textContent = 'Дата';
+                    yAxisLabel.textContent = 'Количество сигарет';
+                    break;
+                case 'hourly':
+                    chartData = getHourlyChartData();
+                    chartOptions = getHourlyChartOptions();
+                    xAxisLabel.textContent = 'Часы';
+                    yAxisLabel.textContent = 'Количество сигарет';
+                    break;
+                case 'savings':
+                    chartData = getSavingsChartData();
+                    chartOptions = getSavingsChartOptions();
+                    xAxisLabel.textContent = 'Дата';
+                    yAxisLabel.textContent = 'Экономия (₽)';
+                    break;
+                default:
+                    return; // Неизвестный тип графика
+            }
+
+            // Создаем новый график с помощью Chart.js
+            statsChartInstance = new Chart(ctx, {
+                type: 'bar', // По умолчанию столбчатая диаграмма
+                data: chartData,
+                options: chartOptions
+            });
+        }
+
+        // --- Функции для получения данных и опций для каждого графика ---
+
+        // 1. График "По дням недели"
+        function getWeekdayChartData() {
             const weekdayStats = new Array(7).fill(0);
-            // Важно: порядок должен соответствовать Chart.js (Вс=0, Пн=1, ..., Сб=6)
             const weekdayLabels = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 
             if (data.timeStats.length > 0) {
@@ -2116,92 +2217,262 @@ ${achievement.description}`);
                 });
             }
 
-            // 2. Уничтожаем предыдущий экземпляр графика, если он существует
-            // Это нужно, чтобы график обновлялся при повторном открытии модального окна
-            if (weekdayChartInstance) {
-                weekdayChartInstance.destroy();
+            return {
+                labels: weekdayLabels,
+                datasets: [{
+                    label: 'Количество сигарет',
+                    data: weekdayStats,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)', // Вс
+                        'rgba(54, 162, 235, 0.7)',  // Пн
+                        'rgba(255, 206, 86, 0.7)',  // Вт
+                        'rgba(75, 192, 192, 0.7)',  // Ср
+                        'rgba(153, 102, 255, 0.7)', // Чт
+                        'rgba(255, 159, 64, 0.7)',  // Пт
+                        'rgba(199, 199, 199, 0.7)'  // Сб
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(199, 199, 199, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+        }
+
+        function getWeekdayChartOptions() {
+            return getDefaultBarChartOptions();
+        }
+
+        // 2. График "По дням" (последние 7 дней)
+        function getDailyChartData() {
+             const now = new Date();
+            const dates = [];
+            const counts = [];
+            
+            // Создаем массив последних 7 дней (включая сегодня)
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(now);
+                date.setDate(now.getDate() - i);
+                dates.push(date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }));
+                
+                // Подсчитываем сигареты за этот день
+                const dayStart = new Date(date);
+                dayStart.setHours(0, 0, 0, 0);
+                const dayEnd = new Date(dayStart);
+                dayEnd.setDate(dayEnd.getDate() + 1);
+                
+                const count = data.timeStats.filter(stat => {
+                    const statDate = new Date(stat.timestamp);
+                    return statDate >= dayStart && statDate < dayEnd;
+                }).length;
+                
+                counts.push(count);
             }
 
-            // 3. Создаем новый график с помощью Chart.js
-            weekdayChartInstance = new Chart(ctx, {
-                type: 'bar', // Тип графика - столбчатая диаграмма
-                data: {
-                    labels: weekdayLabels, // Подписи по оси X
-                    datasets: [{
-                        label: 'Количество сигарет', // Название набора данных
-                        data: weekdayStats, // Данные для каждого дня
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.7)', // Вс
-                            'rgba(54, 162, 235, 0.7)',  // Пн
-                            'rgba(255, 206, 86, 0.7)',  // Вт
-                            'rgba(75, 192, 192, 0.7)',  // Ср
-                            'rgba(153, 102, 255, 0.7)', // Чт
-                            'rgba(255, 159, 64, 0.7)',  // Пт
-                            'rgba(199, 199, 199, 0.7)'  // Сб
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)',
-                            'rgba(199, 199, 199, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true, // Адаптивность
-                    maintainAspectRatio: false, // Не сохранять соотношение сторон, чтобы заполнить контейнер
-                    plugins: {
-                        legend: {
-                            display: false // Скрываем легенду, так как она не нужна для одного набора данных
-                        },
-                        tooltip: {
-                            // Настройка всплывающей подсказки
-                            callbacks: {
-                                label: function(context) {
-                                    return `Сигарет: ${context.parsed.y}`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true, // Начинать ось Y с нуля
-                            ticks: {
-                                color: 'rgba(255, 255, 255, 0.7)', // Цвет подписей оси Y
-                                // Шаг по оси Y будет автоматическим
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)' // Цвет линий сетки
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: 'rgba(255, 255, 255, 0.9)' // Цвет подписей оси X
-                            },
-                            grid: {
-                                display: false // Скрываем вертикальные линии сетки
+            return {
+                labels: dates,
+                datasets: [{
+                    label: 'Количество сигарет',
+                    data: counts,
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            };
+        }
+
+        function getDailyChartOptions() {
+            return getDefaultBarChartOptions();
+        }
+
+        // 3. График "По часам суток"
+        function getHourlyChartData() {
+            const hourlyStats = new Array(24).fill(0);
+            const hourLabels = Array.from({length: 24}, (_, i) => `${i}:00`);
+
+            if (data.timeStats.length > 0) {
+                data.timeStats.forEach(stat => {
+                    const statDate = new Date(stat.timestamp);
+                    const hour = statDate.getHours();
+                    hourlyStats[hour]++;
+                });
+            }
+
+            return {
+                labels: hourLabels,
+                datasets: [{
+                    label: 'Количество сигарет',
+                    data: hourlyStats,
+                    backgroundColor: 'rgba(255, 159, 64, 0.7)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                }]
+            };
+        }
+
+        function getHourlyChartOptions() {
+            return {
+                ...getDefaultBarChartOptions(),
+                scales: {
+                    ...getDefaultBarChartOptions().scales,
+                    x: {
+                        ...getDefaultBarChartOptions().scales.x,
+                        ticks: {
+                            ...getDefaultBarChartOptions().scales.x.ticks,
+                            // Поворачиваем подписи для экономии места
+                            autoSkip: false,
+                            maxRotation: 90,
+                            minRotation: 90,
+                            font: {
+                                size: 9
                             }
                         }
                     }
                 }
-            });
+            };
         }
-        // --- КОНЕЦ НОВОЙ ФУНКЦИИ ---
+
+        // 4. График "Накопительная экономия"
+        function getSavingsChartData() {
+            const now = new Date();
+            const dates = [];
+            const savings = [];
+            let cumulativeSavings = 0;
+            const costPerCigarette = data.packPrice / data.cigarettesPerPack;
+
+            // Создаем массив последних 30 дней
+            const dailyData = {}; // Объект для хранения {дата: количество}
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date(now);
+                date.setDate(now.getDate() - i);
+                const dateStr = date.toDateString();
+                dailyData[dateStr] = 0; // Инициализируем нулем
+                dates.push(date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }));
+            }
+
+            // Подсчитываем сигареты за каждый день
+            data.timeStats.forEach(stat => {
+                const statDate = new Date(stat.timestamp);
+                const statDateStr = statDate.toDateString();
+                if (dailyData.hasOwnProperty(statDateStr)) {
+                    dailyData[statDateStr]++;
+                }
+            });
+
+            // Рассчитываем накопительную экономию
+            Object.entries(dailyData).forEach(([dateStr, count], index) => {
+                // Предположим, что цель - data.goal сигарет в день
+                const potentialCigarettes = data.goal;
+                const savedCigarettes = Math.max(0, potentialCigarettes - count);
+                cumulativeSavings += savedCigarettes * costPerCigarette;
+                savings.push(parseFloat(cumulativeSavings.toFixed(2)));
+            });
+
+            return {
+                labels: dates,
+                datasets: [{
+                    label: 'Накопительная экономия (₽)',
+                    data: savings,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+                    pointRadius: 3,
+                    fill: true,
+                    tension: 0.3 // Сглаживание линии
+                }]
+            };
+        }
+
+        function getSavingsChartOptions() {
+            return {
+                ...getDefaultBarChartOptions(),
+                type: 'line', // Линейный график для экономии
+                scales: {
+                    ...getDefaultBarChartOptions().scales,
+                    y: {
+                        ...getDefaultBarChartOptions().scales.y,
+                        ticks: {
+                            ...getDefaultBarChartOptions().scales.y.ticks,
+                            callback: function(value) {
+                                return value + ' ₽';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    ...getDefaultBarChartOptions().plugins,
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.parsed.y} ₽`;
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        // --- Вспомогательные функции ---
+
+        // Функция для получения стандартных опций столбчатой диаграммы
+        function getDefaultBarChartOptions() {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Сигарет: ${context.parsed.y}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.9)'
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            };
+        }
 
         // Открытие модального окна статистики
         function openStatsModal() {
             statsModal.style.display = 'flex';
-            // Вместо старой функции drawWeekdayChart, вызываем новую
-            renderWeekdayChartWithChartJS();
+            // По умолчанию показываем график "Дни недели"
+            document.querySelectorAll('.chart-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.chart-btn[data-chart="weekday"]').classList.add('active');
+            renderStatsChart('weekday'); // Рисуем график "Дни недели" при открытии
         }
         // Закрытие модального окна статистики
         function closeStatsModalFunc() {
             statsModal.style.display = 'none';
         }
+        // --- Конец функций для модального окна статистики ---
         // Инициализация приложения при загрузке
         document.addEventListener('DOMContentLoaded', initApp);
         // Динамическое обновление theme-color для соответствия градиенту
