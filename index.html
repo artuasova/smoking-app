@@ -19,6 +19,8 @@
     <!-- Apple Touch Icon для homescreen -->
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192x192.png">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
@@ -2089,148 +2091,117 @@ ${achievement.description}`);
             }
         }
         // --- Функции для модального окна статистики ---
+        // --- НОВАЯ ФУНКЦИЯ ДЛЯ ОТРИСОВКИ ГРАФИКА С ПОМОЩЬЮ Chart.js ---
+        let weekdayChartInstance = null; // Переменная для хранения экземпляра графика
+
+        function renderWeekdayChartWithChartJS() {
+            const canvas = document.getElementById('weekdayChart');
+            if (!canvas) {
+                console.error("Canvas элемент для графика не найден");
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+
+            // 1. Подготавливаем данные
+            const weekdayStats = new Array(7).fill(0);
+            // Важно: порядок должен соответствовать Chart.js (Вс=0, Пн=1, ..., Сб=6)
+            const weekdayLabels = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+
+            if (data.timeStats.length > 0) {
+                data.timeStats.forEach(stat => {
+                    const statDate = new Date(stat.timestamp);
+                    const weekday = statDate.getDay(); // 0 (Вс) - 6 (Сб)
+                    weekdayStats[weekday]++;
+                });
+            }
+
+            // 2. Уничтожаем предыдущий экземпляр графика, если он существует
+            // Это нужно, чтобы график обновлялся при повторном открытии модального окна
+            if (weekdayChartInstance) {
+                weekdayChartInstance.destroy();
+            }
+
+            // 3. Создаем новый график с помощью Chart.js
+            weekdayChartInstance = new Chart(ctx, {
+                type: 'bar', // Тип графика - столбчатая диаграмма
+                data: {
+                    labels: weekdayLabels, // Подписи по оси X
+                    datasets: [{
+                        label: 'Количество сигарет', // Название набора данных
+                        data: weekdayStats, // Данные для каждого дня
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)', // Вс
+                            'rgba(54, 162, 235, 0.7)',  // Пн
+                            'rgba(255, 206, 86, 0.7)',  // Вт
+                            'rgba(75, 192, 192, 0.7)',  // Ср
+                            'rgba(153, 102, 255, 0.7)', // Чт
+                            'rgba(255, 159, 64, 0.7)',  // Пт
+                            'rgba(199, 199, 199, 0.7)'  // Сб
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(199, 199, 199, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true, // Адаптивность
+                    maintainAspectRatio: false, // Не сохранять соотношение сторон, чтобы заполнить контейнер
+                    plugins: {
+                        legend: {
+                            display: false // Скрываем легенду, так как она не нужна для одного набора данных
+                        },
+                        tooltip: {
+                            // Настройка всплывающей подсказки
+                            callbacks: {
+                                label: function(context) {
+                                    return `Сигарет: ${context.parsed.y}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true, // Начинать ось Y с нуля
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.7)', // Цвет подписей оси Y
+                                // Шаг по оси Y будет автоматическим
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)' // Цвет линий сетки
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: 'rgba(255, 255, 255, 0.9)' // Цвет подписей оси X
+                            },
+                            grid: {
+                                display: false // Скрываем вертикальные линии сетки
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        // --- КОНЕЦ НОВОЙ ФУНКЦИИ ---
+
         // Открытие модального окна статистики
         function openStatsModal() {
             statsModal.style.display = 'flex';
-            drawWeekdayChart(); // Рисуем график при открытии
+            // Вместо старой функции drawWeekdayChart, вызываем новую
+            renderWeekdayChartWithChartJS();
         }
         // Закрытие модального окна статистики
         function closeStatsModalFunc() {
             statsModal.style.display = 'none';
         }
-        // Функция для рисования графика "По дням недели"
-        function drawWeekdayChart() {
-            if (!weekdayChartCanvas || !weekdayChartCanvas.getContext) {
-                console.error("Canvas не поддерживается или не найден");
-                return;
-            }
-
-            const ctx = weekdayChartCanvas.getContext('2d');
-            // Убедимся, что размеры canvas установлены правильно
-            const dpr = window.devicePixelRatio || 1;
-            const rect = weekdayChartCanvas.getBoundingClientRect();
-            weekdayChartCanvas.width = rect.width * dpr;
-            weekdayChartCanvas.height = rect.height * dpr;
-            ctx.scale(dpr, dpr);
-
-            const width = rect.width;
-            const height = rect.height;
-
-            // Очистка canvas
-            ctx.clearRect(0, 0, width, height);
-
-            // Подготовка данных
-            const weekdayStats = new Array(7).fill(0);
-            const weekdayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']; // Сокращенные названия
-
-            if (data.timeStats.length === 0) {
-                // Рисуем надпись "Нет данных"
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-                ctx.font = '16px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('Нет данных', width / 2, height / 2);
-                return;
-            }
-
-            data.timeStats.forEach(stat => {
-                const statDate = new Date(stat.timestamp);
-                const weekday = statDate.getDay(); // 0 (Вс) - 6 (Сб)
-                weekdayStats[weekday]++;
-            });
-
-            // Найти максимальное значение для масштабирования
-            const maxCount = Math.max(...weekdayStats, 1); // Минимум 1, чтобы избежать деления на 0
-
-            // Параметры графика
-            const padding = 10; // Отступы
-            const bottomPadding = 30; // Отступ снизу для подписей
-            const leftPadding = 30; // Отступ слева для оси Y
-            const graphWidth = width - leftPadding - padding;
-            const graphHeight = height - bottomPadding - padding;
-            const barWidth = graphWidth / weekdayStats.length * 0.8; // Ширина столбца с зазором
-            const gap = (graphWidth - (barWidth * weekdayStats.length)) / (weekdayStats.length - 1); // Зазор между столбцами
-
-            // Определение цветов (тема по умолчанию - темная)
-            const barColor = 'rgba(52, 152, 219, 0.9)';
-            const axisColor = 'rgba(255, 255, 255, 0.7)';
-            const labelColor = 'rgba(255, 255, 255, 0.9)';
-            const gridColor = 'rgba(255, 255, 255, 0.1)';
-
-            // Рисование осей
-            ctx.strokeStyle = axisColor;
-            ctx.lineWidth = 1;
-            // Ось X
-            ctx.beginPath();
-            ctx.moveTo(leftPadding, height - bottomPadding);
-            ctx.lineTo(width - padding, height - bottomPadding);
-            ctx.stroke();
-            // Ось Y
-            ctx.beginPath();
-            ctx.moveTo(leftPadding, padding);
-            ctx.lineTo(leftPadding, height - bottomPadding);
-            ctx.stroke();
-
-            // Рисование сетки и подписей по оси Y (пример для 0, max/2, max)
-            ctx.fillStyle = labelColor;
-            ctx.font = '10px Arial';
-            ctx.textAlign = 'right';
-            ctx.textBaseline = 'middle';
-            // 0
-            ctx.fillText('0', leftPadding - 5, height - bottomPadding);
-            // max/2
-            const midY = padding + graphHeight / 2;
-            ctx.fillText(Math.round(maxCount / 2), leftPadding - 5, midY);
-            // max
-            ctx.fillText(maxCount, leftPadding - 5, padding);
-
-            // Рисование линий сетки
-            ctx.strokeStyle = gridColor;
-            ctx.setLineDash([2, 2]); // Пунктир
-            // Линия для max/2
-            ctx.beginPath();
-            ctx.moveTo(leftPadding, midY);
-            ctx.lineTo(width - padding, midY);
-            ctx.stroke();
-            // Линия для max
-            ctx.beginPath();
-            ctx.moveTo(leftPadding, padding);
-            ctx.lineTo(width - padding, padding);
-            ctx.stroke();
-            ctx.setLineDash([]); // Сброс пунктира
-
-            // Рисование столбцов
-            ctx.fillStyle = barColor;
-            for (let i = 0; i < weekdayStats.length; i++) {
-                const count = weekdayStats[i];
-                const barHeight = (count / maxCount) * graphHeight;
-                const x = leftPadding + i * (barWidth + gap);
-                const y = height - bottomPadding - barHeight;
-
-                ctx.fillRect(x, y, barWidth, barHeight);
-
-                // Подпись дня недели под столбцом (по центру)
-                ctx.fillStyle = labelColor;
-                ctx.font = '10px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'top';
-                const labelX = x + barWidth / 2;
-                const labelY = height - bottomPadding + 5;
-                ctx.fillText(weekdayNames[i], labelX, labelY);
-
-                // Подпись значения над столбцом
-                if (count > 0) {
-                    ctx.fillStyle = labelColor;
-                    ctx.font = '10px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'bottom';
-                    ctx.fillText(count, labelX, y - 2);
-                }
-                 // Восстанавливаем цвет столбцов для следующей итерации
-                ctx.fillStyle = barColor;
-            }
-        }
-        // --- Конец функций для модального окна статистики ---
         // Инициализация приложения при загрузке
         document.addEventListener('DOMContentLoaded', initApp);
         // Динамическое обновление theme-color для соответствия градиенту
