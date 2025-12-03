@@ -208,7 +208,8 @@
         .btn:active {
             transform: translateY(0.5px);
         }
-        /* --- ПРОГРЕСС-БАР ПЕРЕМЕЩЕН ВЫШЕ --- */
+        
+        /* --- НОВЫЙ ПРОГРЕСС-БАР С ЖИДКОСТЬЮ --- */
         .progress-container {
             background: var(--card-bg);
             border-radius: 24px;
@@ -222,7 +223,10 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            position: relative;
+            overflow: hidden;
         }
+        
         .progress-header {
             font-size: 1.2rem;
             font-weight: 600;
@@ -230,56 +234,51 @@
             text-align: center;
             min-height: 30px;
         }
-        .progress-circle-container {
+        
+        .liquid-progress-container {
             position: relative;
             width: 180px;
             height: 180px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 25px rgba(0, 100, 255, 0.5),
+                        inset 0 0 20px rgba(0, 150, 255, 0.4);
+            border: 2px solid rgba(0, 180, 255, 0.5);
+            background: rgba(5, 15, 40, 0.9);
             margin: 15px 0;
         }
-        .progress-circle-svg {
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            top: 0;
-            left: 0;
+        
+        #liquidCanvas {
+            border-radius: 50%;
+            display: block;
         }
-        .progress-circle-svg circle {
-            fill: none;
-            stroke-linecap: round;
-            transform: rotate(-90deg);
-            transform-origin: 90px 90px;
-        }
-        .progress-circle-bg {
-            stroke: rgba(255, 255, 255, 0.15);
-            stroke-width: 12;
-        }
-        .progress-circle-fill {
-            stroke: #34e89e;
-            stroke-width: 12;
-            stroke-dasharray: 565.48;
-            stroke-dashoffset: 565.48;
-            transition: stroke 0.5s ease, stroke-dashoffset 0.5s ease;
-        }
+        
         .progress-circle-text {
-            position: relative;
-            z-index: 1;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center;
+            z-index: 5;
+            pointer-events: none;
         }
+        
         .progress-percent {
             font-size: 2.5rem;
             font-weight: bold;
             line-height: 1;
             margin-bottom: 5px;
+            color: white;
+            text-shadow: 0 0 15px rgba(0, 200, 255, 0.8);
         }
+        
         .progress-goal-text {
             font-size: 0.9rem;
             opacity: 0.85;
             margin-top: 15px;
         }
-        /* --- КОНЕЦ ПРОГРЕСС-БАРА --- */
+        /* --- КОНЕЦ НОВОГО ПРОГРЕСС-БАРА --- */
+        
         .timer-container {
             background: var(--card-bg);
             border-radius: 24px;
@@ -550,31 +549,6 @@
             background: #f44336;
             color: white;
         }
-        .sync-indicator {
-            position: fixed;
-            top: 8px;
-            right: 8px;
-            padding: 6px 10px;
-            border-radius: 18px;
-            font-size: 0.75rem;
-            z-index: 1000;
-            display: none;
-        }
-        .sync-syncing {
-            background: #2196F3;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .sync-success {
-            background: #4CAF50;
-            color: white;
-        }
-        .sync-error {
-            background: #f44336;
-            color: white;
-        }
         footer {
             text-align: center;
             padding: 12px;
@@ -597,11 +571,7 @@
             .counter-value {
                 font-size: 4rem;
             }
-            .progress-circle-container {
-                width: 150px;
-                height: 150px;
-            }
-            .progress-circle-svg {
+            .liquid-progress-container {
                 width: 150px;
                 height: 150px;
             }
@@ -824,6 +794,23 @@
             font-weight: bold;
         }
         /* --- Конец стилей для переключателя графиков --- */
+        
+        /* --- СТИЛИ ДЛЯ ЖИДКОСТИ --- */
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+        }
+        
+        .glow-particle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 20;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 220, 255, 0.8) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+        }
     </style>
 </head>
 <body>
@@ -881,21 +868,18 @@
                 </div>
                  <button id="manualResetToday" style="background: none; border: none; color: #ff4081; cursor: pointer; font-size: 0.85rem; margin-top: 12px; text-align: center; width: 100%;">Нажмите здесь, чтобы завершить день</button>
             </div>
-            <!-- ПРОГРЕСС-БАР ПЕРЕМЕЩЕН СЮДА -->
+            <!-- НОВЫЙ ПРОГРЕСС-БАР С ЖИДКОСТЬЮ -->
             <div class="progress-container">
                 <div class="progress-header" id="progress-header">Прогресс отказа от курения 😊</div>
-                <div class="progress-circle-container">
-                    <svg class="progress-circle-svg" viewBox="0 0 180 180">
-                        <circle class="progress-circle-bg" cx="90" cy="90" r="85"></circle>
-                        <circle class="progress-circle-fill" id="progress-circle-fill" cx="90" cy="90" r="85"></circle>
-                    </svg>
+                <div class="liquid-progress-container">
+                    <canvas id="liquidCanvas" width="180" height="180"></canvas>
                     <div class="progress-circle-text">
                         <div class="progress-percent" id="progress-percent">0%</div>
                     </div>
                 </div>
                 <p class="progress-goal-text">Цель: <span id="goal">20</span> сигарет в день</p>
             </div>
-            <!-- КОНЕЦ ПРОГРЕСС-БАРА -->
+            <!-- КОНЕЦ НОВОГО ПРОГРЕСС-БАРА -->
             <div class="timer-container">
                 <h3>Время с последней сигареты</h3>
                 <div class="timer-value" id="timer">00:00:00</div>
@@ -1096,7 +1080,6 @@
         const monthEl = document.getElementById('month');
         const goalEl = document.getElementById('goal');
         const progressPercentEl = document.getElementById('progress-percent');
-        const progressCircleFill = document.getElementById('progress-circle-fill');
         const progressHeader = document.getElementById('progress-header');
         const costsEl = document.getElementById('costs');
         const packPriceEl = document.getElementById('pack-price');
@@ -1147,11 +1130,278 @@
         const chartSelector = document.querySelector('.chart-selector');
         const xAxisLabel = document.getElementById('x-axis-label');
         const yAxisLabel = document.getElementById('y-axis-label');
-        // --- Конец элементов модального окна статистики ---
+        
+        // --- ЖИДКОСТНЫЙ ПРОГРЕСС-БАР ЭЛЕМЕНТЫ ---
+        const liquidCanvas = document.getElementById('liquidCanvas');
+        const liquidProgressCtx = liquidCanvas ? liquidCanvas.getContext('2d') : null;
+        
         // Auth state
         let isRegistration = false;
         let isForgotPassword = false;
         let currentUser = null;
+        
+        // --- ЖИДКОСТНЫЙ ПРОГРЕСС-БАР ПЕРЕМЕННЫЕ ---
+        let liquidProgress = {
+            canvas: liquidCanvas,
+            ctx: liquidProgressCtx,
+            width: 180,
+            height: 180,
+            centerX: 90,
+            centerY: 90,
+            radius: 75,
+            targetLevel: 0,
+            currentLevel: 0,
+            waveOffset: 0,
+            waveSpeed: 0.018,
+            waveAmplitude: 4,
+            waveCount: 2,
+            animationSpeed: 0.05,
+            bubbles: [],
+            maxBubbles: 6,
+            lastBubbleTime: 0,
+            bubbleInterval: 1500
+        };
+        
+        // --- КЛАСС ПУЗЫРЬКА ДЛЯ ЖИДКОСТИ ---
+        class Bubble {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.radius = Math.random() * 2 + 1;
+                this.speed = Math.random() * 0.6 + 0.2;
+                this.wobble = Math.random() * 0.04;
+                this.wobbleOffset = Math.random() * Math.PI * 2;
+                this.opacity = 0.5 + Math.random() * 0.3;
+                this.life = 1;
+                this.rising = false;
+                this.createdAt = Date.now();
+            }
+            
+            update(liquidHeight) {
+                if (!this.rising && Date.now() - this.createdAt > 1000) {
+                    this.rising = true;
+                }
+                
+                if (this.rising) {
+                    this.y -= this.speed;
+                    this.x += Math.sin(this.wobbleOffset) * this.wobble;
+                    this.wobbleOffset += 0.03;
+                    
+                    const riseDistance = liquidHeight - this.y;
+                    if (riseDistance > 0) {
+                        this.opacity = Math.max(0, 0.7 - riseDistance / 80);
+                    }
+                    
+                    if (this.y < liquidHeight - 20 || this.opacity <= 0.1) {
+                        return true;
+                    }
+                }
+                
+                return false;
+            }
+            
+            draw(ctx) {
+                if (this.opacity <= 0.1) return;
+                
+                // Bubble glow
+                const glowRadius = this.radius * 1.8;
+                const gradient = ctx.createRadialGradient(
+                    this.x, this.y, 0,
+                    this.x, this.y, glowRadius
+                );
+                gradient.addColorStop(0, `rgba(200, 240, 255, ${this.opacity * 0.5})`);
+                gradient.addColorStop(1, 'transparent');
+                
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, glowRadius, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                
+                // Bubble body
+                const bubbleGradient = ctx.createRadialGradient(
+                    this.x - this.radius * 0.3, this.y - this.radius * 0.3, 0,
+                    this.x, this.y, this.radius
+                );
+                bubbleGradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity * 0.8})`);
+                bubbleGradient.addColorStop(0.7, `rgba(180, 230, 255, ${this.opacity * 0.6})`);
+                bubbleGradient.addColorStop(1, 'transparent');
+                
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = bubbleGradient;
+                ctx.fill();
+            }
+        }
+        
+        // --- ФУНКЦИЯ СОЗДАНИЯ ПУЗЫРЬКА ---
+        function createNaturalBubble() {
+            if (!liquidProgress.ctx || liquidProgress.bubbles.length >= liquidProgress.maxBubbles) return;
+            
+            const liquidHeight = liquidProgress.height - (liquidProgress.height * liquidProgress.currentLevel);
+            const bubbleX = liquidProgress.centerX + (Math.random() - 0.5) * liquidProgress.radius * 0.7;
+            const bubbleY = liquidHeight + liquidProgress.radius * 0.6;
+            
+            const bubble = new Bubble(bubbleX, bubbleY);
+            liquidProgress.bubbles.push(bubble);
+        }
+        
+        // --- ФУНКЦИЯ ОТРИСОВКИ ЖИДКОСТИ ---
+        function drawLiquidProgress() {
+            if (!liquidProgress.ctx) return;
+            
+            const ctx = liquidProgress.ctx;
+            const width = liquidProgress.width;
+            const height = liquidProgress.height;
+            const centerX = liquidProgress.centerX;
+            const centerY = liquidProgress.centerY;
+            const radius = liquidProgress.radius;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Save context for clipping
+            ctx.save();
+            
+            // Create circular clipping path
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.clip();
+            
+            // Draw container background (for empty part)
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(15, 30, 60, 0.8)';
+            ctx.fill();
+            
+            // Calculate liquid height with smoothing
+            if (Math.abs(liquidProgress.targetLevel - liquidProgress.currentLevel) > 0.001) {
+                liquidProgress.currentLevel += (liquidProgress.targetLevel - liquidProgress.currentLevel) * liquidProgress.animationSpeed;
+                
+                // Create bubbles only when liquid is moving
+                const now = Date.now();
+                if (now - liquidProgress.lastBubbleTime > liquidProgress.bubbleInterval) {
+                    createNaturalBubble();
+                    liquidProgress.lastBubbleTime = now;
+                }
+            } else {
+                liquidProgress.currentLevel = liquidProgress.targetLevel;
+            }
+            
+            const liquidHeight = height - (height * liquidProgress.currentLevel);
+            
+            // Create liquid shape
+            ctx.beginPath();
+            
+            // Start from left side of circle
+            const leftX = centerX - radius;
+            ctx.moveTo(leftX, liquidHeight);
+            
+            // Draw wave curve across the top of the liquid
+            const waveAmplitude = liquidProgress.waveAmplitude * (1 + Math.sin(liquidProgress.waveOffset * 0.5) * 0.3);
+            const waveResolution = 2;
+            
+            for (let x = leftX; x <= centerX + radius; x += waveResolution) {
+                // Calculate base wave using multiple frequencies
+                let waveY = liquidHeight;
+                
+                // Primary wave
+                waveY += waveAmplitude * Math.sin((x - leftX) * 0.02 + liquidProgress.waveOffset);
+                
+                // Secondary smaller wave for realism
+                waveY += waveAmplitude * 0.4 * Math.sin((x - leftX) * 0.04 + liquidProgress.waveOffset * 1.5);
+                
+                ctx.lineTo(x, waveY);
+            }
+            
+            // Complete the liquid shape by going down and around the bottom
+            ctx.lineTo(centerX + radius, height);
+            ctx.lineTo(centerX - radius, height);
+            ctx.closePath();
+            
+            // Create realistic liquid gradient
+            const liquidGradient = ctx.createLinearGradient(
+                centerX, liquidHeight - 15,
+                centerX, height
+            );
+            
+            // Цвета жидкости в зависимости от прогресса
+            let startColor, midColor, endColor;
+            
+            if (liquidProgress.currentLevel <= 0.7) {
+                // Зеленый (меньше 70%)
+                startColor = 'rgba(0, 230, 255, 0.9)';
+                midColor = 'rgba(0, 150, 255, 0.95)';
+                endColor = 'rgba(0, 80, 200, 1)';
+            } else if (liquidProgress.currentLevel <= 1) {
+                // Оранжевый (70-100%)
+                startColor = 'rgba(0, 230, 255, 0.8)';
+                midColor = 'rgba(0, 150, 200, 0.9)';
+                endColor = 'rgba(255, 120, 0, 1)';
+            } else {
+                // Красный (больше 100%)
+                startColor = 'rgba(0, 200, 255, 0.7)';
+                midColor = 'rgba(255, 80, 80, 0.9)';
+                endColor = 'rgba(200, 0, 0, 1)';
+            }
+            
+            liquidGradient.addColorStop(0, startColor);
+            liquidGradient.addColorStop(0.4, midColor);
+            liquidGradient.addColorStop(1, endColor);
+            
+            // Fill the liquid
+            ctx.fillStyle = liquidGradient;
+            ctx.fill();
+            
+            // Add light reflection on the liquid surface
+            const reflectionGradient = ctx.createLinearGradient(
+                centerX, liquidHeight - 12,
+                centerX, liquidHeight + 8
+            );
+            reflectionGradient.addColorStop(0, 'rgba(255, 255, 255, 0.25)');
+            reflectionGradient.addColorStop(1, 'transparent');
+            
+            ctx.fillStyle = reflectionGradient;
+            ctx.fillRect(0, 0, width, height);
+            
+            // Draw bubbles
+            for (let i = liquidProgress.bubbles.length - 1; i >= 0; i--) {
+                if (liquidProgress.bubbles[i].update(liquidHeight)) {
+                    liquidProgress.bubbles.splice(i, 1);
+                } else {
+                    liquidProgress.bubbles[i].draw(ctx);
+                }
+            }
+            
+            // Restore context (removes clipping)
+            ctx.restore();
+            
+            // Draw the circle border on top
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(0, 180, 255, 0.8)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Draw inner glow
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius - 1, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(100, 230, 255, 0.4)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            
+            // Update wave animation
+            liquidProgress.waveOffset += liquidProgress.waveSpeed;
+            
+            requestAnimationFrame(drawLiquidProgress);
+        }
+        
+        // --- ОБНОВЛЕНИЕ ПРОГРЕССА ЖИДКОСТИ ---
+        function updateLiquidProgress(percent) {
+            if (liquidProgress) {
+                liquidProgress.targetLevel = Math.min(1.2, percent / 100);
+            }
+        }
+        
         // --- НОВАЯ ЛОГИКА АВТОМАТИЧЕСКОГО СБРОСА ---
         // Функция для получения времени следующего сброса (06:00 завтра)
         function getNextResetTime() {
@@ -1219,6 +1469,7 @@
             }
         }
         // --- КОНЕЦ НОВОЙ ЛОГИКИ ---
+        
         // Инициализация приложения
         function initApp() {
             loadData();
@@ -1227,10 +1478,12 @@
             renderAchievements();
             checkAchievements();
             startTimer();
-            
-            // Инициализация градиента
-            const percent = Math.round((data.today / data.goal) * 100);
-            updateBackgroundGradient(percent);
+            // Инициализация жидостного прогресс-бара
+            if (liquidProgress.ctx) {
+                drawLiquidProgress();
+                const initialPercent = Math.round((data.today / data.goal) * 100);
+                updateLiquidProgress(initialPercent);
+            }
             // Установка обработчиков событий
             incrementBtn.addEventListener('click', incrementCounter);
             decrementBtn.addEventListener('click', decrementCounter);
@@ -1287,7 +1540,6 @@
             });
             // Проверка сессии
             checkSession();
-            
             // Очистка старого кэша и регистрация Service Worker
             if ('serviceWorker' in navigator) {
                 // Очищаем старый кэш при загрузке
@@ -1296,7 +1548,6 @@
                         caches.delete(cacheName);
                     });
                 });
-                
                 window.addEventListener('load', function() {
                     navigator.serviceWorker.getRegistrations().then(function(registrations) {
                         registrations.forEach(function(registration) {
@@ -1492,11 +1743,9 @@
                 showSyncIndicator('error', 'Ошибка: ' + error.message);
             }
         }
-
         // === ИСПРАВЛЕННАЯ ФУНКЦИЯ ЗАГРУЗКИ ДАННЫХ С МЕРДЖЕМ ===
         async function loadUserData() {
             if (!currentUser) return;
-
             try {
                 showSyncIndicator('syncing', 'Обновление ...');
                 const { data: userData, error } = await supabase
@@ -1504,24 +1753,18 @@
                     .select('*')
                     .eq('user_id', currentUser.id)
                     .single();
-
                 if (error && error.code !== 'PGRST116') {
                     throw error;
                 }
-
                 // Получаем локальные данные
                 const localData = { ...data };
                 const cloudData = userData?.data || {};
-
                 // Получаем временные метки
                 const lastLocalUpdate = localStorage.getItem('smokingApp_lastUpdate');
                 const lastCloudUpdate = userData?.updated_at;
-
                 const localTime = lastLocalUpdate ? new Date(lastLocalUpdate) : new Date(0);
                 const cloudTime = lastCloudUpdate ? new Date(lastCloudUpdate) : new Date(0);
-
                 let mergedData;
-
                 if (localTime > cloudTime) {
                     // Локальные новее → отправляем в облако
                     console.log("Локальные данные новее. Отправка в облако.");
@@ -1538,13 +1781,11 @@
                     // Время совпадает → объединяем массивы без дубликатов
                     console.log("Время совпадает. Выполняем мердж.");
                     mergedData = { ...localData, ...cloudData };
-
                     const combined = [...(localData.timeStats || []), ...(cloudData.timeStats || [])];
                     const unique = combined.filter((stat, idx, arr) =>
                         idx === arr.findIndex(s => s.timestamp === stat.timestamp)
                     );
                     mergedData.timeStats = unique.sort((a, b) => a.timestamp - b.timestamp);
-
                     if (!mergedData.achievements || mergedData.achievements.length === 0) {
                         mergedData.achievements = cloudData.achievements || localData.achievements;
                     }
@@ -1552,17 +1793,13 @@
                         mergedData.firstUseDate = cloudData.firstUseDate || localData.firstUseDate;
                     }
                 }
-
                 data = mergedData;
                 saveData(); // сохраняет mergedData и обновляет smokingApp_lastUpdate
-
                 console.log("Данные успешно синхронизированы:", data);
                 showSyncIndicator('success', 'Синхронизировано');
-
                 updateUI();
                 checkAchievements();
                 renderAchievements();
-
             } catch (error) {
                 console.error('Ошибка загрузки данных:', error);
                 showSyncIndicator('error', 'Ошибка загрузки данных');
@@ -1571,7 +1808,6 @@
                 renderAchievements();
             }
         }
-
         // Сохранение данных пользователя с retry
         async function saveUserData() {
             if (!currentUser) return false;
@@ -1585,7 +1821,6 @@
                             data,
                             updated_at: now
                         }, { onConflict: 'user_id' });
-
                     if (!error) {
                         localStorage.setItem('smokingApp_lastUpdate', now);
                         return true;
@@ -1597,7 +1832,6 @@
             }
             return false;
         }
-
         // Показать индикатор синхронизации (обновленная версия)
         function showSyncIndicator(status, message) {
             if (syncStatusIndicator) {
@@ -1632,7 +1866,6 @@
                 }
             }
         }
-
         // Сохранение данных (локально + облако)
         function saveData() {
             try {
@@ -1645,7 +1878,6 @@
                 console.log('Не удалось сохранить данные');
             }
         }
-
         // Загрузка данных
         function loadData() {
             try {
@@ -1668,7 +1900,6 @@
                 console.log('Не удалось загрузить данные');
             }
         }
-
         // --- НОВЫЕ ФУНКЦИИ ДЛЯ ВЫЧИСЛЕНИЯ ПО ПЕРИОДАМ ---
         function calculateLastXPeriod(days) {
             if (data.timeStats.length === 0) {
@@ -1685,52 +1916,7 @@
             return filteredStats.length;
         }
         // --- КОНЕЦ НОВЫХ ФУНКЦИЙ ---
-
-        // Функция для динамического изменения фонового градиента в зависимости от процента
-        function updateBackgroundGradient(percent) {
-            let gradient;
-            
-            // Плавный переход от зелёного (0%) к красному (150%)
-            let r, g, b;
-            
-            if (percent <= 25) {
-                // Зелёный (0-25%)
-                const ratio = percent / 25;
-                r = Math.round(15 + (52 - 15) * ratio); // 15 → 52
-                g = Math.round(212 + (232 - 212) * ratio); // 212 → 232
-                b = Math.round(67 + (120 - 67) * ratio); // 67 → 120
-            } else if (percent <= 50) {
-                // Сине-зелёный (25-50%)
-                const ratio = (percent - 25) / 25;
-                r = Math.round(52 + (100 - 52) * ratio); // 52 → 100
-                g = Math.round(232 + (200 - 232) * ratio); // 232 → 200
-                b = Math.round(120 + (160 - 120) * ratio); // 120 → 160
-            } else if (percent <= 75) {
-                // Жёлто-оранжевый (50-75%)
-                const ratio = (percent - 50) / 25;
-                r = Math.round(100 + (255 - 100) * ratio); // 100 → 255
-                g = Math.round(200 + (140 - 200) * ratio); // 200 → 140
-                b = Math.round(160 + (30 - 160) * ratio); // 160 → 30
-            } else if (percent <= 100) {
-                // Оранжевый-красный (75-100%)
-                const ratio = (percent - 75) / 25;
-                r = Math.round(255 + (220 - 255) * ratio); // 255 → 220
-                g = Math.round(140 + (40 - 140) * ratio); // 140 → 40
-                b = Math.round(30 + (20 - 30) * ratio); // 30 → 20
-            } else {
-                // Тёмно-красный (>100%)
-                const ratio = Math.min(1, (percent - 100) / 100);
-                r = Math.round(220 + (139 - 220) * ratio); // 220 → 139
-                g = Math.round(40 + (0 - 40) * ratio); // 40 → 0
-                b = Math.round(20 + (0 - 20) * ratio); // 20 → 0
-            }
-            
-            gradient = `linear-gradient(135deg, rgb(${r}, ${g}, ${b}), rgba(${r}, ${g}, ${b}, 0.7), rgb(${r}, ${g}, ${b}))`;
-            document.documentElement.style.setProperty('--bg-gradient', gradient);
-        }
-
-        // --- КОНЕЦ НОВЫХ ФУНКЦИЙ ---
-
+        
         // Обновление интерфейса
         function updateUI() {
             data.week = calculateLastXPeriod(7);
@@ -1739,36 +1925,14 @@
             weekEl.textContent = data.week;
             monthEl.textContent = data.month;
             goalEl.textContent = data.goal;
-            
-            // Обновление прогресс-круга
+            // Обновление прогресса
             const percent = Math.round((data.today / data.goal) * 100);
             progressPercentEl.textContent = `${percent}%`;
-            
-            // SVG окружность: полный периметр = 2πr, где r=85
-            const radius = 85;
-            const circumference = 2 * Math.PI * radius;
-            const clampedPercent = Math.min(100, percent);
-            const offset = circumference - (clampedPercent / 100) * circumference;
-            progressCircleFill.style.strokeDashoffset = offset;
-            
-            // Изменение цвета круга в зависимости от процента
-            let circleColor;
-            if (percent <= 70) {
-                circleColor = '#34e89e'; // Зелёный
-            } else if (percent <= 100) {
-                circleColor = '#ffa500'; // Жёлтый
-            } else {
-                circleColor = '#ff6b6b'; // Красный
-            }
-            progressCircleFill.style.stroke = circleColor;
-            
-            // Динамическое изменение фонового градиента
-            updateBackgroundGradient(percent);
-            
-            // Обновление заголовка и мотивирующего текста
+            // Обновление жидкостного прогресс-бара
+            updateLiquidProgress(percent);
+            // Динамическое изменение заголовка и мотивирующего текста
             let progressMessage = "Прогресс отказа от курения";
             let emoji = "";
-            
             if (data.today === 0) {
                 progressMessage = "Начни свой день чистым!";
                 emoji = "😊";
@@ -1815,14 +1979,11 @@
                 progressMessage = randomMsg.msg;
                 emoji = randomMsg.emoji;
             }
-            
             progressHeader.textContent = `${emoji} ${progressMessage}`;
-            
             const costPerCigarette = data.packPrice / data.cigarettesPerPack;
             const totalCost = data.totalCost;
             costsEl.textContent = `${Math.round(totalCost)} ₽`;
             packPriceEl.textContent = data.packPrice;
-            
             const startDate = new Date(data.firstUseDate);
             const startDateStr = startDate.toLocaleDateString('ru-RU');
             const costsContainer = document.querySelector('.costs-container');
@@ -1836,17 +1997,14 @@
                 costsContainer.appendChild(startDateEl);
             }
             startDateEl.textContent = `С ${startDateStr}`;
-            
             const achievedCount = data.achievements.filter(a => a.achieved).length;
             achievementsCountEl.textContent = `${achievedCount}/${data.achievements.length}`;
-            
             if (data.lastCigaretteTime) {
                 const lastTime = new Date(data.lastCigaretteTime);
                 lastCigaretteTimeEl.textContent = lastTime.toLocaleTimeString('ru-RU');
             } else {
                 lastCigaretteTimeEl.textContent = '--:--:--';
             }
-            
             const allTimeValueEl = document.getElementById('allTimeValue');
             const firstUseDateLabelEl = document.getElementById('firstUseDateLabel');
             if (allTimeValueEl) {
@@ -1868,7 +2026,6 @@
                 }
             }
         }
-
         function showMedicalFact() {
             const factContainer = document.getElementById('medical-fact');
             if (!factContainer) return;
@@ -1889,7 +2046,6 @@
                 factContainer.style.display = 'none';
             }
         }
-
         function startTimer() {
             setInterval(() => {
                 if (data.lastCigaretteTime) {
@@ -1907,7 +2063,6 @@
                 showMedicalFact();
             }, 1000);
         }
-
         function incrementCounter() {
             data.today++;
             const now = new Date();
@@ -1931,7 +2086,6 @@
             createSmokeAnimation();
             if ('vibrate' in navigator) navigator.vibrate(50);
         }
-
         function decrementCounter() {
             if (data.today > 0) {
                 data.today--;
@@ -1955,14 +2109,12 @@
                 createSmokeAnimation();
             }
         }
-
         function createSmokeAnimation() {
             counterEl.classList.add('pulse');
             setTimeout(() => {
                 counterEl.classList.remove('pulse');
             }, 400);
         }
-
         function resetAll() {
             const confirmed1 = confirm('Вы уверены, что хотите сбросить ВСЕ данные? Это действие нельзя отменить.');
             if (confirmed1) {
@@ -2001,7 +2153,6 @@
                 }
             }
         }
-
         function manualResetToday() {
             const confirmed = confirm('Вы уверены, что хотите сбросить счетчик на сегодня? Счетчик "Сегодня" будет установлен в 0.');
             if (confirmed) {
@@ -2017,18 +2168,15 @@
                 }, 500);
             }
         }
-
         function openSettings() {
             document.getElementById('goalSetting').value = data.goal;
             document.getElementById('priceSetting').value = data.packPrice;
             document.getElementById('countSetting').value = data.cigarettesPerPack;
             settingsModal.style.display = 'flex';
         }
-
         function closeSettings() {
             settingsModal.style.display = 'none';
         }
-
         function saveSettings() {
             data.goal = parseInt(document.getElementById('goalSetting').value) || 20;
             data.packPrice = parseInt(document.getElementById('priceSetting').value) || 250;
@@ -2037,7 +2185,6 @@
             updateUI();
             closeSettings();
         }
-
         function exportData() {
             const dataStr = JSON.stringify(data, null, 2);
             const dataUri = 'application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
@@ -2047,7 +2194,6 @@
             linkElement.setAttribute('download', exportFileDefaultName);
             linkElement.click();
         }
-
         function refreshApp() {
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistrations().then(function(registrations) {
@@ -2065,12 +2211,10 @@
             }
             location.reload(true);
         }
-
         function showRandomQuote() {
             const randomIndex = Math.floor(Math.random() * quotes.length);
             quoteEl.textContent = `"${quotes[randomIndex]}"`;
         }
-
         function checkAchievements() {
             data.achievements.forEach(achievement => {
                 if (!achievement.achieved) {
@@ -2101,11 +2245,10 @@
                 }
             });
         }
-
         function showAchievementNotification(achievement) {
-            alert(`🎉 Поздравляем! Вы получили достижение: ${achievement.name}\n${achievement.description}`);
+            alert(`🎉 Поздравляем! Вы получили достижение: ${achievement.name}
+${achievement.description}`);
         }
-
         function renderAchievements() {
             achievementsListEl.innerHTML = '';
             data.achievements.forEach(achievement => {
@@ -2121,7 +2264,6 @@
                 achievementsListEl.appendChild(achievementEl);
             });
         }
-
         function toggleTimeDetails(period) {
             let card;
             if (period === 'all') {
@@ -2192,10 +2334,8 @@
                 }
             }
         }
-
         // === ИСПРАВЛЕННЫЕ ГРАФИКИ ===
         let statsChartInstance = null;
-
         function renderStatsChart(chartType) {
             const canvas = document.getElementById('statsChart');
             if (!canvas) {
@@ -2242,7 +2382,6 @@
                 options: chartOptions
             });
         }
-
         function getWeekdayChartData() {
             const weekdayStats = new Array(7).fill(0);
             const weekdayLabels = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
@@ -2280,11 +2419,9 @@
                 }]
             };
         }
-
         function getWeekdayChartOptions() {
             return getDefaultBarChartOptions();
         }
-
         function getDailyChartData() {
             const now = new Date();
             const dates = [];
@@ -2314,11 +2451,9 @@
                 }]
             };
         }
-
         function getDailyChartOptions() {
             return getDefaultBarChartOptions();
         }
-
         function getHourlyChartData() {
             const hourlyStats = new Array(24).fill(0);
             const hourLabels = Array.from({length: 24}, (_, i) => `${i}:00`);
@@ -2340,7 +2475,6 @@
                 }]
             };
         }
-
         function getHourlyChartOptions() {
             return {
                 ...getDefaultBarChartOptions(),
@@ -2361,7 +2495,6 @@
                 }
             };
         }
-
         function getSpendingChartData() {
             const now = new Date();
             const dates = [];
@@ -2397,7 +2530,6 @@
                 }]
             };
         }
-
         function getSpendingChartOptions() {
             return {
                 ...getDefaultBarChartOptions(),
@@ -2425,7 +2557,6 @@
                 }
             };
         }
-
         function getDefaultBarChartOptions() {
             return {
                 responsive: true,
@@ -2463,25 +2594,21 @@
                 }
             };
         }
-
         function openStatsModal() {
             statsModal.style.display = 'flex';
             document.querySelectorAll('.chart-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector('.chart-btn[data-chart="weekday"]').classList.add('active');
             renderStatsChart('weekday');
         }
-
         function closeStatsModalFunc() {
             statsModal.style.display = 'none';
         }
-
         function updateThemeColor() {
             const metaThemeColor = document.querySelector('meta[name="theme-color"]');
             if (metaThemeColor) {
                 metaThemeColor.setAttribute('content', '#1a2a6c');
             }
         }
-
         document.addEventListener('DOMContentLoaded', initApp);
         document.addEventListener('DOMContentLoaded', () => {
             updateThemeColor();
@@ -2489,3 +2616,4 @@
     </script>
 </body>
 </html>
+
