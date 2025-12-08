@@ -1,138 +1,2335 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Cigarette, RefreshCcw, AlertCircle, Trophy } from 'lucide-react';
-
-export default function App() {
-  const [count, setCount] = useState(0);
-  
-  const increment = () => {
-    setCount(prev => prev + 1);
-  };
-  
-  const reset = () => {
-    setCount(0);
-  };
-  
-  const getMessage = () => {
-    if (count === 0) return "Great job! You haven't smoked any cigarettes today.";
-    if (count <= 5) return "Every cigarette avoided is a victory for your health.";
-    if (count <= 10) return "Consider taking a break. Your body will thank you.";
-    return "It's never too late to make a positive change. You've got this!";
-  };
-  
-  const getVisualTheme = () => {
-    if (count === 0) return {
-      bg: 'bg-gradient-to-br from-emerald-50 to-teal-100',
-      counter: 'text-emerald-600 drop-shadow-lg',
-      smokeBtn: 'bg-emerald-500 hover:bg-emerald-600'
-    };
-    
-    if (count <= 5) return {
-      bg: 'bg-gradient-to-br from-amber-50 to-orange-100',
-      counter: 'text-amber-600 drop-shadow-lg',
-      smokeBtn: 'bg-amber-500 hover:bg-amber-600'
-    };
-    
-    return {
-      bg: 'bg-gradient-to-br from-rose-50 to-pink-100',
-      counter: 'text-rose-600 drop-shadow-lg',
-      smokeBtn: 'bg-rose-600 hover:bg-rose-700'
-    };
-  };
-  
-  const { bg, counter, smokeBtn } = getVisualTheme();
-  
-  return (
-    <div className={`min-h-screen ${bg} flex flex-col items-center justify-center p-4 transition-all duration-500`}>
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
-        <div className="text-center bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-gray-100">
-          <motion.div 
-            initial={{ scale: 0.9 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", damping: 15 }}
-            className="mb-6"
-          >
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-3">
-              {count === 0 ? (
-                <>
-                  <Trophy className="text-amber-400" size={32} />
-                  Smoke-Free Day
-                </>
-              ) : (
-                <>
-                  <Cigarette className="text-gray-500" size={32} />
-                  Cigarette Counter
-                </>
-              )}
-            </h1>
-            <p className="text-gray-600 mt-1">Track your progress toward a healthier life</p>
-          </motion.div>
-          
-          <motion.div 
-            key={count}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: "spring", damping: 10 }}
-            className={`text-8xl md:text-9xl font-bold mb-8 ${counter} font-mono transition-all duration-500`}
-          >
-            {count}
-          </motion.div>
-          
-          <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={increment}
-              className={`${smokeBtn} text-white font-bold py-4 px-6 rounded-xl flex-1 flex items-center justify-center gap-2 transition-all duration-200 shadow-lg`}
-            >
-              <Cigarette size={24} />
-              <span className="hidden sm:inline">Smoke</span>
-            </motion.button>
-            
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={reset}
-              className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-4 px-6 rounded-xl flex-1 flex items-center justify-center gap-2 transition-all duration-200 shadow-lg"
-            >
-              <RefreshCcw size={24} />
-              <span className="hidden sm:inline">Reset</span>
-            </motion.button>
-          </div>
-          
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="bg-gray-50 rounded-2xl p-5 border border-gray-100"
-          >
-            <div className="flex items-start gap-3">
-              <div className="mt-1">
-                {count === 0 ? (
-                  <Trophy className="text-amber-400" size={24} />
-                ) : (
-                  <AlertCircle className="text-gray-400" size={24} />
-                )}
-              </div>
-              <p className="text-gray-700 font-medium text-lg leading-relaxed">
-                {getMessage()}
-              </p>
-            </div>
-          </motion.div>
-          
-          <div className="mt-6 text-sm text-gray-500 italic">
-            * This counter resets when you close the browser tab
-          </div>
-        </div>
-        
-        <div className="mt-8 text-center text-gray-600 text-sm">
-          <p>Designed to help you build awareness about your smoking habits</p>
-        </div>
-      </motion.div>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#1a2a6c">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Счетчик сигарет">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="HandheldFriendly" content="true">
+    <title>SmokeLess</title>
+    <meta name="description" content="SmokeLess - приложение для отслеживания потребления сигарет">
+    <link rel="manifest" href="manifest.json">
+    <!-- Иконки для браузеров, не поддерживающих Web App Manifest -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
+    <!-- Apple Touch Icon для homescreen -->
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192x192.png">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --text-color: white;
+            --border-color: rgba(255, 255, 255, 0.2);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --primary-btn: linear-gradient(to right, #4CAF50, #8BC34A);
+            --secondary-btn: linear-gradient(to right, #f44336, #FF9800);
+            --warning-btn: linear-gradient(to right, #FF9800, #FF5722);
+            /* Начальный цвет фона для progress-container */
+            --progress-container-bg-start: rgba(255, 255, 255, 0.1);
+            /* Конечный цвет фона для progress-container при >100% */
+            --progress-container-bg-end: rgba(255, 100, 100, 0.2);
+        }
+        /* data-theme="light" удален, так как функционал убран */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        html {
+            height: 100%;
+        }
+        body {
+            background: var(--bg-gradient) !important;
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            touch-action: manipulation;
+            margin: 0;
+            background-attachment: fixed !important;
+            background-size: cover !important;
+            background-repeat: no-repeat !important;
+            background-position: center center !important;
+        }
+        /* Добавляем фикс для полного покрытия фона */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-gradient);
+            z-index: -1;
+            background-attachment: fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+        }
+        header {
+            text-align: center;
+            padding: 10px 0;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-content {
+            flex: 1;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        /* Кнопка настроек */
+        .settings-btn {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            font-size: 1.1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            margin-right: 8px; /* Добавим отступ справа */
+        }
+        /* Кнопка статистики (ранее переключатель темы) */
+        .stats-btn {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            font-size: 1.1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .counter-card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+        }
+        .counter-value {
+            font-size: 4.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+        .counter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .btn {
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            min-width: 120px;
+            touch-action: manipulation;
+        }
+        .btn-primary {
+            background: var(--primary-btn);
+            color: white;
+        }
+        .btn-secondary {
+            background: var(--secondary-btn);
+            color: white;
+        }
+        .btn-warning {
+            background: var(--warning-btn);
+            color: white;
+        }
+        .btn-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+        }
+        .btn:active {
+            transform: translateY(0.5px);
+        }
+        /* --- ПРОГРЕСС-БАР ПЕРЕМЕЩЕН ВЫШЕ --- */
+        .progress-container {
+            background: var(--progress-container-bg-start);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            /* Переход для плавного изменения фона */
+            transition: background-color 0.5s ease;
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        .progress-bar {
+            height: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 8px;
+            width: 0%;
+            transition: width 0.5s ease, background-color 0.5s ease;
+        }
+        /* --- КОНЕЦ ПРОГРЕСС-БАРА --- */
+        .timer-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 18px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+        }
+        .timer-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 8px 0;
+            color: #4CAF50;
+            text-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+        }
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 13px;
+            padding: 13px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card:hover {
+            transform: translateY(-1px);
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 6px 0;
+        }
+        .stat-label {
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+        .time-details {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 8px;
+            margin-top: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+        .time-item {
+            padding: 4px 0;
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .time-item:last-child {
+            border-bottom: none;
+        }
+        .costs-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 18px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+        }
+        .costs-amount {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #FF6B6B;
+            text-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
+        }
+        .quote-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 18px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+            font-style: italic;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+        }
+        .achievements-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 18px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+        }
+        .achievements-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+        .achievement {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        .achievement.achieved {
+            background: rgba(76, 175, 80, 0.2);
+        }
+        .achievement-icon {
+            font-size: 1.3rem;
+            margin-right: 12px;
+        }
+        .achievement-info {
+            flex: 1;
+        }
+        .achievement-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+            font-size: 1rem;
+        }
+        .achievement-desc {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 25px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.4rem;
+            cursor: pointer;
+        }
+        .setting {
+            margin-bottom: 18px;
+        }
+        .setting label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .setting input, .setting select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+        .setting input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        .modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 18px;
+            align-items: center;
+        }
+        .btn-full {
+            flex: 1;
+            width: 100%;
+            max-width: 300px;
+        }
+        .danger-btn {
+            background: linear-gradient(to right, #f44336, #d32f2f);
+            color: white;
+        }
+        /* --- ИСПРАВЛЕНИЕ: Стили для user-panel --- */
+        .user-panel {
+          background: var(--card-bg);
+          border-radius: 13px;
+          padding: calc(12px + env(safe-area-inset-top, 0px)) 12px 12px 12px;
+          margin-bottom: 15px;
+          display: none;
+          box-sizing: border-box;
+          width: 100%;
+        }
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 0.9rem;
+        }
+        /* --- КОНЕЦ ИСПРАВЛЕНИЯ user-panel --- */
+        .sync-indicator {
+            position: fixed;
+            top: 8px;
+            right: 8px;
+            padding: 6px 10px;
+            border-radius: 18px;
+            font-size: 0.75rem;
+            z-index: 1000;
+            display: none;
+        }
+        .sync-syncing {
+            background: #2196F3;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .sync-success {
+            background: #4CAF50;
+            color: white;
+        }
+        .sync-error {
+            background: #f44336;
+            color: white;
+        }
+        footer {
+            text-align: center;
+            padding: 12px;
+            margin-top: auto;
+            opacity: 0.7;
+            font-size: 0.75rem;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pulse {
+            animation: pulse 0.4s;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            }
+            .counter-value {
+                font-size: 3.8rem;
+            }
+            .counter-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+            .btn {
+                width: 100%;
+                max-width: 280px;
+                padding: 15px;
+                font-size: 1.1rem;
+            }
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            .stat-card {
+                padding: 12px;
+            }
+            .stat-value {
+                font-size: 2rem;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .subtitle {
+                font-size: 0.85rem;
+            }
+            .header-content {
+                text-align: center;
+            }
+            .settings-btn, .stats-btn {
+                position: static;
+                margin: 4px;
+            }
+        }
+        @media (max-width: 400px) {
+            .counter-value {
+                font-size: 3.2rem;
+            }
+            .costs-amount {
+                font-size: 1.8rem;
+            }
+            /* Глобальные стили для фона */
+            html, body {
+                height: 100%;
+                height: -webkit-fill-available;
+                margin: 0;
+                padding: 0;
+                background: var(--bg-gradient) !important;
+                background-attachment: fixed !important;
+                background-size: cover !important;
+                background-repeat: no-repeat !important;
+            }
+            /* Фикс для PWA */
+            * {
+                -webkit-tap-highlight-color: transparent;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                overscroll-behavior: none;
+            }
+            /* Фон для всей страницы */
+            .container {
+                max-width: 800px;
+                width: 100%;
+                margin: 0 auto;
+                position: relative;
+                padding: 10px;
+                display: flex;
+                flex-direction: column;
+            }
+            /* Фикс для overscroll */
+            body::-webkit-scrollbar {
+                display: none;
+            }
+            body {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            /* Добавьте эти стили для предотвращения белого фона */
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: var(--bg-gradient);
+                z-index: -1;
+                background-attachment: fixed;
+            }
+            /* Фикс для pull-to-refresh */
+            body {
+                background: var(--bg-gradient) !important;
+                background-attachment: fixed !important;
+                overscroll-behavior: contain;
+                -webkit-overscroll-behavior: contain;
+            }
+            /* Улучшенный градиент */
+            :root {
+                --bg-gradient: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c) !important;
+            }
+            /* Фикс для iOS PWA */
+            @supports (-webkit-touch-callout: none) {
+                .container {
+                    min-height: -webkit-fill-available;
+                }
+                body {
+                    min-height: -webkit-fill-available;
+                }
+            }
+            /* Добавьте это в конец CSS секции */
+            .scroll-container {
+                height: 100%;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                position: relative;
+            }
+        }
+        /* Минимальный фон для предотвращения черного экрана на старте */
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c) !important;
+            background-attachment: fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        /* Анимации для прелоадера */
+        @keyframes appLogoPulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.03); opacity: 0.85; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes appSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Анимации для прогресс-бара */
+        @keyframes pulseDanger {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.7; transform: scale(1.01); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+        }
+        /* --- Стили для модального окна статистики --- */
+        .stats-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .stats-modal-content {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 25px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            max-height: 90vh;
+            overflow-y: auto;
+            text-align: center; /* Центрируем содержимое */
+        }
+        .stats-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .stats-modal-header h2 {
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
+        }
+        /* --- Конец стилей для модального окна статистики --- */
+        /* --- Стили для переключателя графиков --- */
+        .chart-selector {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .chart-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 6px 12px;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+        .chart-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .chart-btn.active {
+            background: var(--primary-btn);
+            border-color: transparent;
+            font-weight: bold;
+        }
+        /* --- Конец стилей для переключателя графиков --- */
+    </style>
+</head>
+<body>
+    <!-- Кастомный экран загрузки (Preloader) -->
+    <div id="app-preloader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.4s ease-out;">
+        <img src="icon-192x192.png" alt="SmokeLess Logo" style="width: 90px; height: 90px; margin-bottom: 18px; animation: appLogoPulse 1.8s infinite;">
+        <div style="color: white; font-size: 1.3rem; font-weight: bold; text-align: center; padding: 0 15px;">SmokeLess загружается...</div>
+        <!-- Простая анимация спиннера -->
+        <div style="margin-top: 25px; width: 40px; height: 40px; border: 4px solid rgba(255, 255, 255, 0.3); border-top: 4px solid white; border-radius: 50%; animation: appSpin 0.9s linear infinite;"></div>
     </div>
-  );
-}
+    <div class="container">
+        <div class="sync-indicator" id="syncIndicator">
+            <span id="syncText">Синхронизация...</span>
+        </div>
+        <!-- ИСПРАВЛЕНИЕ: Обновлен HTML user-panel для корректного отображения и позиционирования -->
+        <div class="user-panel" id="userPanel">
+            <div class="user-info">
+                <!-- Левая часть: Аватар и информация -->
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div>
+                        <div id="userName">Пользователь</div>
+                        <div style="font-size: 0.75rem; opacity: 0.8;" id="userEmail">email@example.com</div>
+                    </div>
+                </div>
+                <!-- Правая часть: Кнопки управления -->
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <!-- Индикатор синхронизации -->
+                    <div id="syncStatusIndicator" style="font-size: 1.1rem; display: none;">⚪</div>
+                    <!-- Контейнер для текста статуса -->
+                    <div id="syncStatusText" style="font-size: 0.8rem; display: none;"></div>
+                    <!-- Кнопка обновления -->
+                    <button id="refreshAppBtnTop" title="Обновить данные" style="background: none; border: none; cursor: pointer; font-size: 1.1rem;">🔄</button>
+                </div>
+            </div>
+        </div>
+        <!-- КОНЕЦ ИСПРАВЛЕНИЯ user-panel -->
+        <header>
+            <div class="header-content">
+                <h1>Счетчик сигарет</h1>
+                <p class="subtitle">Отслеживайте свое потребление и работайте над улучшением здоровья</p>
+            </div>
+            <button class="settings-btn" id="settingsBtn" title="Настройки">⚙️</button>
+            <!-- Кнопка статистики вместо переключателя темы -->
+            <button class="stats-btn" id="statsBtn" title="Статистика">📊</button>
+        </header>
+        <div class="scroll-container">
+        <main>
+            <div class="counter-card">
+                <h2>Сегодня выкуренных сигарет</h2>
+                <div class="counter-value" id="counter">0</div>
+                <div class="counter-buttons">
+                    <button class="btn btn-primary" id="increment">Добавить</button>
+                    <button class="btn btn-secondary" id="decrement">Удалить</button>
+                </div>
+                 <button id="manualResetToday" style="background: none; border: none; color: #ff4081; cursor: pointer; font-size: 0.85rem; margin-top: 12px; text-align: center; width: 100%;">Нажмите здесь, чтобы завершить день</button>
+            </div>
+            <!-- ПРОГРЕСС-БАР ПЕРЕМЕЩЕН СЮДА -->
+            <div class="progress-container">
+                <div class="progress-header">
+                    <h3>Прогресс отказа от курения 😊</h3> <!-- Начальный эмодзи -->
+                    <span id="goal-percent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <p style="margin-top: 10px; font-size: 0.9rem;">Цель: <span id="goal">20</span> сигарет в день</p>
+            </div>
+            <!-- КОНЕЦ ПРОГРЕСС-БАРА -->
+            <div class="timer-container">
+                <h3>Время с последней сигареты</h3>
+                <div class="timer-value" id="timer">00:00:00</div>
+                <p style="font-size: 0.9rem;">Последняя сигарета: <span id="last-cigarette-time">--:--:--</span></p>
+                <div class="medical-fact-container" style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.2); border-radius: 8px; display: none; font-size: 0.85rem;" id="medical-fact">
+                    <!-- Медицинский факт будет добавлен сюда -->
+                </div>
+            </div>
+            <div class="stats-container">
+                <div class="stat-card" id="weekCard">
+                    <div class="stat-value" id="week">0</div>
+                    <div class="stat-label">За неделю</div>
+                </div>
+                <div class="stat-card" id="monthCard">
+                    <div class="stat-value" id="month">0</div>
+                    <div class="stat-label">За месяц</div>
+                </div>
+                <div class="stat-card" id="allTimeCard" style="cursor: pointer; text-align: center;">
+                    <div class="stat-value" id="allTimeValue">0</div>
+                    <div class="stat-label">За всё время</div>
+                    <div class="stat-sublabel" id="firstUseDateLabel" style="font-size: 0.65rem; opacity: 0.7; margin-top: 4px;">--.--.----</div>
+                </div>
+            </div>
+            <div class="costs-container">
+                <h3>Потрачено на сигареты</h3>
+                <div class="costs-amount" id="costs">0 ₽</div>
+                <p style="font-size: 0.9rem;">При цене пачки <span id="pack-price">250</span> ₽</p>
+            </div>
+            <div class="quote-container">
+                <p id="quote">"Каждая не выкуренная сигарета - шаг к здоровью!"</p>
+            </div>
+            <div class="achievements-container">
+                <div class="achievements-header">
+                    <h3>Достижения</h3>
+                    <span id="achievements-count">0/0</span>
+                </div>
+                <div id="achievements-list">
+                    <!-- Достижения будут добавлены сюда -->
+                </div>
+            </div>
+        </main>
+        </div>
+        <footer>
+            <p>SmokeLess - Smoking Tracker App by Artuasova | © 2025 Ver.0.8</p>
+        </footer>
+    </div>
+    <!-- Модальное окно аутентификации -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="authTitle">Вход</h2>
+                <button class="close-modal" id="closeAuthModal">&times;</button>
+            </div>
+            <div class="setting">
+                <label>Email:</label>
+                <input type="email" id="authEmail" placeholder="example@email.com">
+            </div>
+            <div class="setting">
+                <label>Пароль:</label>
+                <input type="password" id="authPassword" placeholder="********">
+            </div>
+            <div class="setting" id="forgotPasswordSection" style="display: none;">
+                <label>Новый пароль:</label>
+                <input type="password" id="newPassword" placeholder="********">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary btn-full" id="authSubmit">Войти</button>
+                <button class="btn btn-secondary btn-full" id="toggleAuth">Нет аккаунта? Зарегистрироваться</button>
+                <button class="btn btn-warning btn-full" id="forgotPasswordBtn">Забыли пароль?</button>
+                <button class="btn btn-secondary btn-full" id="resetPasswordBtn" style="display: none;">Сбросить пароль</button>
+            </div>
+        </div>
+    </div>
+    <!-- Модальное окно настроек -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Настройки</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="setting">
+                <label>Цель (сигарет в день):</label>
+                <input type="number" id="goalSetting" value="20" min="0">
+            </div>
+            <div class="setting">
+                <label>Цена пачки (₽):</label>
+                <input type="number" id="priceSetting" value="250" min="0">
+            </div>
+            <div class="setting">
+                <label>Сигарет в пачке:</label>
+                <input type="number" id="countSetting" value="20" min="1">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary btn-full" id="exportBtn">Экспорт данных</button>
+                <button class="btn danger-btn btn-full" id="resetAllBtn">Сбросить всё</button>
+                <button class="btn btn-warning btn-full" id="refreshBtn">Обновить приложение</button>
+                <button class="btn btn-primary btn-full" id="saveSettings">Сохранить</button>
+                <button id="logoutFromSettings" style="background: none; border: none; color: #ff4081; cursor: pointer; font-size: 0.85rem; margin-top: 12px; text-align: center; width: 100%;">Выйти из аккаунта</button>
+            </div>
+        </div>
+    </div>
+    <!-- Модальное окно расширенной статистики -->
+    <div class="stats-modal" id="statsModal">
+        <div class="stats-modal-content">
+            <div class="stats-modal-header">
+                <h2>📊 Расширенная статистика</h2>
+                <button class="close-modal" id="closeStatsModal">&times;</button>
+            </div>
+            <!-- Переключатель графиков -->
+            <div class="chart-selector">
+                <button class="chart-btn active" data-chart="weekday">Дни недели</button>
+                <button class="chart-btn" data-chart="daily">По дням</button>
+                <button class="chart-btn" data-chart="hourly">По часам</button>
+                <button class="chart-btn" data-chart="spending">Расходы</button>
+            </div>
+            <div style="position: relative; height: 250px; margin-bottom: 15px;">
+                <canvas id="statsChart" style="width: 100%; height: 100%;"></canvas>
+            </div>
+            <!-- Подписи осей -->
+            <div id="chart-axis-labels" style="display: flex; justify-content: space-between; font-size: 0.7rem; opacity: 0.8; margin-top: 5px;">
+                <span id="y-axis-label">Количество</span>
+                <span id="x-axis-label">Дни недели</span>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Конфигурация Supabase
+        const supabaseUrl = 'https://podwpmokbbyzkrqhygci.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvZHdwbW9rYmJ5emtycWh5Z2NpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzNzI1MzQsImV4cCI6MjA2ODk0ODUzNH0.3UH4jmnzgPub0GLCK4yXE692kpYuXVt9LAwJmC5heaA';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        // Данные приложения
+        let data = {
+            today: 0,
+            week: 0,
+            month: 0,
+            goal: 20,
+            packPrice: 250,
+            cigarettesPerPack: 20,
+            streak: 0,
+            lastDate: null,
+            timeStats: [],
+            lastAutoResetDate: new Date().toDateString(), // Дата последнего автоматического сброса
+            achievements: [
+                { id: 1, name: "Первый день", description: "Использовать приложение первый день", target: 1, achieved: false, icon: "📅" },
+                { id: 2, name: "Неделя использования", description: "Использовать приложение неделю", target: 7, achieved: false, icon: "🗓️" },
+                { id: 3, name: "Месяц использования", description: "Использовать приложение месяц", target: 30, achieved: false, icon: "📆" },
+                { id: 4, name: "100 сигарет", description: "Выкурить 100 сигарет", target: 100, achieved: false, icon: "🚬" },
+                { id: 5, name: "Экономия здоровья", description: "Сократить потребление на 50% по сравнению с неделей", target: 50, achieved: false, icon: "💚" }
+            ],
+            totalCost: 0,
+            usageDays: 0,
+            firstUseDate: new Date().toDateString(),
+            lastCigaretteTime: null
+        };
+        // Мотивационные цитаты
+        const quotes = [
+            "Каждая не выкуренная сигарета - шаг к здоровью!",
+            "Вы сильнее своей зависимости!",
+            "Экономия сегодня - здоровье завтра!",
+            "Каждый день без сигарет делает вас сильнее!",
+            "Ваше здоровье - ваша ценность!",
+            "Сила воли - ключ к успеху!",
+            "Каждая сигарета, которую вы не выкурили - победа!",
+            "Здоровье нельзя купить, но можно сохранить!",
+            "Сегодня вы сильнее, чем вчера!",
+            "Каждый день - это новый шанс!"
+        ];
+        // Медицинские факты по часам (от 1 до 24 часа)
+        const medicalFacts = [
+            "Через 1 час после последней сигареты пульс и артериальное давление начинают снижаться до нормального уровня.",
+            "Через 2 часа периферические кровеносные сосуды расширяются, улучшается циркуляция крови в руках и ногах.",
+            "Через 3 часа уровень никотина в крови снижается до нуля, начинается процесс детоксикации организма.",
+            "Через 4 часа улучшается насыщение крови кислородом, снижается риск сердечного приступа.",
+            "Через 5 часов начинается восстановление слизистой оболочки носоглотки и дыхательных путей.",
+            "Через 6 часов улучшается вкус и обоняние, организм начинает выводить токсины.",
+            "Через 7 часов начинается нормализация температуры тела, улучшается кровообращение.",
+            "Через 8 часов уровень оксида углерода в крови снижается, кислородное насыщение нормализуется.",
+            "Через 9 часов начинается восстановление функций легких, улучшается дыхание.",
+            "Через 10 часов снижается уровень стресса, улучшается настроение.",
+            "Через 11 часов улучшается работа пищеварительной системы, снижается тошнота.",
+            "Через 12 часов начинается восстановление иммунной системы, организм борется с инфекциями.",
+            "Через 13 часов улучшается кровоток в мозге, повышается концентрация внимания.",
+            "Через 14 часов снижается раздражительность, улучшается качество сна.",
+            "Через 15 часов начинается восстановление клеток печени, улучшается метаболизм.",
+            "Через 16 часов снижается уровень кашля, уменьшается одышка.",
+            "Через 17 часов улучшается работа сердца, снижается нагрузка на орган.",
+            "Через 18 часов начинается восстановление вкусовых рецепторов, еда становится вкуснее.",
+            "Через 19 часов улучшается работа почек, организм лучше выводит токсины.",
+            "Через 20 часов снижается риск инсульта, улучшается кровообращение в мозге.",
+            "Через 21 час начинается восстановление нервной системы, улучшается координация.",
+            "Через 22 часа улучшается работа эндокринной системы, нормализуются гормоны.",
+            "Через 23 час снижается воспаление в организме, улучшается общее состояние.",
+            "Через 24 часа организм полностью избавляется от никотина, начинается активное восстановление."
+        ];
+        // DOM элементы
+        const counterEl = document.getElementById('counter');
+        const weekEl = document.getElementById('week');
+        const monthEl = document.getElementById('month');
+        const goalEl = document.getElementById('goal');
+        const goalPercentEl = document.getElementById('goal-percent');
+        const progressFillEl = document.getElementById('progress-fill');
+        const costsEl = document.getElementById('costs');
+        const packPriceEl = document.getElementById('pack-price');
+        const quoteEl = document.getElementById('quote');
+        const achievementsListEl = document.getElementById('achievements-list');
+        const achievementsCountEl = document.getElementById('achievements-count');
+        const timerEl = document.getElementById('timer');
+        const lastCigaretteTimeEl = document.getElementById('last-cigarette-time');
+        const syncIndicator = document.getElementById('syncIndicator');
+        const syncText = document.getElementById('syncText');
+        const userPanel = document.getElementById('userPanel');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const userEmail = document.getElementById('userEmail');
+        const logoutFromSettingsBtn = document.getElementById('logoutFromSettings');
+        // Элементы для новой кнопки обновления и индикатора в панели пользователя
+        const refreshAppBtnTop = document.getElementById('refreshAppBtnTop');
+        const syncStatusIndicator = document.getElementById('syncStatusIndicator');
+        const syncStatusText = document.getElementById('syncStatusText');
+        // Auth elements
+        const authModal = document.getElementById('authModal');
+        const authTitle = document.getElementById('authTitle');
+        const authEmail = document.getElementById('authEmail');
+        const authPassword = document.getElementById('authPassword');
+        const newPassword = document.getElementById('newPassword');
+        const authSubmit = document.getElementById('authSubmit');
+        const toggleAuth = document.getElementById('toggleAuth');
+        const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
+        const resetPasswordBtn = document.getElementById('resetPasswordBtn');
+        const forgotPasswordSection = document.getElementById('forgotPasswordSection');
+        const closeAuthModal = document.getElementById('closeAuthModal');
+        // Settings elements
+        const settingsModal = document.getElementById('settingsModal');
+        const settingsBtn = document.getElementById('settingsBtn');
+        // Кнопка статистики (ранее переключатель темы)
+        const statsBtn = document.getElementById('statsBtn');
+        const incrementBtn = document.getElementById('increment');
+        const decrementBtn = document.getElementById('decrement');
+        const saveSettingsBtn = document.getElementById('saveSettings');
+        const exportBtn = document.getElementById('exportBtn');
+        const resetAllBtn = document.getElementById('resetAllBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const manualResetTodayBtn = document.getElementById('manualResetToday');
+        // --- Элементы модального окна статистики ---
+        const statsModal = document.getElementById('statsModal');
+        const closeStatsModal = document.getElementById('closeStatsModal');
+        const statsChartCanvas = document.getElementById('statsChart');
+        const chartSelector = document.querySelector('.chart-selector');
+        const xAxisLabel = document.getElementById('x-axis-label');
+        const yAxisLabel = document.getElementById('y-axis-label');
+        // --- Конец элементов модального окна статистики ---
+        // Auth state
+        let isRegistration = false;
+        let isForgotPassword = false;
+        let currentUser = null;
+        // --- НОВАЯ ЛОГИКА АВТОМАТИЧЕСКОГО СБРОСА ---
+        // Функция для получения времени следующего сброса (06:00 завтра)
+        function getNextResetTime() {
+            const now = new Date();
+            // Создаем дату на 06:00 сегодня
+            const nextReset = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 6, 0, 0, 0);
+            // Если сейчас уже прошло 06:00 сегодня, то следующий сброс - завтра в 06:00
+            if (now >= nextReset) {
+                nextReset.setDate(nextReset.getDate() + 1);
+            }
+            return nextReset;
+        }
+        // Функция автоматического сброса (ИСПРАВЛЕНА)
+        function performAutoReset() {
+            console.log("Выполняется автоматический сброс...");
+            data.today = 0;
+            // 1. Определяем период "сегодня" (с 06:00 сегодня до 05:59 завтра)
+            const now = new Date();
+            const startOfTodayPeriod = new Date(now);
+            startOfTodayPeriod.setHours(6, 0, 0, 0); // Начало периода
+            const endOfTodayPeriod = new Date(startOfTodayPeriod);
+            endOfTodayPeriod.setDate(endOfTodayPeriod.getDate() + 1); // Конец периода (следующий день)
+            endOfTodayPeriod.setMilliseconds(endOfTodayPeriod.getMilliseconds() - 1); // Минус 1 миллисекунда
+            // 2. Удаляем записи из data.timeStats, которые попадают в этот период
+            const initialStatsCount = data.timeStats.length;
+            data.timeStats = data.timeStats.filter(stat => {
+                const statTimestamp = stat.timestamp;
+                // Оставляем записи, которые НЕ входят в период сегодняшнего дня
+                return !(statTimestamp >= startOfTodayPeriod.getTime() && statTimestamp <= endOfTodayPeriod.getTime());
+            });
+            const removedStatsCount = initialStatsCount - data.timeStats.length;
+            console.log(`Удалено ${removedStatsCount} записей за сегодня.`);
+            // 3. Обновляем время последней сигареты (lastCigaretteTime)
+            // Это важно, чтобы таймер и медицинские факты работали правильно
+            if (data.timeStats.length > 0) {
+                // Берем самую последнюю (новую) запись из оставшихся
+                const lastRecord = data.timeStats[data.timeStats.length - 1];
+                data.lastCigaretteTime = lastRecord.timestamp;
+                console.log("Новое время последней сигареты:", new Date(data.lastCigaretteTime).toLocaleString('ru-RU'));
+            } else {
+                // Если сигарет больше нет вообще
+                data.lastCigaretteTime = null;
+                console.log("Все сигареты удалены, время последней сигареты сброшено.");
+            }
+            // 4. Обновляем дату последнего автоматического сброса
+            // Это нужно, чтобы автоматический сброс не сработал снова в тот же день
+            data.lastAutoResetDate = new Date().toDateString();
+            console.log("Дата последнего сброса обновлена на:", data.lastAutoResetDate);
+            // 5. Сохраняем данные и обновляем интерфейс
+            saveData();
+            updateUI();
+            console.log("Автоматический сброс завершен.");
+        }
+        // Функция проверки необходимости сброса
+        function checkForAutoReset() {
+            const todayString = new Date().toDateString();
+            // Проверяем, был ли уже сброс сегодня
+            if (data.lastAutoResetDate !== todayString) {
+                const now = new Date();
+                const nextResetTime = getNextResetTime();
+                // Проверяем, наступило ли время сброса (06:00)
+                if (now >= nextResetTime || data.lastAutoResetDate === null) {
+                     performAutoReset();
+                }
+            }
+        }
+        // --- КОНЕЦ НОВОЙ ЛОГИКИ ---
+        // Инициализация приложения
+        function initApp() {
+            loadData();
+            updateUI();
+            showRandomQuote();
+            renderAchievements();
+            checkAchievements();
+            startTimer();
+            // Установка обработчиков событий
+            incrementBtn.addEventListener('click', incrementCounter);
+            decrementBtn.addEventListener('click', decrementCounter);
+            // Обработчик для кнопки настроек
+            settingsBtn.addEventListener('click', openSettings);
+            // Обработчик для кнопки статистики
+            statsBtn.addEventListener('click', openStatsModal);
+            saveSettingsBtn.addEventListener('click', saveSettings);
+            exportBtn.addEventListener('click', exportData);
+            resetAllBtn.addEventListener('click', resetAll);
+            refreshBtn.addEventListener('click', refreshApp);
+            logoutFromSettingsBtn.addEventListener('click', logout);
+            refreshAppBtnTop.addEventListener('click', refreshApp);
+            document.querySelector('#settingsModal .close-modal').addEventListener('click', closeSettings);
+            manualResetTodayBtn.addEventListener('click', manualResetToday);
+            // --- Обработчики для модального окна статистики ---
+            closeStatsModal.addEventListener('click', closeStatsModalFunc);
+            statsModal.addEventListener('click', function(e) {
+                if (e.target === this) closeStatsModalFunc();
+            });
+            // Обработчики для переключения графиков
+            chartSelector.addEventListener('click', function(e) {
+                if (e.target.classList.contains('chart-btn')) {
+                    // Убираем активный класс у всех кнопок
+                    document.querySelectorAll('.chart-btn').forEach(btn => btn.classList.remove('active'));
+                    // Добавляем активный класс нажатой кнопке
+                    e.target.classList.add('active');
+                    // Получаем тип графика из data-атрибута
+                    const chartType = e.target.getAttribute('data-chart');
+                    // Рисуем выбранный график
+                    renderStatsChart(chartType);
+                }
+            });
+            // --- Конец обработчиков для модального окна статистики ---
+            // Auth handlers
+            document.getElementById('authSubmit').addEventListener('click', handleAuth);
+            document.getElementById('toggleAuth').addEventListener('click', toggleAuthForm);
+            document.getElementById('forgotPasswordBtn').addEventListener('click', toggleForgotPassword);
+            document.getElementById('resetPasswordBtn').addEventListener('click', resetPassword);
+            document.getElementById('closeAuthModal').addEventListener('click', hideAuthModal);
+            document.getElementById('authModal').addEventListener('click', function(e) {
+                if (e.target === this) hideAuthModal();
+            });
+            // Обработчики для статистики
+            document.getElementById('weekCard').addEventListener('click', function() {
+                toggleTimeDetails('week');
+            });
+            document.getElementById('monthCard').addEventListener('click', function() {
+                toggleTimeDetails('month');
+            });
+            // Добавьте это сразу после monthCard.addEventListener(...)
+            document.getElementById('allTimeCard').addEventListener('click', function() {
+                toggleTimeDetails('all');
+            });
+            // Проверка сессии
+            checkSession();
+            // Регистрация Service Worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('sw.js')
+                    .then(function(registration) {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+                });
+            }
+            // Запуск периодической проверки автоматического сброса (например, каждую минуту)
+            setInterval(checkForAutoReset, 60 * 1000); // Проверка каждую минуту
+            // Проверка автоматического сброса при запуске
+            checkForAutoReset();
+            // Скрыть прелоадер после полной инициализации приложения
+            hidePreloader();
+        }
+        // Функция для скрытия прелоадера
+        function hidePreloader() {
+            const preloader = document.getElementById('app-preloader');
+            if (preloader) {
+                // Запускаем анимацию исчезновения
+                preloader.style.opacity = '0';
+                // После завершения анимации удаляем элемент
+                setTimeout(() => {
+                    if (preloader.parentNode) {
+                        preloader.parentNode.removeChild(preloader);
+                    }
+                }, 400); // Должно совпадать с длительностью transition в CSS (0.4s)
+            }
+        }
+        // Проверка сессии
+        async function checkSession() {
+            // --- ИСПРАВЛЕНА СИНТАКСИЧЕСКАЯ ОШИБКА ---
+            const { data: { session } } = await supabase.auth.getSession();
+            // --- КОНЕЦ ИСПРАВЛЕНИЯ ---
+            if (session) {
+                currentUser = session.user;
+                showUserPanel();
+                await loadUserData();
+            } else {
+                showAuthModal();
+            }
+        }
+        // Показать панель пользователя
+        function showUserPanel() {
+            if (currentUser) {
+                const email = currentUser.email;
+                userAvatar.textContent = email.charAt(0).toUpperCase();
+                userName.textContent = email.split('@')[0];
+                userEmail.textContent = email;
+                userPanel.style.display = 'block';
+            }
+        }
+        // Скрыть панель пользователя
+        function hideUserPanel() {
+            userPanel.style.display = 'none';
+        }
+        // Выход
+        async function logout() {
+            const confirmed = confirm('Вы уверены, что хотите выйти?');
+            if (confirmed) {
+                await supabase.auth.signOut();
+                currentUser = null;
+                hideUserPanel();
+                showAuthModal();
+                showSyncIndicator('success', 'Вы вышли из аккаунта');
+            }
+        }
+        // Показать модальное окно аутентификации
+        function showAuthModal() {
+            authTitle.textContent = 'Вход';
+            authSubmit.textContent = 'Войти';
+            toggleAuth.textContent = 'Нет аккаунта? Зарегистрироваться';
+            forgotPasswordSection.style.display = 'none';
+            resetPasswordBtn.style.display = 'none';
+            forgotPasswordBtn.style.display = 'block';
+            isRegistration = false;
+            isForgotPassword = false;
+            authModal.style.display = 'flex';
+        }
+        // Скрыть модальное окно аутентификации
+        function hideAuthModal() {
+            authModal.style.display = 'none';
+        }
+        // Переключение формы аутентификации
+        function toggleAuthForm() {
+            isRegistration = !isRegistration;
+            if (isRegistration) {
+                authTitle.textContent = 'Регистрация';
+                authSubmit.textContent = 'Зарегистрироваться';
+                toggleAuth.textContent = 'Уже есть аккаунт? Войти';
+                forgotPasswordSection.style.display = 'none';
+                resetPasswordBtn.style.display = 'none';
+                forgotPasswordBtn.style.display = 'block';
+            } else {
+                authTitle.textContent = 'Вход';
+                authSubmit.textContent = 'Войти';
+                toggleAuth.textContent = 'Нет аккаунта? Зарегистрироваться';
+                forgotPasswordSection.style.display = 'none';
+                resetPasswordBtn.style.display = 'none';
+                forgotPasswordBtn.style.display = 'block';
+            }
+            isForgotPassword = false;
+        }
+        // Переключение формы восстановления пароля
+        function toggleForgotPassword() {
+            isForgotPassword = !isForgotPassword;
+            if (isForgotPassword) {
+                authTitle.textContent = 'Забыли пароль?';
+                authSubmit.textContent = 'Отправить ссылку';
+                forgotPasswordSection.style.display = 'block';
+                resetPasswordBtn.style.display = 'block';
+                forgotPasswordBtn.style.display = 'none';
+                toggleAuth.style.display = 'none';
+            } else {
+                authTitle.textContent = 'Вход';
+                authSubmit.textContent = 'Войти';
+                forgotPasswordSection.style.display = 'none';
+                resetPasswordBtn.style.display = 'none';
+                forgotPasswordBtn.style.display = 'block';
+                toggleAuth.style.display = 'block';
+            }
+        }
+        // Обработка аутентификации
+        async function handleAuth() {
+            const email = authEmail.value.trim();
+            const password = authPassword.value;
+            if (!email || !password) {
+                showSyncIndicator('error', 'Заполните все поля');
+                return;
+            }
+            try {
+                let result;
+                if (isRegistration) {
+                    // Регистрация
+                    result = await supabase.auth.signUp({
+                        email: email,
+                        password: password
+                    });
+                    if (result.error) throw result.error;
+                    showSyncIndicator('success', 'Регистрация успешна!');
+                    hideAuthModal();
+                    currentUser = result.data.user;
+                    showUserPanel();
+                    await saveUserData();
+                } else if (isForgotPassword) {
+                    // Восстановление пароля
+                    const { error } = await supabase.auth.resetPasswordForEmail(email);
+                    if (error) throw error;
+                    showSyncIndicator('success', 'Ссылка для восстановления отправлена');
+                } else {
+                    // Вход
+                    result = await supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+                    if (result.error) throw result.error;
+                    currentUser = result.data.user;
+                    hideAuthModal();
+                    showUserPanel();
+                    showSyncIndicator('success', 'Вход выполнен!');
+                    await loadUserData();
+                }
+            } catch (error) {
+                console.error('Ошибка аутентификации:', error);
+                showSyncIndicator('error', 'Ошибка: ' + error.message);
+            }
+        }
+        // Сброс пароля
+        async function resetPassword() {
+            const email = authEmail.value.trim();
+            const newPasswordVal = newPassword.value;
+            if (!email || !newPasswordVal) {
+                showSyncIndicator('error', 'Заполните все поля');
+                return;
+            }
+            try {
+                const { error } = await supabase.auth.updateUser({
+                    password: newPasswordVal
+                });
+                if (error) throw error;
+                showSyncIndicator('success', 'Пароль успешно изменен');
+                toggleForgotPassword();
+            } catch (error) {
+                showSyncIndicator('error', 'Ошибка: ' + error.message);
+            }
+        }
+
+        // === ИСПРАВЛЕННАЯ ФУНКЦИЯ ЗАГРУЗКИ ДАННЫХ С МЕРДЖЕМ ===
+        async function loadUserData() {
+            if (!currentUser) return;
+
+            try {
+                showSyncIndicator('syncing', 'Обновление ...');
+                const { data: userData, error } = await supabase
+                    .from('smoking_data')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .single();
+
+                if (error && error.code !== 'PGRST116') {
+                    throw error;
+                }
+
+                // Получаем локальные данные
+                const localData = { ...data };
+                const cloudData = userData?.data || {};
+
+                // Получаем временные метки
+                const lastLocalUpdate = localStorage.getItem('smokingApp_lastUpdate');
+                const lastCloudUpdate = userData?.updated_at;
+
+                const localTime = lastLocalUpdate ? new Date(lastLocalUpdate) : new Date(0);
+                const cloudTime = lastCloudUpdate ? new Date(lastCloudUpdate) : new Date(0);
+
+                let mergedData;
+
+                if (localTime > cloudTime) {
+                    // Локальные новее → отправляем в облако
+                    console.log("Локальные данные новее. Отправка в облако.");
+                    await saveUserData();
+                    mergedData = localData;
+                } else if (cloudTime > localTime) {
+                    // Облачные новее → применяем их
+                    console.log("Облачные данные новее. Применяем их.");
+                    mergedData = { ...localData, ...cloudData };
+                    if (Array.isArray(cloudData.timeStats)) mergedData.timeStats = cloudData.timeStats;
+                    if (Array.isArray(cloudData.achievements)) mergedData.achievements = cloudData.achievements;
+                    if (cloudData.firstUseDate) mergedData.firstUseDate = cloudData.firstUseDate;
+                } else {
+                    // Время совпадает → объединяем массивы без дубликатов
+                    console.log("Время совпадает. Выполняем мердж.");
+                    mergedData = { ...localData, ...cloudData };
+
+                    const combined = [...(localData.timeStats || []), ...(cloudData.timeStats || [])];
+                    const unique = combined.filter((stat, idx, arr) =>
+                        idx === arr.findIndex(s => s.timestamp === stat.timestamp)
+                    );
+                    mergedData.timeStats = unique.sort((a, b) => a.timestamp - b.timestamp);
+
+                    if (!mergedData.achievements || mergedData.achievements.length === 0) {
+                        mergedData.achievements = cloudData.achievements || localData.achievements;
+                    }
+                    if (!mergedData.firstUseDate) {
+                        mergedData.firstUseDate = cloudData.firstUseDate || localData.firstUseDate;
+                    }
+                }
+
+                data = mergedData;
+                saveData(); // сохраняет mergedData и обновляет smokingApp_lastUpdate
+
+                console.log("Данные успешно синхронизированы:", data);
+                showSyncIndicator('success', 'Синхронизировано');
+
+                updateUI();
+                checkAchievements();
+                renderAchievements();
+
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                showSyncIndicator('error', 'Ошибка загрузки данных');
+                updateUI();
+                checkAchievements();
+                renderAchievements();
+            }
+        }
+
+        // Сохранение данных пользователя с retry
+        async function saveUserData() {
+            if (!currentUser) return false;
+            for (let attempt = 0; attempt < 3; attempt++) {
+                try {
+                    const now = new Date().toISOString();
+                    const { error } = await supabase
+                        .from('smoking_data')
+                        .upsert({
+                            user_id: currentUser.id,
+                            data,
+                            updated_at: now
+                        }, { onConflict: 'user_id' });
+
+                    if (!error) {
+                        localStorage.setItem('smokingApp_lastUpdate', now);
+                        return true;
+                    }
+                    await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+                } catch (e) {
+                    console.warn(`Попытка сохранения ${attempt + 1} не удалась`, e);
+                }
+            }
+            return false;
+        }
+
+        // Показать индикатор синхронизации (обновленная версия)
+        function showSyncIndicator(status, message) {
+            if (syncStatusIndicator) {
+                syncStatusIndicator.style.display = 'block';
+                switch (status) {
+                    case 'syncing':
+                        syncStatusIndicator.textContent = '🟡';
+                        syncStatusIndicator.style.animation = 'spin 1s linear infinite';
+                        break;
+                    case 'success':
+                        syncStatusIndicator.textContent = '🟢';
+                        syncStatusIndicator.style.animation = 'none';
+                        break;
+                    case 'error':
+                        syncStatusIndicator.textContent = '🔴';
+                        syncStatusIndicator.style.animation = 'none';
+                        break;
+                    default:
+                        syncStatusIndicator.textContent = '⚪';
+                        syncStatusIndicator.style.animation = 'none';
+                }
+                if (syncStatusText) {
+                    syncStatusText.textContent = message;
+                    syncStatusText.style.display = 'block';
+                    if (status === 'success' || status === 'error') {
+                        setTimeout(() => {
+                            if (syncStatusText) {
+                                syncStatusText.style.display = 'none';
+                            }
+                        }, 3000);
+                    }
+                }
+            }
+        }
+
+        // Сохранение данных (локально + облако)
+        function saveData() {
+            try {
+                localStorage.setItem('smokingData', JSON.stringify(data));
+                localStorage.setItem('smokingApp_lastUpdate', new Date().toISOString()); // ← КЛЮЧЕВАЯ СТРОКА
+                setTimeout(() => {
+                    saveUserData();
+                }, 100);
+            } catch (e) {
+                console.log('Не удалось сохранить данные');
+            }
+        }
+
+        // Загрузка данных
+        function loadData() {
+            try {
+                const saved = localStorage.getItem('smokingData');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    const newData = { ...data, ...parsed };
+                    if (parsed && Array.isArray(parsed.timeStats)) {
+                        newData.timeStats = parsed.timeStats;
+                    }
+                    if (parsed && parsed.firstUseDate) {
+                        newData.firstUseDate = parsed.firstUseDate;
+                    }
+                    if (parsed && Array.isArray(parsed.achievements)) {
+                        newData.achievements = parsed.achievements;
+                    }
+                    data = newData;
+                }
+            } catch (e) {
+                console.log('Не удалось загрузить данные');
+            }
+        }
+
+        // --- НОВЫЕ ФУНКЦИИ ДЛЯ ВЫЧИСЛЕНИЯ ПО ПЕРИОДАМ ---
+        function calculateLastXPeriod(days) {
+            if (data.timeStats.length === 0) {
+                return 0;
+            }
+            const now = new Date();
+            const xDaysAgo = new Date(now);
+            xDaysAgo.setDate(xDaysAgo.getDate() - days);
+            xDaysAgo.setHours(0, 0, 0, 0);
+            const filteredStats = data.timeStats.filter(stat => {
+                const statDate = new Date(stat.timestamp);
+                return statDate >= xDaysAgo;
+            });
+            return filteredStats.length;
+        }
+        // --- КОНЕЦ НОВЫХ ФУНКЦИЙ ---
+
+        // Обновление интерфейса
+        function updateUI() {
+            data.week = calculateLastXPeriod(7);
+            data.month = calculateLastXPeriod(30);
+            counterEl.textContent = data.today;
+            weekEl.textContent = data.week;
+            monthEl.textContent = data.month;
+            goalEl.textContent = data.goal;
+            const percent = Math.round((data.today / data.goal) * 100);
+            const clampedPercent = Math.min(100, percent);
+            goalPercentEl.textContent = `${percent}%`;
+            let progressBarColor;
+            if (percent <= 50) {
+                const ratio = percent / 50;
+                const r = Math.round(76 + (255 - 76) * ratio);
+                const g = Math.round(175 + (238 - 175) * ratio);
+                const b = Math.round(80 + (0 - 80) * ratio);
+                progressBarColor = `rgb(${r}, ${g}, ${b})`;
+            } else if (percent <= 100) {
+                const ratio = (percent - 50) / 50;
+                const r = 255;
+                const g = Math.round(238 - (238 - 60) * ratio);
+                const b = 0;
+                progressBarColor = `rgb(${r}, ${g}, ${b})`;
+            } else {
+                progressBarColor = '#D32F2F';
+            }
+            progressFillEl.style.width = `${clampedPercent}%`;
+            progressFillEl.style.background = progressBarColor;
+            if (percent <= 100) {
+                progressFillEl.style.animation = '';
+            }
+            const progressHeaderEl = document.querySelector('.progress-header h3');
+            let progressMessage = "Прогресс отказа от курения";
+            let emoji = "";
+            let isShake = false;
+            if (data.today === 0) {
+                progressMessage = "Начни свой день чистым!";
+                emoji = "😊";
+            } else if (percent < 30) {
+                const lowMessages = [
+                    {msg: "Отличное начало!", emoji: "🙂"},
+                    {msg: "Ты на правильном пути!", emoji: "👍"},
+                    {msg: "Маленькие победы каждый день!", emoji: "🌟"}
+                ];
+                const randomMsg = lowMessages[Math.floor(Math.random() * lowMessages.length)];
+                progressMessage = randomMsg.msg;
+                emoji = randomMsg.emoji;
+            } else if (percent < 50) {
+                emoji = "🙂";
+            } else if (percent < 75) {
+                const midMessages = [
+                    {msg: "Вы приближаетесь к лимиту!", emoji: "😐"},
+                    {msg: "Постарайтесь остановиться!", emoji: "😐"},
+                    {msg: "Внимание: Лимит близко!", emoji: "⚠️"}
+                ];
+                const randomMsg = midMessages[Math.floor(Math.random() * midMessages.length)];
+                progressMessage = randomMsg.msg;
+                emoji = randomMsg.emoji;
+            } else if (percent < 100) {
+                progressMessage = "Лимит почти исчерпан!";
+                emoji = "😨";
+            } else if (percent === 100) {
+                const limitMessages = [
+                    {msg: "Лимит на сегодня исчерпан!", emoji: "⚠️"},
+                    {msg: "Цель достигнута. Осторожно!", emoji: "⚠️"},
+                    {msg: "Предел дневной нормы!", emoji: "⛔"}
+                ];
+                const randomMsg = limitMessages[Math.floor(Math.random() * limitMessages.length)];
+                progressMessage = randomMsg.msg;
+                emoji = randomMsg.emoji;
+            } else {
+                const overMessages = [
+                    {msg: "Лимит превышен! Подумай о здоровье!", emoji: "🚨"},
+                    {msg: "Перебор! Одумайся!", emoji: "😱"},
+                    {msg: "Это уже вред! Хватит!", emoji: "😵‍💫"},
+                    {msg: "Стоп! Подумай о своем здоровье!", emoji: "🛑"}
+                ];
+                const randomMsg = overMessages[Math.floor(Math.random() * overMessages.length)];
+                progressMessage = randomMsg.msg;
+                emoji = randomMsg.emoji;
+                isShake = true;
+            }
+            progressHeaderEl.textContent = `${emoji} ${progressMessage}`;
+            const progressContainer = document.querySelector('.progress-container');
+            progressFillEl.style.animation = '';
+            progressContainer.style.animation = '';
+            if (percent >= 110) {
+                progressFillEl.style.animation = 'pulseDanger 0.5s infinite';
+                progressContainer.style.animation = 'shake 0.2s 3';
+            }
+            let mixRatio = 0;
+            if (percent > 100) {
+                mixRatio = Math.min(1, (percent - 100) / 100);
+            }
+            const startAlpha = 0.1;
+            const endAlpha = 0.2;
+            const currentAlpha = startAlpha + (endAlpha - startAlpha) * mixRatio;
+            const bgColor = `rgba(255, 100, 100, ${currentAlpha})`;
+            progressContainer.style.background = bgColor;
+            const costPerCigarette = data.packPrice / data.cigarettesPerPack;
+            const totalCost = data.totalCost;
+            costsEl.textContent = `${Math.round(totalCost)} ₽`;
+            packPriceEl.textContent = data.packPrice;
+            const startDate = new Date(data.firstUseDate);
+            const startDateStr = startDate.toLocaleDateString('ru-RU');
+            const costsContainer = document.querySelector('.costs-container');
+            let startDateEl = costsContainer.querySelector('.start-date');
+            if (!startDateEl) {
+                startDateEl = document.createElement('p');
+                startDateEl.className = 'start-date';
+                startDateEl.style.fontSize = '0.8rem';
+                startDateEl.style.opacity = '0.8';
+                startDateEl.style.marginTop = '5px';
+                costsContainer.appendChild(startDateEl);
+            }
+            startDateEl.textContent = `С ${startDateStr}`;
+            const achievedCount = data.achievements.filter(a => a.achieved).length;
+            achievementsCountEl.textContent = `${achievedCount}/${data.achievements.length}`;
+            if (data.lastCigaretteTime) {
+                const lastTime = new Date(data.lastCigaretteTime);
+                lastCigaretteTimeEl.textContent = lastTime.toLocaleTimeString('ru-RU');
+            } else {
+                lastCigaretteTimeEl.textContent = '--:--:--';
+            }
+            const allTimeValueEl = document.getElementById('allTimeValue');
+            const firstUseDateLabelEl = document.getElementById('firstUseDateLabel');
+            if (allTimeValueEl) {
+                const allTimeCount = data.timeStats.length;
+                allTimeValueEl.textContent = allTimeCount;
+            }
+            if (firstUseDateLabelEl) {
+                if (data.timeStats.length > 0) {
+                    const earliestStat = data.timeStats.reduce((earliest, current) =>
+                        (current.timestamp < earliest.timestamp) ? current : earliest
+                    );
+                    const firstDate = new Date(earliestStat.timestamp);
+                    firstUseDateLabelEl.textContent = `с ${firstDate.toLocaleDateString('ru-RU')}`;
+                } else if (data.firstUseDate) {
+                    const firstDate = new Date(data.firstUseDate);
+                    firstUseDateLabelEl.textContent = `с ${firstDate.toLocaleDateString('ru-RU')}`;
+                } else {
+                    firstUseDateLabelEl.textContent = 'данных нет';
+                }
+            }
+        }
+
+        function showMedicalFact() {
+            const factContainer = document.getElementById('medical-fact');
+            if (!factContainer) return;
+            if (data.lastCigaretteTime) {
+                const now = new Date();
+                const lastTime = new Date(data.lastCigaretteTime);
+                const diffHours = Math.floor((now - lastTime) / (1000 * 60 * 60));
+                if (diffHours >= 1 && diffHours <= 24) {
+                    factContainer.textContent = medicalFacts[diffHours - 1];
+                    factContainer.style.display = 'block';
+                } else if (diffHours > 24) {
+                    factContainer.textContent = "Более 24 часов без сигарет! Организм продолжает восстанавливаться!";
+                    factContainer.style.display = 'block';
+                } else {
+                    factContainer.style.display = 'none';
+                }
+            } else {
+                factContainer.style.display = 'none';
+            }
+        }
+
+        function startTimer() {
+            setInterval(() => {
+                if (data.lastCigaretteTime) {
+                    const now = new Date();
+                    const lastTime = new Date(data.lastCigaretteTime);
+                    const diff = now - lastTime;
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                    timerEl.textContent =
+                        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                } else {
+                    timerEl.textContent = '00:00:00';
+                }
+                showMedicalFact();
+            }, 1000);
+        }
+
+        function incrementCounter() {
+            data.today++;
+            const now = new Date();
+            data.timeStats.push({
+                time: now.toLocaleTimeString('ru-RU'),
+                timestamp: now.getTime(),
+                date: now.toDateString()
+            });
+            data.lastCigaretteTime = now.getTime();
+            const costPerCigarette = data.packPrice / data.cigarettesPerPack;
+            data.totalCost += costPerCigarette;
+            const today = new Date().toDateString();
+            if (data.lastDate !== today) {
+                data.lastDate = today;
+                data.usageDays++;
+            }
+            saveData();
+            updateUI();
+            checkAchievements();
+            renderAchievements();
+            createSmokeAnimation();
+        }
+
+        function decrementCounter() {
+            if (data.today > 0) {
+                data.today--;
+                if (data.timeStats.length > 0) {
+                    data.timeStats.pop();
+                    if (data.timeStats.length > 0) {
+                        data.lastCigaretteTime = data.timeStats[data.timeStats.length - 1].timestamp;
+                    } else {
+                        data.lastCigaretteTime = null;
+                    }
+                } else {
+                    data.lastCigaretteTime = null;
+                }
+                const costPerCigarette = data.packPrice / data.cigarettesPerPack;
+                data.totalCost -= costPerCigarette;
+                data.totalCost = Math.max(0, data.totalCost);
+                saveData();
+                updateUI();
+                checkAchievements();
+                renderAchievements();
+                createSmokeAnimation();
+            }
+        }
+
+        function createSmokeAnimation() {
+            counterEl.classList.add('pulse');
+            setTimeout(() => {
+                counterEl.classList.remove('pulse');
+            }, 400);
+        }
+
+        function resetAll() {
+            const confirmed1 = confirm('Вы уверены, что хотите сбросить ВСЕ данные? Это действие нельзя отменить.');
+            if (confirmed1) {
+                const confirmed2 = confirm('Последнее предупреждение: ВСЕ данные будут удалены. Продолжить?');
+                if (confirmed2) {
+                    data = {
+                        today: 0,
+                        week: 0,
+                        month: 0,
+                        goal: 20,
+                        packPrice: 250,
+                        cigarettesPerPack: 20,
+                        streak: 0,
+                        lastDate: null,
+                        timeStats: [],
+                        lastAutoResetDate: new Date().toDateString(),
+                        achievements: [
+                            { id: 1, name: "Первый день", description: "Использовать приложение первый день", target: 1, achieved: false, icon: "📅" },
+                            { id: 2, name: "Неделя использования", description: "Использовать приложение неделю", target: 7, achieved: false, icon: "🗓️" },
+                            { id: 3, name: "Месяц использования", description: "Использовать приложение месяц", target: 30, achieved: false, icon: "📆" },
+                            { id: 4, name: "100 сигарет", description: "Выкурить 100 сигарет", target: 100, achieved: false, icon: "🚬" },
+                            { id: 5, name: "Экономия здоровья", description: "Сократить потребление на 50% по сравнению с неделей", target: 50, achieved: false, icon: "💚" }
+                        ],
+                        totalCost: 0,
+                        usageDays: 0,
+                        firstUseDate: new Date().toDateString(),
+                        lastCigaretteTime: null
+                    };
+                    saveData();
+                    updateUI();
+                    renderAchievements();
+                    document.body.style.backgroundColor = '#FF5252';
+                    setTimeout(() => {
+                        document.body.style.backgroundColor = '';
+                    }, 400);
+                }
+            }
+        }
+
+        function manualResetToday() {
+            const confirmed = confirm('Вы уверены, что хотите сбросить счетчик на сегодня? Счетчик "Сегодня" будет установлен в 0.');
+            if (confirmed) {
+                console.log("Выполняется ручной сброс счетчика 'Сегодня'...");
+                data.today = 0;
+                data.lastAutoResetDate = new Date().toDateString();
+                saveData();
+                updateUI();
+                console.log("Ручной сброс счетчика 'Сегодня' завершен.");
+                counterEl.style.color = '#FF5252';
+                setTimeout(() => {
+                    counterEl.style.color = '';
+                }, 500);
+            }
+        }
+
+        function openSettings() {
+            document.getElementById('goalSetting').value = data.goal;
+            document.getElementById('priceSetting').value = data.packPrice;
+            document.getElementById('countSetting').value = data.cigarettesPerPack;
+            settingsModal.style.display = 'flex';
+        }
+
+        function closeSettings() {
+            settingsModal.style.display = 'none';
+        }
+
+        function saveSettings() {
+            data.goal = parseInt(document.getElementById('goalSetting').value) || 20;
+            data.packPrice = parseInt(document.getElementById('priceSetting').value) || 250;
+            data.cigarettesPerPack = parseInt(document.getElementById('countSetting').value) || 20;
+            saveData();
+            updateUI();
+            closeSettings();
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const exportFileDefaultName = 'smoking-data.json';
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        function refreshApp() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                        registration.update();
+                    }
+                });
+            }
+            if (window.caches) {
+                caches.keys().then(function(names) {
+                    for (let name of names) {
+                        caches.delete(name);
+                    }
+                });
+            }
+            location.reload(true);
+        }
+
+        function showRandomQuote() {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            quoteEl.textContent = `"${quotes[randomIndex]}"`;
+        }
+
+        function checkAchievements() {
+            data.achievements.forEach(achievement => {
+                if (!achievement.achieved) {
+                    let achieved = false;
+                    switch(achievement.id) {
+                        case 1:
+                        case 2:
+                        case 3:
+                            achieved = data.usageDays >= achievement.target;
+                            break;
+                        case 4:
+                            achieved = data.timeStats.length >= achievement.target;
+                            break;
+                        case 5:
+                            if (data.week > 0) {
+                                const averageLastWeek = data.week / 7;
+                                if (averageLastWeek > 0) {
+                                    const reduction = ((averageLastWeek - data.today) / averageLastWeek) * 100;
+                                    achieved = reduction >= achievement.target;
+                                }
+                            }
+                            break;
+                    }
+                    if (achieved) {
+                        achievement.achieved = true;
+                        showAchievementNotification(achievement);
+                    }
+                }
+            });
+        }
+
+        function showAchievementNotification(achievement) {
+            alert(`🎉 Поздравляем! Вы получили достижение: ${achievement.name}\n${achievement.description}`);
+        }
+
+        function renderAchievements() {
+            achievementsListEl.innerHTML = '';
+            data.achievements.forEach(achievement => {
+                const achievementEl = document.createElement('div');
+                achievementEl.className = `achievement ${achievement.achieved ? 'achieved' : ''}`;
+                achievementEl.innerHTML = `
+                    <div class="achievement-icon">${achievement.icon}</div>
+                    <div class="achievement-info">
+                        <div class="achievement-name">${achievement.name}</div>
+                        <div class="achievement-desc">${achievement.description}</div>
+                    </div>
+                `;
+                achievementsListEl.appendChild(achievementEl);
+            });
+        }
+
+        function toggleTimeDetails(period) {
+            let card;
+            if (period === 'all') {
+                card = document.getElementById('allTimeCard');
+            } else {
+                card = document.getElementById(`${period}Card`);
+            }
+            if (!card) {
+                console.error(`Card element for period '${period}' not found.`);
+                return;
+            }
+            const existingDetails = card.querySelector('.time-details');
+            if (existingDetails) {
+                existingDetails.remove();
+            } else {
+                if (data.timeStats.length > 0) {
+                    const details = document.createElement('div');
+                    details.className = 'time-details';
+                    let filteredStats = [];
+                    const now = new Date();
+                    if (period === 'today') {
+                        const startOfTodayPeriod = new Date(now);
+                        startOfTodayPeriod.setHours(6, 0, 0, 0);
+                        const endOfTodayPeriod = new Date(startOfTodayPeriod);
+                        endOfTodayPeriod.setDate(endOfTodayPeriod.getDate() + 1);
+                        endOfTodayPeriod.setMilliseconds(endOfTodayPeriod.getMilliseconds() - 1);
+                        filteredStats = data.timeStats.filter(stat => {
+                            const statTimestamp = stat.timestamp;
+                            return statTimestamp >= startOfTodayPeriod.getTime() && statTimestamp <= endOfTodayPeriod.getTime();
+                        });
+                    } else if (period === 'week') {
+                        const weekAgo = new Date();
+                        weekAgo.setDate(weekAgo.getDate() - 7);
+                        weekAgo.setHours(0, 0, 0, 0);
+                        const endOfPeriod = now;
+                        filteredStats = data.timeStats.filter(stat => {
+                            const statDate = new Date(stat.timestamp);
+                            return statDate >= weekAgo && statDate <= endOfPeriod;
+                        });
+                    } else if (period === 'month') {
+                        const monthAgo = new Date();
+                        monthAgo.setDate(monthAgo.getDate() - 30);
+                        monthAgo.setHours(0, 0, 0, 0);
+                        const endOfPeriod = now;
+                        filteredStats = data.timeStats.filter(stat => {
+                            const statDate = new Date(stat.timestamp);
+                            return statDate >= monthAgo && statDate <= endOfPeriod;
+                        });
+                    } else if (period === 'all') {
+                        filteredStats = [...data.timeStats];
+                    }
+                    const sortedStats = [...filteredStats].sort((a, b) => b.timestamp - a.timestamp);
+                    if (sortedStats.length > 0) {
+                        sortedStats.forEach(stat => {
+                            const timeItem = document.createElement('div');
+                            timeItem.className = 'time-item';
+                            const recordDate = new Date(stat.timestamp);
+                            timeItem.textContent = `${recordDate.toLocaleTimeString('ru-RU')} - ${recordDate.toLocaleDateString('ru-RU')}`;
+                            details.appendChild(timeItem);
+                        });
+                    } else {
+                        const timeItem = document.createElement('div');
+                        timeItem.className = 'time-item';
+                        timeItem.textContent = 'Нет данных';
+                        details.appendChild(timeItem);
+                    }
+                    card.appendChild(details);
+                }
+            }
+        }
+
+        // === ИСПРАВЛЕННЫЕ ГРАФИКИ ===
+        let statsChartInstance = null;
+
+        function renderStatsChart(chartType) {
+            const canvas = document.getElementById('statsChart');
+            if (!canvas) {
+                console.error("Canvas элемент для графика не найден");
+                return;
+            }
+            const ctx = canvas.getContext('2d');
+            if (statsChartInstance) {
+                statsChartInstance.destroy();
+            }
+            let chartData = {};
+            let chartOptions = {};
+            switch (chartType) {
+                case 'weekday':
+                    chartData = getWeekdayChartData();
+                    chartOptions = getWeekdayChartOptions();
+                    xAxisLabel.textContent = 'Дни недели';
+                    yAxisLabel.textContent = 'Количество сигарет';
+                    break;
+                case 'daily':
+                    chartData = getDailyChartData();
+                    chartOptions = getDailyChartOptions();
+                    xAxisLabel.textContent = 'Дата';
+                    yAxisLabel.textContent = 'Количество сигарет';
+                    break;
+                case 'hourly':
+                    chartData = getHourlyChartData();
+                    chartOptions = getHourlyChartOptions();
+                    xAxisLabel.textContent = 'Часы';
+                    yAxisLabel.textContent = 'Количество сигарет';
+                    break;
+                case 'spending':
+                    chartData = getSpendingChartData();
+                    chartOptions = getSpendingChartOptions();
+                    xAxisLabel.textContent = 'Дата';
+                    yAxisLabel.textContent = 'Расходы (₽)';
+                    break;
+                default:
+                    return;
+            }
+            statsChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: chartData, // ← ИСПРАВЛЕНО: было chartData → стало data: chartData
+                options: chartOptions
+            });
+        }
+
+        function getWeekdayChartData() {
+            const weekdayStats = new Array(7).fill(0);
+            const weekdayLabels = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+            if (data.timeStats.length > 0) {
+                data.timeStats.forEach(stat => {
+                    const statDate = new Date(stat.timestamp);
+                    const weekday = statDate.getDay();
+                    weekdayStats[weekday]++;
+                });
+            }
+            return {
+                labels: weekdayLabels,
+                datasets: [{
+                    label: 'Количество сигарет',
+                    data: weekdayStats, // ← ИСПРАВЛЕНО
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)',
+                        'rgba(255, 159, 64, 0.7)',
+                        'rgba(199, 199, 199, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(199, 199, 199, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+        }
+
+        function getWeekdayChartOptions() {
+            return getDefaultBarChartOptions();
+        }
+
+        function getDailyChartData() {
+            const now = new Date();
+            const dates = [];
+            const counts = [];
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(now);
+                date.setDate(now.getDate() - i);
+                dates.push(date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }));
+                const dayStart = new Date(date);
+                dayStart.setHours(0, 0, 0, 0);
+                const dayEnd = new Date(dayStart);
+                dayEnd.setDate(dayEnd.getDate() + 1);
+                const count = data.timeStats.filter(stat => {
+                    const statDate = new Date(stat.timestamp);
+                    return statDate >= dayStart && statDate < dayEnd;
+                }).length;
+                counts.push(count);
+            }
+            return {
+                labels: dates,
+                datasets: [{
+                    label: 'Количество сигарет',
+                    data: counts, // ← ИСПРАВЛЕНО
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            };
+        }
+
+        function getDailyChartOptions() {
+            return getDefaultBarChartOptions();
+        }
+
+        function getHourlyChartData() {
+            const hourlyStats = new Array(24).fill(0);
+            const hourLabels = Array.from({length: 24}, (_, i) => `${i}:00`);
+            if (data.timeStats.length > 0) {
+                data.timeStats.forEach(stat => {
+                    const statDate = new Date(stat.timestamp);
+                    const hour = statDate.getHours();
+                    hourlyStats[hour]++;
+                });
+            }
+            return {
+                labels: hourLabels,
+                datasets: [{
+                    label: 'Количество сигарет',
+                    data: hourlyStats, // ← ИСПРАВЛЕНО
+                    backgroundColor: 'rgba(255, 159, 64, 0.7)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                }]
+            };
+        }
+
+        function getHourlyChartOptions() {
+            return {
+                ...getDefaultBarChartOptions(),
+                scales: {
+                    ...getDefaultBarChartOptions().scales,
+                    x: {
+                        ...getDefaultBarChartOptions().scales.x,
+                        ticks: {
+                            ...getDefaultBarChartOptions().scales.x.ticks,
+                            autoSkip: false,
+                            maxRotation: 90,
+                            minRotation: 90,
+                            font: {
+                                size: 9
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        function getSpendingChartData() {
+            const now = new Date();
+            const dates = [];
+            const spending = [];
+            const costPerCigarette = data.packPrice / data.cigarettesPerPack;
+            const dailyData = {};
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date(now);
+                date.setDate(now.getDate() - i);
+                const dateStr = date.toDateString();
+                dailyData[dateStr] = 0;
+                dates.push(date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }));
+            }
+            data.timeStats.forEach(stat => {
+                const statDate = new Date(stat.timestamp);
+                const statDateStr = statDate.toDateString();
+                if (dailyData.hasOwnProperty(statDateStr)) {
+                    dailyData[statDateStr]++;
+                }
+            });
+            Object.entries(dailyData).forEach(([dateStr, count], index) => {
+                const daySpending = count * costPerCigarette;
+                spending.push(parseFloat(daySpending.toFixed(2)));
+            });
+            return {
+                labels: dates,
+                datasets: [{
+                    label: 'Расходы на сигареты (₽)',
+                    data: spending, // ← ИСПРАВЛЕНО
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            };
+        }
+
+        function getSpendingChartOptions() {
+            return {
+                ...getDefaultBarChartOptions(),
+                scales: {
+                    ...getDefaultBarChartOptions().scales,
+                    y: {
+                        ...getDefaultBarChartOptions().scales.y,
+                        ticks: {
+                            ...getDefaultBarChartOptions().scales.y.ticks,
+                            callback: function(value) {
+                                return value + ' ₽';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    ...getDefaultBarChartOptions().plugins,
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.parsed.y} ₽`;
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        function getDefaultBarChartOptions() {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Сигарет: ${context.parsed.y}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.9)'
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            };
+        }
+
+        function openStatsModal() {
+            statsModal.style.display = 'flex';
+            document.querySelectorAll('.chart-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.chart-btn[data-chart="weekday"]').classList.add('active');
+            renderStatsChart('weekday');
+        }
+
+        function closeStatsModalFunc() {
+            statsModal.style.display = 'none';
+        }
+
+        function updateThemeColor() {
+            const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            if (metaThemeColor) {
+                metaThemeColor.setAttribute('content', '#1a2a6c');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
+        document.addEventListener('DOMContentLoaded', () => {
+            updateThemeColor();
+        });
+    </script>
+</body>
+</html>
