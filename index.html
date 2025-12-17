@@ -10,9 +10,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="format-detection" content="telephone=no">
     <meta name="HandheldFriendly" content="true">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <title>SmokeLess</title>
     <meta name="description" content="SmokeLess - приложение для отслеживания потребления сигарет">
     <link rel="manifest" href="manifest.json">
@@ -24,23 +21,20 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // Принудительное обновление при каждой загрузке
-        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({type: 'SKIP_WAITING'});
-        }
-    </script>
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #0f3443, #34e89e, #0f3443);
-            --card-bg: rgba(255, 255, 255, 0.15);
+            --bg-gradient: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            --card-bg: rgba(255, 255, 255, 0.1);
             --text-color: white;
-            --border-color: rgba(255, 255, 255, 0.25);
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
-            --primary-btn: linear-gradient(to right, #34e89e, #2cc96b);
-            --secondary-btn: linear-gradient(to right, #ff6b6b, #ee5a6f);
-            --warning-btn: linear-gradient(to right, #ffa500, #ff7e22);
-            --glass-blur: 12px;
+            --border-color: rgba(255, 255, 255, 0.2);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --primary-btn: linear-gradient(to right, #4CAF50, #8BC34A);
+            --secondary-btn: linear-gradient(to right, #f44336, #FF9800);
+            --warning-btn: linear-gradient(to right, #FF9800, #FF5722);
+            /* Начальный цвет фона для progress-container */
+            --progress-container-bg-start: rgba(255, 255, 255, 0.1);
+            /* Конечный цвет фона для progress-container при >100% */
+            --progress-container-bg-end: rgba(255, 100, 100, 0.2);
         }
         /* data-theme="light" удален, так как функционал убран */
         * {
@@ -68,7 +62,6 @@
             background-size: cover !important;
             background-repeat: no-repeat !important;
             background-position: center center !important;
-            transition: background 0.8s ease;
         }
         /* Добавляем фикс для полного покрытия фона */
         body::before {
@@ -84,7 +77,6 @@
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center center;
-            transition: background 0.8s ease;
         }
         .container {
             max-width: 800px;
@@ -148,16 +140,15 @@
         }
         .counter-card {
             background: var(--card-bg);
-            border-radius: 24px;
+            border-radius: 18px;
             padding: 20px;
             text-align: center;
             box-shadow: var(--shadow);
             margin-bottom: 15px;
             border: 1px solid var(--border-color);
-            backdrop-filter: blur(var(--glass-blur));
         }
         .counter-value {
-            font-size: 5.5rem;
+            font-size: 4.5rem;
             font-weight: bold;
             margin: 10px 0;
             text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
@@ -179,17 +170,14 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             min-width: 120px;
             touch-action: manipulation;
-            backdrop-filter: blur(var(--glass-blur));
         }
         .btn-primary {
             background: var(--primary-btn);
             color: white;
-            opacity: 0.9;
         }
         .btn-secondary {
             background: var(--secondary-btn);
             color: white;
-            opacity: 0.9;
         }
         .btn-warning {
             background: var(--warning-btn);
@@ -210,85 +198,43 @@
         }
         /* --- ПРОГРЕСС-БАР ПЕРЕМЕЩЕН ВЫШЕ --- */
         .progress-container {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 30px;
+            background: var(--progress-container-bg-start);
+            border-radius: 15px;
+            padding: 15px;
             margin-bottom: 15px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            backdrop-filter: blur(var(--glass-blur));
+            /* Переход для плавного изменения фона */
             transition: background-color 0.5s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
         .progress-header {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            text-align: center;
-            min-height: 30px;
-        }
-        .progress-circle-container {
-            position: relative;
-            width: 180px;
-            height: 180px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            margin: 15px 0;
+            margin-bottom: 8px;
+            font-size: 1rem;
         }
-        .progress-circle-svg {
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            top: 0;
-            left: 0;
+        .progress-bar {
+            height: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
         }
-        .progress-circle-svg circle {
-            fill: none;
-            stroke-linecap: round;
-            transform: rotate(-90deg);
-            transform-origin: 90px 90px;
-        }
-        .progress-circle-bg {
-            stroke: rgba(255, 255, 255, 0.15);
-            stroke-width: 12;
-        }
-        .progress-circle-fill {
-            stroke: #34e89e;
-            stroke-width: 12;
-            stroke-dasharray: 565.48;
-            stroke-dashoffset: 565.48;
-            transition: stroke 0.5s ease, stroke-dashoffset 0.5s ease;
-        }
-        .progress-circle-text {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-        }
-        .progress-percent {
-            font-size: 2.5rem;
-            font-weight: bold;
-            line-height: 1;
-            margin-bottom: 5px;
-        }
-        .progress-goal-text {
-            font-size: 0.9rem;
-            opacity: 0.85;
-            margin-top: 15px;
+        .progress-fill {
+            height: 100%;
+            border-radius: 8px;
+            width: 0%;
+            transition: width 0.5s ease, background-color 0.5s ease;
         }
         /* --- КОНЕЦ ПРОГРЕСС-БАРА --- */
         .timer-container {
             background: var(--card-bg);
-            border-radius: 24px;
+            border-radius: 15px;
             padding: 18px;
             text-align: center;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
             margin-bottom: 15px;
-            backdrop-filter: blur(var(--glass-blur));
         }
         .timer-value {
             font-size: 2.2rem;
@@ -305,7 +251,7 @@
         }
         .stat-card {
             background: var(--card-bg);
-            border-radius: 24px;
+            border-radius: 13px;
             padding: 13px;
             text-align: center;
             box-shadow: var(--shadow);
@@ -313,7 +259,6 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(var(--glass-blur));
         }
         .stat-card:hover {
             transform: translateY(-1px);
@@ -345,13 +290,12 @@
         }
         .costs-container {
             background: var(--card-bg);
-            border-radius: 24px;
+            border-radius: 15px;
             padding: 18px;
             text-align: center;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
             margin-bottom: 15px;
-            backdrop-filter: blur(var(--glass-blur));
         }
         .costs-amount {
             font-size: 2.2rem;
@@ -362,7 +306,7 @@
         }
         .quote-container {
             background: var(--card-bg);
-            border-radius: 24px;
+            border-radius: 15px;
             padding: 18px;
             text-align: center;
             box-shadow: var(--shadow);
@@ -374,16 +318,14 @@
             align-items: center;
             justify-content: center;
             font-size: 0.95rem;
-            backdrop-filter: blur(var(--glass-blur));
         }
         .achievements-container {
             background: var(--card-bg);
-            border-radius: 24px;
+            border-radius: 15px;
             padding: 18px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
             margin-bottom: 15px;
-            backdrop-filter: blur(var(--glass-blur));
         }
         .achievements-header {
             display: flex;
@@ -433,13 +375,13 @@
         }
         .modal-content {
             background: var(--card-bg);
-            border-radius: 24px;
+            border-radius: 18px;
             padding: 25px;
             width: 90%;
             max-width: 500px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            backdrop-filter: blur(var(--glass-blur));
+            backdrop-filter: blur(10px);
             max-height: 90vh;
             overflow-y: auto;
         }
@@ -494,17 +436,15 @@
             background: linear-gradient(to right, #f44336, #d32f2f);
             color: white;
         }
+        /* --- ИСПРАВЛЕНИЕ: Стили для user-panel --- */
         .user-panel {
           background: var(--card-bg);
-          border-radius: 24px;
+          border-radius: 13px;
           padding: calc(12px + env(safe-area-inset-top, 0px)) 12px 12px 12px;
           margin-bottom: 15px;
           display: none;
           box-sizing: border-box;
           width: 100%;
-          backdrop-filter: blur(var(--glass-blur));
-          border: 1px solid var(--border-color);
-          box-shadow: var(--shadow);
         }
         .user-info {
             display: flex;
@@ -550,31 +490,6 @@
             background: #f44336;
             color: white;
         }
-        .sync-indicator {
-            position: fixed;
-            top: 8px;
-            right: 8px;
-            padding: 6px 10px;
-            border-radius: 18px;
-            font-size: 0.75rem;
-            z-index: 1000;
-            display: none;
-        }
-        .sync-syncing {
-            background: #2196F3;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .sync-success {
-            background: #4CAF50;
-            color: white;
-        }
-        .sync-error {
-            background: #f44336;
-            color: white;
-        }
         footer {
             text-align: center;
             padding: 12px;
@@ -595,18 +510,7 @@
                 padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             }
             .counter-value {
-                font-size: 4rem;
-            }
-            .progress-circle-container {
-                width: 150px;
-                height: 150px;
-            }
-            .progress-circle-svg {
-                width: 150px;
-                height: 150px;
-            }
-            .progress-percent {
-                font-size: 2rem;
+                font-size: 3.8rem;
             }
             .counter-buttons {
                 flex-direction: column;
@@ -774,16 +678,16 @@
         }
         .stats-modal-content {
             background: var(--card-bg);
-            border-radius: 24px;
+            border-radius: 18px;
             padding: 25px;
             width: 90%;
             max-width: 500px;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            backdrop-filter: blur(var(--glass-blur));
+            backdrop-filter: blur(10px);
             max-height: 90vh;
             overflow-y: auto;
-            text-align: center;
+            text-align: center; /* Центрируем содержимое */
         }
         .stats-modal-header {
             display: flex;
@@ -883,17 +787,14 @@
             </div>
             <!-- ПРОГРЕСС-БАР ПЕРЕМЕЩЕН СЮДА -->
             <div class="progress-container">
-                <div class="progress-header" id="progress-header">Прогресс отказа от курения 😊</div>
-                <div class="progress-circle-container">
-                    <svg class="progress-circle-svg" viewBox="0 0 180 180">
-                        <circle class="progress-circle-bg" cx="90" cy="90" r="85"></circle>
-                        <circle class="progress-circle-fill" id="progress-circle-fill" cx="90" cy="90" r="85"></circle>
-                    </svg>
-                    <div class="progress-circle-text">
-                        <div class="progress-percent" id="progress-percent">0%</div>
-                    </div>
+                <div class="progress-header">
+                    <h3>Прогресс отказа от курения 😊</h3> <!-- Начальный эмодзи -->
+                    <span id="goal-percent">0%</span>
                 </div>
-                <p class="progress-goal-text">Цель: <span id="goal">20</span> сигарет в день</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <p style="margin-top: 10px; font-size: 0.9rem;">Цель: <span id="goal">20</span> сигарет в день</p>
             </div>
             <!-- КОНЕЦ ПРОГРЕСС-БАРА -->
             <div class="timer-container">
@@ -1095,9 +996,8 @@
         const weekEl = document.getElementById('week');
         const monthEl = document.getElementById('month');
         const goalEl = document.getElementById('goal');
-        const progressPercentEl = document.getElementById('progress-percent');
-        const progressCircleFill = document.getElementById('progress-circle-fill');
-        const progressHeader = document.getElementById('progress-header');
+        const goalPercentEl = document.getElementById('goal-percent');
+        const progressFillEl = document.getElementById('progress-fill');
         const costsEl = document.getElementById('costs');
         const packPriceEl = document.getElementById('pack-price');
         const quoteEl = document.getElementById('quote');
@@ -1227,10 +1127,6 @@
             renderAchievements();
             checkAchievements();
             startTimer();
-            
-            // Инициализация градиента
-            const percent = Math.round((data.today / data.goal) * 100);
-            updateBackgroundGradient(percent);
             // Установка обработчиков событий
             incrementBtn.addEventListener('click', incrementCounter);
             decrementBtn.addEventListener('click', decrementCounter);
@@ -1287,30 +1183,15 @@
             });
             // Проверка сессии
             checkSession();
-            
-            // Очистка старого кэша и регистрация Service Worker
+            // Регистрация Service Worker
             if ('serviceWorker' in navigator) {
-                // Очищаем старый кэш при загрузке
-                caches.keys().then(function(cacheNames) {
-                    cacheNames.forEach(function(cacheName) {
-                        caches.delete(cacheName);
-                    });
-                });
-                
                 window.addEventListener('load', function() {
-                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                        registrations.forEach(function(registration) {
-                            registration.unregister();
-                        });
-                    }).then(function() {
-                        navigator.serviceWorker.register('sw.js')
-                        .then(function(registration) {
-                            console.log('SW registered: ', registration);
-                            registration.update();
-                        })
-                        .catch(function(registrationError) {
-                            console.log('SW registration failed: ', registrationError);
-                        });
+                    navigator.serviceWorker.register('sw.js')
+                    .then(function(registration) {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                        console.log('SW registration failed: ', registrationError);
                     });
                 });
             }
@@ -1686,51 +1567,6 @@
         }
         // --- КОНЕЦ НОВЫХ ФУНКЦИЙ ---
 
-        // Функция для динамического изменения фонового градиента в зависимости от процента
-        function updateBackgroundGradient(percent) {
-            let gradient;
-            
-            // Плавный переход от зелёного (0%) к красному (150%)
-            let r, g, b;
-            
-            if (percent <= 25) {
-                // Зелёный (0-25%)
-                const ratio = percent / 25;
-                r = Math.round(15 + (52 - 15) * ratio); // 15 → 52
-                g = Math.round(212 + (232 - 212) * ratio); // 212 → 232
-                b = Math.round(67 + (120 - 67) * ratio); // 67 → 120
-            } else if (percent <= 50) {
-                // Сине-зелёный (25-50%)
-                const ratio = (percent - 25) / 25;
-                r = Math.round(52 + (100 - 52) * ratio); // 52 → 100
-                g = Math.round(232 + (200 - 232) * ratio); // 232 → 200
-                b = Math.round(120 + (160 - 120) * ratio); // 120 → 160
-            } else if (percent <= 75) {
-                // Жёлто-оранжевый (50-75%)
-                const ratio = (percent - 50) / 25;
-                r = Math.round(100 + (255 - 100) * ratio); // 100 → 255
-                g = Math.round(200 + (140 - 200) * ratio); // 200 → 140
-                b = Math.round(160 + (30 - 160) * ratio); // 160 → 30
-            } else if (percent <= 100) {
-                // Оранжевый-красный (75-100%)
-                const ratio = (percent - 75) / 25;
-                r = Math.round(255 + (220 - 255) * ratio); // 255 → 220
-                g = Math.round(140 + (40 - 140) * ratio); // 140 → 40
-                b = Math.round(30 + (20 - 30) * ratio); // 30 → 20
-            } else {
-                // Тёмно-красный (>100%)
-                const ratio = Math.min(1, (percent - 100) / 100);
-                r = Math.round(220 + (139 - 220) * ratio); // 220 → 139
-                g = Math.round(40 + (0 - 40) * ratio); // 40 → 0
-                b = Math.round(20 + (0 - 20) * ratio); // 20 → 0
-            }
-            
-            gradient = `linear-gradient(135deg, rgb(${r}, ${g}, ${b}), rgba(${r}, ${g}, ${b}, 0.7), rgb(${r}, ${g}, ${b}))`;
-            document.documentElement.style.setProperty('--bg-gradient', gradient);
-        }
-
-        // --- КОНЕЦ НОВЫХ ФУНКЦИЙ ---
-
         // Обновление интерфейса
         function updateUI() {
             data.week = calculateLastXPeriod(7);
@@ -1739,36 +1575,34 @@
             weekEl.textContent = data.week;
             monthEl.textContent = data.month;
             goalEl.textContent = data.goal;
-            
-            // Обновление прогресс-круга
             const percent = Math.round((data.today / data.goal) * 100);
-            progressPercentEl.textContent = `${percent}%`;
-            
-            // SVG окружность: полный периметр = 2πr, где r=85
-            const radius = 85;
-            const circumference = 2 * Math.PI * radius;
             const clampedPercent = Math.min(100, percent);
-            const offset = circumference - (clampedPercent / 100) * circumference;
-            progressCircleFill.style.strokeDashoffset = offset;
-            
-            // Изменение цвета круга в зависимости от процента
-            let circleColor;
-            if (percent <= 70) {
-                circleColor = '#34e89e'; // Зелёный
+            goalPercentEl.textContent = `${percent}%`;
+            let progressBarColor;
+            if (percent <= 50) {
+                const ratio = percent / 50;
+                const r = Math.round(76 + (255 - 76) * ratio);
+                const g = Math.round(175 + (238 - 175) * ratio);
+                const b = Math.round(80 + (0 - 80) * ratio);
+                progressBarColor = `rgb(${r}, ${g}, ${b})`;
             } else if (percent <= 100) {
-                circleColor = '#ffa500'; // Жёлтый
+                const ratio = (percent - 50) / 50;
+                const r = 255;
+                const g = Math.round(238 - (238 - 60) * ratio);
+                const b = 0;
+                progressBarColor = `rgb(${r}, ${g}, ${b})`;
             } else {
-                circleColor = '#ff6b6b'; // Красный
+                progressBarColor = '#D32F2F';
             }
-            progressCircleFill.style.stroke = circleColor;
-            
-            // Динамическое изменение фонового градиента
-            updateBackgroundGradient(percent);
-            
-            // Обновление заголовка и мотивирующего текста
+            progressFillEl.style.width = `${clampedPercent}%`;
+            progressFillEl.style.background = progressBarColor;
+            if (percent <= 100) {
+                progressFillEl.style.animation = '';
+            }
+            const progressHeaderEl = document.querySelector('.progress-header h3');
             let progressMessage = "Прогресс отказа от курения";
             let emoji = "";
-            
+            let isShake = false;
             if (data.today === 0) {
                 progressMessage = "Начни свой день чистым!";
                 emoji = "😊";
@@ -1814,15 +1648,29 @@
                 const randomMsg = overMessages[Math.floor(Math.random() * overMessages.length)];
                 progressMessage = randomMsg.msg;
                 emoji = randomMsg.emoji;
+                isShake = true;
             }
-            
-            progressHeader.textContent = `${emoji} ${progressMessage}`;
-            
+            progressHeaderEl.textContent = `${emoji} ${progressMessage}`;
+            const progressContainer = document.querySelector('.progress-container');
+            progressFillEl.style.animation = '';
+            progressContainer.style.animation = '';
+            if (percent >= 110) {
+                progressFillEl.style.animation = 'pulseDanger 0.5s infinite';
+                progressContainer.style.animation = 'shake 0.2s 3';
+            }
+            let mixRatio = 0;
+            if (percent > 100) {
+                mixRatio = Math.min(1, (percent - 100) / 100);
+            }
+            const startAlpha = 0.1;
+            const endAlpha = 0.2;
+            const currentAlpha = startAlpha + (endAlpha - startAlpha) * mixRatio;
+            const bgColor = `rgba(255, 100, 100, ${currentAlpha})`;
+            progressContainer.style.background = bgColor;
             const costPerCigarette = data.packPrice / data.cigarettesPerPack;
             const totalCost = data.totalCost;
             costsEl.textContent = `${Math.round(totalCost)} ₽`;
             packPriceEl.textContent = data.packPrice;
-            
             const startDate = new Date(data.firstUseDate);
             const startDateStr = startDate.toLocaleDateString('ru-RU');
             const costsContainer = document.querySelector('.costs-container');
@@ -1836,17 +1684,14 @@
                 costsContainer.appendChild(startDateEl);
             }
             startDateEl.textContent = `С ${startDateStr}`;
-            
             const achievedCount = data.achievements.filter(a => a.achieved).length;
             achievementsCountEl.textContent = `${achievedCount}/${data.achievements.length}`;
-            
             if (data.lastCigaretteTime) {
                 const lastTime = new Date(data.lastCigaretteTime);
                 lastCigaretteTimeEl.textContent = lastTime.toLocaleTimeString('ru-RU');
             } else {
                 lastCigaretteTimeEl.textContent = '--:--:--';
             }
-            
             const allTimeValueEl = document.getElementById('allTimeValue');
             const firstUseDateLabelEl = document.getElementById('firstUseDateLabel');
             if (allTimeValueEl) {
@@ -1929,7 +1774,6 @@
             checkAchievements();
             renderAchievements();
             createSmokeAnimation();
-            if ('vibrate' in navigator) navigator.vibrate(50);
         }
 
         function decrementCounter() {
